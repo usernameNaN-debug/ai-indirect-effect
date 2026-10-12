@@ -1,5 +1,5 @@
 import { DEFAULTS, PRESETS, solveMarket, solveBoundaryPath, learningRisk, localWelfare, growthPaths } from './model.js';
-import { mountFeedback } from './feedback-ui.js?v=20261013b';
+import { mountFeedback } from './feedback-ui.js?v=20261013c';
 
 const NS = 'http://www.w3.org/2000/svg';
 const C = { teal: '#0F4D92', rust: '#B64342', blue: '#3775BA', ink: 'var(--ink, #242424)', muted: '#767676', line: 'var(--line, #dedede)', paper: '#ffffff', mixed: '#E4CCD8', humanFill: '#B4C0E4', machineFill: '#F0C0CC', quiet: '#f4f4f4' };
