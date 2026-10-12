@@ -1,0 +1,10 @@
+{
+  "name": "indirect-effects-research-essay",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node build-content.mjs",
+    "check:model": "node scripts/check-model.mjs",
+    "check:site": "node scripts/check-site.mjs"
+  }
+}
