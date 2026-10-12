@@ -1,5 +1,5 @@
-import { mountWidgets } from './widgets.js?v=20261013c';
-import { mountDynamics } from './dynamics-figures.js?v=20261013c';
+import { mountWidgets } from './widgets.js?v=20261013d';
+import { mountDynamics } from './dynamics-figures.js?v=20261013d';
 
 const dialog = document.querySelector('.contents-dialog');
 const openButton = document.querySelector('.contents-toggle');
@@ -41,7 +41,7 @@ try {
   await mountDynamics(document);
   const playground = document.querySelector('[data-playground]');
   if (playground) {
-    const { mountPlayground } = await import('./home-playground.js?v=20261013c');
+    const { mountPlayground } = await import('./home-playground.js?v=20261013d');
     await mountPlayground(playground);
   }
   document.documentElement.dataset.interactions = 'ready';

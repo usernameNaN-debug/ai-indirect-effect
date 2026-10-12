@@ -48,7 +48,7 @@ const LOOPS = {
   B2:{title:'Learning-credit pricing',edges:['p4','p5','p6','p7','p9','p10','p11'],description:'Qualification value prices the learning in a customer file, with the pay floor changing the separate local credit rule.'},
   B3:{title:'Customer progress and research hours',edges:['p1','p2','p3','p4','p8','p9','p10','p15','p16','p17'],description:'Customer work changes expertise and research wages, while frontier progress returns to the customer interface.'},
   B4:{title:'Idea difficulty',edges:['p18','p19'],description:'Each frontier advance raises the packet requirement for a further absolute increment.'},
-  R1:{title:'Self-improving research',edges:['p20','p21'],description:'Progress lowers complete machine requirements and changes the research bought by the budget.'},
+  R1:{title:'Recursive improvement',edges:['p20','p21'],description:'Current AI lowers the machine resources needed to generate and validate research. Completed research advances the AI used in the next cycle.'},
   S:{title:'Automation and career incentives',edges:['p11','p12','p13','p14','p20','p22'],description:'Relative complete-method productivity changes parity wages and the value of becoming qualified.'},
 };
 const METRICS = { E: { title: 'Experts', label: 'Expert population share', unit: 'population share', format: percent }, w: { title: 'Wage', label: 'Hourly wage', unit: 'numeraire / hour', format }, Delta: { title: 'Value', label: 'Qualification value', unit: 'numeraire', format }, A: { title: 'Frontier', label: 'Frontier productivity', unit: 'productivity index', format } };
@@ -66,7 +66,7 @@ const NODE_COPY = {
   x: 'Each novice chooses formal study from the qualification value divided by the training cost parameter.',
   d: 'Career value anticipates future wage premia and satisfies the specified terminal qualification payoff.',
   diff: 'Idea difficulty gives the number of completed packets needed for another absolute frontier increment.',
-  a: 'Completed, validated research packets advance the frontier and change the tools available to customers.',
+  a: 'Completed, validated research packets advance the frontier, updating the AI available to both customers and the next research cycle.',
   lr: 'Research procurement assigns expert time to human work or grounding as the available methods compete.',
   my: 'Machine output per dollar accounts for the resources used in both generation and validation.',
 };
