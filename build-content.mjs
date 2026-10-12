@@ -58,6 +58,7 @@ function overview() {
   return `<main class="overview" id="article"><header class="overview-heading"><h1>Indirect Effects of Frontier AI</h1><div class="home-playground" data-playground></div><div class="overview-actions"><a class="overview-button" href="/assets/paper.pdf" target="_blank" rel="noopener">Read the paper</a><a class="overview-button" href="/economy/">Explore the economy</a></div></header><div class="overview-paths"><section class="overview-card"><h2>Story</h2><p>From a household’s tax return, we follow how customer AI changes the work reaching a profession, the experience through which people learn, and the value of their future expertise.</p><a class="overview-button" href="/story/">Read the story</a></section><section class="overview-card"><h2>Mathematics</h2><p>Through customer choices, private investment, and research allocation, we develop the equations that connect professional work to learning, welfare, and frontier growth.</p><a class="overview-button" href="/model/">Explore the model</a></section></div></main>`;
 }
 function pageNavigation(key) {
+  if (key === 'home' || key === 'economy') return '';
   const index = order.indexOf(key), previous = order[index - 1], next = order[index + 1];
   return `<nav class="page-navigation" aria-label="Page navigation">${previous ? `<a href="${route(previous)}" rel="prev">prev</a>` : '<span aria-disabled="true">prev</span>'}<button type="button" data-back-to-top>back to top</button>${next ? `<a href="${route(next)}" rel="next">next</a>` : '<span aria-disabled="true">next</span>'}</nav>`;
 }

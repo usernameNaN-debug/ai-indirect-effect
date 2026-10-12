@@ -428,19 +428,6 @@ function welfare(host) {
     const m0 = state.P / state.gap, m1 = (state.P + state.premium * market.chiR) / state.gap, id = `welfare-clip-${++uid}`;
     const defs = se('defs', {}, graph.svg), clip = se('clipPath', { id }, defs); se('rect', { x: graph.margin.l, y: graph.margin.t, width: graph.right - graph.margin.l, height: graph.bottom - graph.margin.t }, clip);
     graph.boundary = se('line', { x1: graph.X(m0), y1: graph.Y(0), x2: graph.X(m1), y2: graph.Y(1), stroke: C.ink, 'stroke-width': 1.6, 'stroke-dasharray': '5 4', 'clip-path': `url(#${id})`, 'pointer-events': 'none', 'data-welfare-boundary': '', opacity: .8 }, graph.svg);
-    graph.cursor = se('circle', { cx: graph.X(state.m), cy: graph.Y(state.e), r: 5, class: 'map-pointer', 'pointer-events': 'none' }, graph.svg);
-    const surface = graph.svg.querySelector('rect[aria-label]');
-    surface.setAttribute('tabindex', '0');
-    surface.setAttribute('aria-label', 'Prepared case. Click the field or use arrow keys to move the case.');
-    surface.addEventListener('pointerdown', event => {
-      const rect = graph.svg.getBoundingClientRect(), x = (event.clientX - rect.left) * graph.width / rect.width, y = (event.clientY - rect.top) * graph.height / rect.height;
-      state.m = clamp((x - graph.margin.l) / (graph.right - graph.margin.l), 0, 1);
-      state.e = clamp((graph.bottom - y) / (graph.bottom - graph.margin.t), 0, 1); draw();
-    });
-    surface.addEventListener('keydown', event => {
-      const change = { ArrowLeft: ['m', -.02], ArrowRight: ['m', .02], ArrowDown: ['e', -.02], ArrowUp: ['e', .02] }[event.key];
-      if (change) { event.preventDefault(); state[change[0]] = clamp(state[change[0]] + change[1], 0, 1); draw(); }
-    });
   }
   function draw() {
     if (!graph) return;
@@ -454,7 +441,6 @@ function welfare(host) {
     graph.cells.forEach(({ cell, m, e }) => { const W = state.P - state.gap * m + state.premium * market.chiR * e; cell.setAttribute('fill', fieldColor(W)); cell.dataset.mapValue = W; });
     graph.boundary.setAttribute('x1', graph.X(state.P / state.gap));
     graph.boundary.setAttribute('x2', graph.X((state.P + state.premium * market.chiR) / state.gap));
-    graph.cursor.setAttribute('cx', graph.X(state.m)); graph.cursor.setAttribute('cy', graph.Y(state.e));
     const { svg, width } = svgBase(flow, map.clientWidth < 400 ? 295 : 325, 'Decomposition of local public value using supplied continuation values');
     tx(svg, 12, 13, 'Per-case value', { class: 'svg-label' });
     const terms = [{ label: 'Private gain', value: w.privateGain, color: C.teal, body: `Supplied private gain P = ${fmt(state.P, 2)}.` }, { label: 'Learning cost', value: -w.learningCost, color: C.rust, body: `Learning value gap λ − Δ = ${fmt(state.gap, 2)}, multiplied by learning lost m.` }, { label: 'Research gain', value: w.researchGain, color: C.blue, body: `Research premium Π − h = ${fmt(state.premium, 2)}. Market absorption χᵣ = ${fmt(market.chiR, 3)}.` }, { label: 'Public value', value: w.W, color: C.ink, body: 'Private gain minus learning cost plus research gain.' }];
