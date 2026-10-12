@@ -1,4 +1,4 @@
-.feedback-workspace { max-width:1600px;margin:0 auto;padding:4px 34px 28px; }
+.feedback-workspace { max-width:1150px;margin:0 auto;padding:14px 28px 20px; }
 .feedback-interactive {
   --fb-blue:#0F4D92;
   --fb-red:#B64342;
@@ -38,24 +38,24 @@
 .feedback-interactive .fb-playback button:disabled { opacity:.5; cursor:default; }
 .feedback-interactive .fb-clock { min-width:100px; padding-left:5px; color:#767676; font:12px/1.4 var(--font-mono,monospace); font-variant-numeric:tabular-nums; }
 .feedback-interactive .fb-scenarios { display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:5px 14px; margin:5px 0 0; min-height:38px; }
-.feedback-interactive .fb-size { display:flex; align-items:center; gap:7px; color:#767676; font-size:12px; }
-.feedback-interactive .fb-size input { width:58px; height:28px; padding:3px 4px; border:1px solid #dedede; border-radius:3px; background:white; font:12px/1.4 var(--font-mono,monospace); color:#282828; }
 .feedback-interactive .fb-parts { margin-top:5px; padding-bottom:4px; border-bottom:1px solid #e8e8e8; }
 .feedback-interactive .fb-parts button { font-size:12px; min-height:32px; }
 .feedback-interactive .fb-stage { display:grid; grid-template-columns:minmax(0,1fr) 250px; align-items:stretch; gap:20px; padding-top:4px; }
 .feedback-interactive .fb-surface { min-width:0; position:relative; height:clamp(330px,43vh,380px); background:#f8f8f8; border:1px solid #eeeeee; border-radius:20px; padding:7px 8px 10px; }
 .feedback-interactive .fb-surface>svg { display:block; width:100%; height:100%; max-width:100%; overflow:visible; margin:0; }
+.feedback-interactive .fb-original-band { fill:none; stroke:#d5d7db; stroke-width:.8; stroke-dasharray:3 4; }
 .feedback-interactive .fb-region-label { font:11px/1 var(--font-ui,system-ui,sans-serif); letter-spacing:.05em; fill:#8c8c8c; }
 .feedback-interactive .fb-edge { fill:none; stroke:#9aa4b3; stroke-width:1.25; stroke-linecap:round; stroke-linejoin:round; pointer-events:none; }
 .feedback-interactive .fb-edge-hit { fill:none; stroke:transparent; stroke-width:13px; cursor:pointer; pointer-events:stroke; outline:none; }
 .feedback-interactive .fb-edge-hit:focus-visible { stroke:#3775BA; stroke-opacity:.13; }
 .feedback-interactive .fb-node { cursor:pointer; outline:none; }
 .feedback-interactive .fb-node-box { fill:white; stroke:#d7dadd; stroke-width:1; filter:drop-shadow(0 1px 1.5px rgb(0 0 0 / .045)); }
+.feedback-interactive .fb-node.is-hovered .fb-node-box { stroke:#8d9aaa; stroke-width:1.3; filter:drop-shadow(0 2px 3px rgb(0 0 0 / .09)); }
 .feedback-interactive .fb-node.is-inactive .fb-node-box { stroke-dasharray:3 3; }
 .feedback-interactive .fb-node.is-connected .fb-node-box { stroke:#3775BA; stroke-opacity:.7; }
 .feedback-interactive .fb-node.is-selected .fb-node-box, .feedback-interactive .fb-node:focus-visible .fb-node-box { fill:#fff; stroke:#8696a6; stroke-width:1.4; }
-.feedback-interactive .fb-node-title { fill:#373c43; font:14px/1 var(--font-ui,system-ui,sans-serif); }
-.feedback-interactive .fb-node-value { fill:#767676; font:13.2px/1 var(--font-mono,monospace); font-variant-numeric:tabular-nums; }
+.feedback-interactive .fb-node-title { fill:#373c43; font:14.5px/1 var(--font-ui,system-ui,sans-serif); }
+.feedback-interactive .fb-node-value { fill:#767676; font:13px/1 var(--font-ui,system-ui,sans-serif); }
 .feedback-interactive .fb-node.is-selected .fb-node-title { fill:#0F4D92; }
 .feedback-interactive .fb-surface>.fb-replay { position:absolute; right:12px; bottom:9px; min-width:61px; min-height:27px; padding:5px 12px; border:1px solid #e1e1e1; border-radius:999px; background:#eeeeee; color:#666; font:11px/1.35 var(--font-ui,system-ui,sans-serif); cursor:pointer; }
 .feedback-interactive .fb-surface>.fb-replay:hover { background:#e7e7e7; }
@@ -102,8 +102,14 @@
 .feedback-interactive .fb-footer { display:flex; align-items:baseline; justify-content:space-between; flex-wrap:wrap; gap:5px 16px; margin-top:1px; }
 .feedback-interactive .fb-status, .feedback-interactive .fb-scale { margin:0; color:#767676; font:10.5px/1.4 var(--font-ui,system-ui,sans-serif); }
 .feedback-interactive .fb-full-link { font:12px/1.4 var(--font-ui,system-ui,sans-serif); color:#0F4D92; text-decoration:underline; text-underline-offset:3px; }
+.feedback-interactive .fb-caption { margin:10px 2px 0; color:#767676; font:11px/1.5 var(--font-ui,system-ui,sans-serif); max-width:660px; }
+.feedback-interactive .fb-status[hidden] { display:none; }
+.feedback-interactive .fb-coefficient-strip { display:flex; align-items:baseline; gap:12px; margin:7px 0 9px; }
+.feedback-interactive .fb-coefficient-strip strong { font:18px/1.25 var(--font-mono,monospace); font-weight:400; }
+.feedback-interactive .fb-coefficient-strip span { color:#767676; font:10.5px/1.4 var(--font-ui,system-ui,sans-serif); }
 .feedback-interactive.fb-embedded .fb-stage { grid-template-columns:minmax(0,1fr); gap:0; }
-.feedback-interactive.fb-embedded .fb-surface { height:272px; }
+.feedback-interactive.fb-embedded .fb-surface { height:310px; }
+.feedback-interactive.fb-embedded .fb-surface[data-part="machines"] { height:330px; }
 .feedback-interactive.fb-embedded .fb-inspector { border:0; border-top:1px solid #ededed; padding:12px 0 8px; margin:0; max-height:none; overflow:visible; }
 .feedback-interactive.fb-embedded .fb-inspector-content { display:grid; grid-template-columns:1fr 1fr; gap:0 22px; padding:0; }
 .feedback-interactive.fb-embedded .fb-inspector-kicker { grid-column:1; }
@@ -149,8 +155,6 @@
   .feedback-interactive .fb-tabs button { font-size:12px; }
   .feedback-interactive .fb-scenarios { padding-top:7px; align-items:flex-end; }
   .feedback-interactive .fb-scenarios .fb-tabs { gap:12px; }
-  .feedback-interactive .fb-size { gap:5px; }
-  .feedback-interactive .fb-size input { width:50px; }
   .feedback-interactive .fb-parts { column-gap:15px; }
   .feedback-interactive .fb-parts button { font-size:11px; }
   .feedback-interactive .fb-surface, .feedback-interactive.fb-embedded .fb-surface { height:auto; min-height:225px; }
@@ -164,6 +168,104 @@
   .feedback-interactive .fb-inspector-content { column-gap:14px; }
   .feedback-interactive .fb-status, .feedback-interactive .fb-scale { font-size:10.5px; }
 }
+.feedback-interactive .fb-economy-layout { display:grid; grid-template-columns:minmax(330px,370px) minmax(600px,700px); gap:24px; align-items:start; justify-content:center; }
+.feedback-interactive .fb-economy-controls { min-width:0; }
+.feedback-interactive .fb-economy-figure { min-width:0; }
+.feedback-interactive .fb-economy-title { margin:0 0 10px; font:400 18px/1.25 var(--font-ui,system-ui,sans-serif); letter-spacing:-.02em; }
+.feedback-interactive.fb-fullscreen .fb-toolbar { display:block; min-height:0; }
+.feedback-interactive.fb-fullscreen .fb-toolbar>.fb-tabs { margin-bottom:4px; }
+.feedback-interactive.fb-fullscreen .fb-playback { gap:7px; margin-left:0; }
+.feedback-interactive.fb-fullscreen .fb-playback button { min-height:27px; padding:5px 12px; font-size:11px; }
+.feedback-interactive.fb-fullscreen .fb-clock { margin-left:auto; min-width:0; font-size:11px; }
+.feedback-interactive.fb-fullscreen .fb-scenarios { min-height:28px; margin-top:4px; margin-bottom:3px; }
+.feedback-interactive.fb-fullscreen .fb-scenarios .fb-tabs { column-gap:15px; }
+.feedback-interactive.fb-fullscreen .fb-scenarios button { font-size:11px; min-height:28px; padding-top:5px; padding-bottom:4px; }
+.feedback-interactive .fb-loops { display:grid; grid-template-columns:1fr 1fr; gap:0 14px; margin:3px 0 4px; }
+.feedback-interactive .fb-loops button { min-height:25px; padding:3px 0; text-align:left; white-space:normal; font-size:11px; line-height:1.3; align-self:stretch; }
+.feedback-interactive .fb-loops button:first-child { grid-column:1 / -1; min-height:23px; }
+.feedback-interactive.fb-fullscreen .fb-surface { width:100%; height:min(720px,calc(100svh - 110px)); min-height:600px; padding:6px; border-radius:20px; }
+.feedback-interactive.fb-fullscreen .fb-surface>svg { width:100%; height:100%; }
+.feedback-interactive.fb-fullscreen .fb-region-label { font-size:11px; letter-spacing:0; }
+.feedback-interactive.fb-fullscreen .fb-inspector { height:152px; max-height:152px; margin:6px 0 8px; padding:8px 0 0; border-left:0; border-top:1px solid #e5e5e5; overflow-y:auto; }
+.feedback-interactive.fb-fullscreen .fb-inspector-content { display:block; padding-right:7px; }
+.feedback-interactive.fb-fullscreen .fb-inspector h3 { font-size:15px; margin-bottom:6px; }
+.feedback-interactive.fb-fullscreen .fb-inspector-explanation { font-size:11.5px; line-height:1.45; margin:7px 0 10px; }
+.feedback-interactive.fb-fullscreen .fb-inspector-kicker { font-size:10.5px; margin-bottom:5px; }
+.feedback-interactive.fb-fullscreen .fb-inspector-change, .feedback-interactive.fb-fullscreen .fb-inspector-coefficient { font-size:18px; margin-bottom:8px; }
+.feedback-interactive.fb-fullscreen .fb-comparison { display:flex; gap:8px; }
+.feedback-interactive.fb-fullscreen .fb-inspector-unit { margin-top:5px; font-size:10px; }
+.feedback-interactive.fb-fullscreen .fb-below { display:block; padding-top:2px; }
+.feedback-interactive.fb-fullscreen .fb-below .fb-tabs { justify-content:space-between; gap:10px; }
+.feedback-interactive.fb-fullscreen .fb-legend { justify-content:flex-end; margin:3px 0 2px; font-size:10px; }
+.feedback-interactive.fb-fullscreen .fb-plot { margin-top:0; }
+.feedback-interactive.fb-fullscreen .fb-footer { display:block; margin-top:6px; }
+.feedback-interactive.fb-fullscreen .fb-status, .feedback-interactive.fb-fullscreen .fb-scale { font-size:10px; line-height:1.4; margin:3px 0; }
+.feedback-interactive .fb-node.is-connected .fb-node-box { stroke:#b9c2cb; stroke-opacity:1; }
+@media (max-height:850px) and (min-width:900px) {
+  .feedback-interactive .fb-economy-title { position:absolute; width:1px; height:1px; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; }
+}
+@media (max-width:1050px) {
+  .feedback-workspace { padding:12px 18px 24px; }
+  .feedback-interactive .fb-economy-layout { grid-template-columns:minmax(280px,330px) minmax(530px,1fr); gap:18px; }
+  .feedback-interactive.fb-fullscreen .fb-surface { min-height:560px; }
+}
+@media (max-width:899px) {
+  .feedback-interactive .fb-economy-layout { display:flex; flex-direction:column; gap:22px; }
+  .feedback-interactive .fb-economy-controls { width:100%; }
+  .feedback-interactive .fb-economy-figure { width:100%; overflow-x:auto; overscroll-behavior-x:contain; }
+  .feedback-interactive.fb-fullscreen .fb-surface { width:620px; height:620px; min-height:620px; max-width:none; margin:0 auto; }
+  .feedback-interactive.fb-fullscreen .fb-loops { grid-template-columns:1fr 1fr; }
+  .feedback-interactive.fb-fullscreen .fb-inspector { height:165px; max-height:165px; }
+  .feedback-interactive.fb-fullscreen .fb-below .fb-tabs { justify-content:flex-start; gap:22px; }
+  .feedback-interactive.fb-embedded .fb-surface { min-height:0; height:310px; }
+  .feedback-interactive.fb-embedded .fb-surface[data-part="machines"] { height:330px; }
+  .feedback-interactive.fb-embedded .fb-surface>svg { height:100%; }
+}
 @media (prefers-reduced-motion:reduce) {
   .feedback-interactive *, .feedback-interactive *::before, .feedback-interactive *::after { scroll-behavior:auto; animation:none; transition:none; }
+}
+.feedback-interactive[data-view="strength"] .fb-below,
+.feedback-interactive[data-view="strength"] .fb-plot { display:none; }
+.feedback-interactive[data-view="strength"] .fb-inspector { height:auto; max-height:none; padding-top:10px; }
+.feedback-interactive[data-view="strength"] .fb-inspector-content { display:block; padding-right:0; }
+.feedback-interactive.fb-fullscreen[data-view="strength"] .fb-inspector { max-height:calc(100svh - 320px); min-height:260px; overflow-y:auto; }
+.feedback-interactive .fb-el-heading { margin:0 0 12px; color:#474747; font:400 12px/1.4 var(--font-ui,system-ui,sans-serif); }
+.feedback-interactive .fb-el-chart>svg { display:block; width:100%; height:auto; margin:0; }
+.feedback-interactive .fb-el-zero { stroke:#c2c6cb; stroke-width:.8; }
+.feedback-interactive .fb-el-axis { font:12px/1 var(--font-mono,monospace); fill:#767676; }
+.feedback-interactive .fb-el-row { outline:none; cursor:pointer; }
+.feedback-interactive .fb-el-backdrop { fill:transparent; }
+.feedback-interactive .fb-el-row:hover .fb-el-backdrop,
+.feedback-interactive .fb-el-row.is-selected .fb-el-backdrop,
+.feedback-interactive .fb-el-row:focus-visible .fb-el-backdrop { fill:#f2f4f7; }
+.feedback-interactive .fb-el-label { fill:#4d5158; font:12px/1 var(--font-ui,system-ui,sans-serif); }
+.feedback-interactive .fb-el-value { font:12px/1 var(--font-mono,monospace); }
+.feedback-interactive .fb-el-stem { stroke-width:1.5; stroke-linecap:round; }
+.feedback-interactive .fb-el-dot { stroke-width:1.2; }
+.feedback-interactive .fb-el-row.is-inactive .fb-el-label { fill:#9b9b9b; }
+.feedback-interactive .fb-el-unavailable { margin:0 0 8px; color:#767676; font:12px/1.5 var(--font-ui,system-ui,sans-serif); }
+.feedback-interactive .fb-el-detail { height:108px; overflow-y:auto; margin-top:5px; padding-top:10px; border-top:1px solid #e9e9e9; scrollbar-width:thin; scrollbar-color:#ddd transparent; }
+.feedback-interactive .fb-el-detail h3 { margin:0 0 5px; font:400 12px/1.4 var(--font-ui,system-ui,sans-serif); }
+.feedback-interactive .fb-el-detail .fb-inspector-formula { font-size:12px; }
+.feedback-interactive .fb-el-detail .fb-coefficient-strip { margin:4px 0 6px; }
+.feedback-interactive .fb-el-detail:empty { border-color:transparent; }
+@media (max-width:899px) {
+  .feedback-interactive.fb-fullscreen[data-view="strength"] .fb-inspector { max-height:none; }
+  .feedback-interactive .fb-el-detail { height:auto; min-height:75px; max-height:170px; }
+}
+
+/* Inspector content remains in normal document flow for every selected block. */
+.feedback-interactive.fb-fullscreen[data-view] .fb-inspector,
+.feedback-interactive.fb-embedded[data-view] .fb-inspector { height:auto; min-height:0; max-height:none; overflow:visible; }
+.feedback-interactive.fb-fullscreen[data-view] .fb-inspector-content,
+.feedback-interactive.fb-embedded[data-view] .fb-inspector-content { display:block; grid-template-columns:none; }
+.feedback-interactive[data-view] .fb-inspector-content>* { grid-area:auto; min-width:0; }
+.feedback-interactive[data-view] .fb-el-detail { height:auto; min-height:0; max-height:none; overflow:visible; }
+.feedback-interactive .fb-coefficient-strip span { font-size:12px; }
+.feedback-interactive.fb-fullscreen[data-view] .fb-inspector-unit { font-size:12px; }
+.feedback-interactive .fb-economy-figure { position:sticky; top:94px; align-self:start; }
+.feedback-interactive.fb-fullscreen .fb-surface { height:min(720px,calc(100svh - 125px)); min-height:0; }
+@media (max-width:899px) {
+  .feedback-interactive .fb-economy-figure { position:static; top:auto; }
+  .feedback-interactive.fb-fullscreen .fb-surface { height:620px; min-height:620px; }
 }

@@ -5,6 +5,7 @@
   "scripts": {
     "build": "node build-content.mjs",
     "check:model": "node scripts/check-model.mjs",
-    "check:site": "node scripts/check-site.mjs"
+    "check:site": "node scripts/check-site.mjs",
+    "check:dynamics": "node scripts/check-dynamics.mjs"
   }
 }

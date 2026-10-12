@@ -1,0 +1,30 @@
+.dynamic-figure { margin:2.8rem 0 3rem; padding:0; background:#fff; color:#383c43; font:13px/1.6 var(--font-ui,Arial,Helvetica,sans-serif); }
+.dynamic-figure *, .dynamic-figure *::before, .dynamic-figure *::after { box-sizing:border-box; }
+.dynamic-figure .dyn-figure { margin:0; padding:0; background:#fff; border:0; }
+.dynamic-figure .dyn-heading { display:flex; align-items:baseline; justify-content:space-between; gap:18px; margin:0 0 1.1rem; }
+.dynamic-figure .dyn-heading h3 { margin:0; font:500 20px/1.4 var(--font-ui,Arial,Helvetica,sans-serif); letter-spacing:-.025em; color:#272727; }
+.dynamic-figure button { border:0; border-radius:0; background:transparent; padding:8px 0; color:#767a80; font:12px/1.5 var(--font-ui,Arial,Helvetica,sans-serif); cursor:pointer; min-height:36px; }
+.dynamic-figure button:hover { color:#0f4d92; }
+.dynamic-figure .dyn-pause { flex:none; min-width:40px; text-align:right; }
+.dynamic-figure [hidden] { display:none!important; }
+.dynamic-figure :focus-visible { outline:2px solid #3775ba; outline-offset:4px; }
+.dynamic-figure .dyn-tabs { display:flex; flex-wrap:wrap; gap:8px 23px; margin:-5px 0 12px; }
+.dynamic-figure .dyn-tabs button { border-bottom:1px solid transparent; }
+.dynamic-figure .dyn-tabs button[aria-pressed="true"] { color:#0f4d92; border-bottom-color:#0f4d92; }
+.dynamic-figure .dyn-plot { width:100%; min-width:0; background:#fff; }
+.dynamic-figure svg { width:100%; display:block; overflow:visible; touch-action:pan-y; }
+.dynamic-figure svg text { font:12px var(--font-ui,Arial,Helvetica,sans-serif); font-variant-numeric:tabular-nums; }
+.dynamic-figure svg text:not([fill]) { fill:#767a80; }
+.dynamic-figure svg .dyn-axis-title { fill:#565c64; }
+.dynamic-figure svg .dyn-direct { font-weight:500; }
+.dynamic-figure svg .dyn-value { fill:#767a80; }
+.dynamic-figure svg .dyn-row-label { fill:#565c64; }
+.dynamic-figure svg .dyn-live-value { font-size:12px; }
+.dynamic-figure svg .dyn-axis { stroke:#cbd0d8; stroke-width:.8; shape-rendering:crispEdges; }
+.dynamic-figure svg .dyn-guide { stroke:#444d60; stroke-width:1; stroke-dasharray:2 4; opacity:.45; pointer-events:none; }
+.dynamic-figure svg .dyn-leader { fill:none; }
+.dynamic-figure svg .dyn-note { fill:#8b9097; }
+.dynamic-figure .dyn-readout { min-height:2.9em; margin:8px 0 3px; font:12px/1.65 var(--font-ui,Arial,Helvetica,sans-serif); color:#646c76; font-variant-numeric:tabular-nums; }
+.dynamic-figure .dyn-caption { margin:.55rem 0 0; max-width:none; font:13px/1.75 var(--font-ui,Arial,Helvetica,sans-serif); color:#73777f; }
+@media(max-width:590px) { .dynamic-figure { margin:2.25rem 0 2.6rem; } .dynamic-figure .dyn-heading h3 { font-size:18px; } .dynamic-figure .dyn-heading { gap:14px; } .dynamic-figure .dyn-tabs { column-gap:17px; } }
+@media(prefers-reduced-motion:reduce) { .dynamic-figure *, .dynamic-figure *::before, .dynamic-figure *::after { animation:none!important; transition:none!important; } }

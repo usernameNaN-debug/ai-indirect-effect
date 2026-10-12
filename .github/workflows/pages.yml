@@ -31,6 +31,7 @@ jobs:
         run: |
           npm run check:site
           npm run check:model
+          npm run check:dynamics
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v4
         with:

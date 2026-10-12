@@ -1,5 +1,5 @@
-import { DEFAULTS, PARAMETER_RANGES, PRESETS, solveMarket, solveBoundaryPath, learningRisk, localWelfare, growthPaths } from './model.js';
-import { mountFeedback } from './feedback-ui.js';
+import { DEFAULTS, PRESETS, solveMarket, solveBoundaryPath, learningRisk, localWelfare, growthPaths } from './model.js';
+import { mountFeedback } from './feedback-ui.js?v=20261013b';
 
 const NS = 'http://www.w3.org/2000/svg';
 const C = { teal: '#0F4D92', rust: '#B64342', blue: '#3775BA', ink: 'var(--ink, #242424)', muted: '#767676', line: 'var(--line, #dedede)', paper: '#ffffff', mixed: '#E4CCD8', humanFill: '#B4C0E4', machineFill: '#F0C0CC', quiet: '#f4f4f4' };
@@ -15,40 +15,71 @@ function se(tag, attrs = {}, parent, text) { const n = document.createElementNS(
 function tx(svg, x, y, text, attrs = {}) { return se('text', { x, y, ...attrs, ...(attrs.fill?{style:`${attrs.style||''};fill:${attrs.fill}`}:{}) }, svg, text); }
 function svgBase(host, height, label) { const width = Math.max(270, Math.round(host.getBoundingClientRect().width || 640)); host.replaceChildren(); const svg = se('svg', { viewBox: `0 0 ${width} ${height}`, width, height, role: 'img', 'aria-label': label }, host); se('title', {}, svg, label); return { svg, width, height }; }
 function watch(host, draw) { let width = 0; const observer = new ResizeObserver(entries => { const next = Math.round(entries[0].contentRect.width); if (next > 0 && next !== width) { width = next; draw(); } }); observer.observe(host); draw(); return observer; }
-function title(host, heading, kind) { const row = el('div', { class: 'figure-heading' }, host); el('h3', {}, row, heading); el('span', { class: 'figure-kind' }, row, kind); }
+function title(host, heading) { const row = el('div', { class: 'figure-heading' }, host); el('h3', {}, row, heading); }
 function caption(host, html) { const p = el('p', { class: 'figure-caption' }, host); p.innerHTML = html; return p; }
-function range(host, label, value, min, max, step, fn, format = fmt) {
-  const id=`widget-number-${++uid}`,box=el('div',{class:'widget-control'},host);
-  el('label',{for:id},box,label);const stepper=el('div',{class:'number-stepper'},box),minus=button(stepper,'−',()=>commit(+input.value-step)),input=el('input',{type:'number',id,min,max,step,value,inputmode:'decimal','aria-label':label},stepper),plus=button(stepper,'+',()=>commit(+input.value+step));
-  minus.setAttribute('aria-label',`Decrease ${label}`);plus.setAttribute('aria-label',`Increase ${label}`);const output=el('output',{for:id,class:'number-formatted'},box);
-  const precision=Math.max(0,(String(step).split('.')[1]||'').length),normalize=v=>Number(clamp(+v,min,max).toFixed(precision));
-  const update=v=>{const next=normalize(v);input.value=next;output.value=format(next);output.hidden=String(format(next))===String(next);input.setAttribute('aria-valuetext',String(format(next)));minus.disabled=next<=min;plus.disabled=next>=max;};
-  function commit(v){if(!finite(v))v=value;value=normalize(v);update(value);fn(value);}
-  input.addEventListener('input',()=>{const v=input.valueAsNumber;if(finite(v)&&v>=min&&v<=max){value=v;output.value=format(v);fn(v);}});input.addEventListener('change',()=>commit(input.valueAsNumber));update(value);
-  return {input,output,set:update,box};
-}
-function select(host, label, options, selected, fn) { const id = `widget-select-${++uid}`; const wrap = el('div', { class: 'widget-select' }, host); el('label', { for: id }, wrap, label); const input = el('select', { id, 'aria-label': label }, wrap); options.forEach(o => el('option', { value: o.value }, input, o.label)); input.value = selected; input.addEventListener('change', () => fn(input.value)); return input; }
 function tabs(host, options, value, fn) { const wrap = el('div', { class: 'widget-tabs', role: 'group' }, host); const buttons = options.map(o => { const button = el('button', { type: 'button', 'aria-pressed': String(o.value === value) }, wrap, o.label); button.addEventListener('click', () => { buttons.forEach(([b, key]) => b.setAttribute('aria-pressed', String(key === o.value))); fn(o.value); }); return [button, o.value]; }); return { wrap, set(v) { buttons.forEach(([b, key]) => b.setAttribute('aria-pressed', String(key === v))); } }; }
 function legend(host, series) { const box = el('div', { class: 'figure-legend' }, host); series.forEach(s => { const item = el('span', {}, box); const line = el('i', { class: s.square ? 'legend-square' : 'legend-line', style: `color:${s.color};${s.dash ? 'border-top-style:dashed' : ''}` }, item); line.setAttribute('aria-hidden', 'true'); item.append(document.createTextNode(s.label)); }); return box; }
-function readout(host) { const box = el('div', { class: 'figure-readout', 'aria-live': 'polite', 'aria-atomic': 'true' }, host); return values => { box.innerHTML = values.map(([l, v]) => `<span>${esc(l)}<strong>${esc(v)}</strong></span>`).join(''); }; }
+function readout(host) { const box = el('div', { class: 'figure-readout' }, host); return values => { const html = values.map(([l, v]) => `<span>${esc(l)}<strong>${esc(v)}</strong></span>`).join(''); if (box.innerHTML !== html) box.innerHTML = html; }; }
 function detail(host) { const box = el('div', { class: 'figure-detail', 'aria-live': 'polite' }, host); return (head, formula, body) => { box.innerHTML = `<h4>${esc(head)}</h4>${formula ? `<p class="formula">${esc(formula)}</p>` : ''}<p>${esc(body)}</p>`; }; }
 function button(host, text, fn) { const b = el('button', { type: 'button' }, host, text); b.addEventListener('click', fn); return b; }
-function playback(host, max, onchange) {
-  const box=el('div',{class:'figure-playback'},host);let t=0,playing=false,frame=0,previous=0,lastDraw=0,inView=false,armed=false,autoPlayed=false;
-  const b=button(box,'Play',()=>playing?stop():play());b.classList.add('primary-play');b.setAttribute('aria-label','Play time path');
-  const restart=button(box,'Restart',()=>{stop();set(0);play();});restart.classList.add('restart-play');
-  const clock=el('output',{class:'playback-time','aria-label':'Current model time'},box);const update=()=>{clock.value=`t ${fmt(t,1)} / ${fmt(max,0)}`;};
-  function set(v){t=clamp(v,0,max);update();onchange(t);}
-  function stop(){playing=false;cancelAnimationFrame(frame);b.textContent='Play';b.setAttribute('aria-label','Play time path');}
-  function play(){if(b.disabled)return;if(t>=max)t=0;playing=true;previous=0;lastDraw=0;b.textContent='Pause';b.setAttribute('aria-label','Pause time path');frame=requestAnimationFrame(tick);}
-  function tick(now){if(!playing||!document.contains(host))return;if(!inView||document.hidden){stop();return;}if(previous)t=Math.min(max,t+(now-previous)/1000*max/10);previous=now;if(now-lastDraw>(reducedMotion()?240:45)||t>=max){update();onchange(t);lastDraw=now;}if(t>=max){stop();return;}frame=requestAnimationFrame(tick);}
-  const observer=new IntersectionObserver(entries=>{inView=entries[0].isIntersecting;if(!inView&&playing)stop();else if(inView&&armed&&!autoPlayed&&!reducedMotion()){autoPlayed=true;play();}},{threshold:.12});observer.observe(host);update();
-  host.addEventListener('pointerover',event=>{if(playing&&event.target.closest('.plot-area'))stop();});
-  host.addEventListener('focusin',event=>{if(playing&&event.target.closest('.plot-area'))stop();});
-  return {setMax(v){max=v;t=Math.min(t,max);update();},set,value:()=>t,stop,button:b,autoplay(){armed=true;if(inView&&!autoPlayed&&!reducedMotion()){autoPlayed=true;play();}},box};
+function playback(host, max, onchange, options = {}) {
+  const box = el('div', { class: 'figure-playback' }, host), duration = options.duration || 12000;
+  let t = reducedMotion() ? max * .65 : 0, wanted = false, frame = 0, previous = 0, lastDraw = 0, inView = false, hovering = false, focused = false, scrubbing = false, completedAt = 0;
+  let slider, sliderValue;
+  const scrub = options.scrub;
+  if (scrub) {
+    const wrap = el('label', { class: 'playback-scrub' }, box);
+    el('span', {}, wrap, scrub.label);
+    sliderValue = el('output', {}, wrap);
+    slider = el('input', { type: 'range', min: scrub.min ?? 0, max: scrub.max ?? max, step: scrub.step ?? .01, 'aria-label': scrub.label }, wrap);
+    slider.addEventListener('pointerdown', () => { scrubbing = true; sync(); });
+    slider.addEventListener('input', () => { const value = +slider.value; scrubbing = true; sync(); set(scrub.toTime ? scrub.toTime(value) : value); });
+    slider.addEventListener('change', () => { scrubbing = false; sync(); });
+    slider.addEventListener('pointerup', () => { scrubbing = false; sync(); });
+    slider.addEventListener('pointercancel', () => { scrubbing = false; sync(); });
+    slider.addEventListener('blur', () => { scrubbing = false; sync(); });
+  }
+  const b = button(box, 'Play', () => wanted ? stop() : play()); b.classList.add('primary-play');
+  const restart = button(box, 'Replay', () => { set(0); play(); }); restart.classList.add('restart-play');
+  const clock = !scrub && options.clock !== false ? el('output', { class: 'playback-time', 'aria-label': options.label || 'Current model time' }, box) : null;
+  function update() {
+    if (slider) {
+      const value = scrub.fromTime ? scrub.fromTime(t) : t;
+      slider.value = value; slider.disabled = b.disabled || !!scrub.disabled?.();
+      const display = scrub.format ? scrub.format(value) : fmt(value, 1);
+      sliderValue.value = display; slider.setAttribute('aria-valuetext', display);
+      slider.style.setProperty('--range-progress', `${clamp((value - +slider.min) / (+slider.max - +slider.min), 0, 1) * 100}%`);
+    }
+    if (clock) clock.value = options.format ? options.format(t, max) : `Time ${fmt(t, 1)} of ${fmt(max, 0)}`;
+    b.textContent = wanted ? 'Pause' : t > 0 ? 'Resume' : 'Play'; b.setAttribute('aria-label', wanted ? 'Pause animation' : 'Play animation');
+  }
+  function set(v) { t = clamp(v, 0, max); completedAt = 0; update(); onchange(t); }
+  function sync() {
+    cancelAnimationFrame(frame); previous = 0; completedAt = 0; update();
+    if (wanted && inView && !document.hidden && !hovering && !focused && !scrubbing && !b.disabled) frame = requestAnimationFrame(tick);
+  }
+  function stop() { wanted = false; sync(); }
+  function play() { if (b.disabled) return; wanted = true; sync(); }
+  function tick(now) {
+    if (!document.contains(host)) { observer.disconnect(); document.removeEventListener('visibilitychange', sync); return; }
+    if (previous) t = Math.min(max, t + (now - previous) / duration * max);
+    previous = now;
+    if (t >= max) { if (!completedAt) completedAt = now; if (now - completedAt > 700) { t = 0; completedAt = 0; } }
+    if (now - lastDraw > (options.interval || 40)) { update(); onchange(t); lastDraw = now; }
+    frame = requestAnimationFrame(tick);
+  }
+  const observer = new IntersectionObserver(entries => { inView = entries[0].isIntersecting; sync(); }, { threshold: .12 }); observer.observe(host);
+  document.addEventListener('visibilitychange', sync);
+  host.querySelectorAll('.plot-area').forEach(plot => {
+    plot.addEventListener('pointerenter', event => { if (event.pointerType !== 'touch') { hovering = true; sync(); } });
+    plot.addEventListener('pointerleave', () => { hovering = false; sync(); });
+    plot.addEventListener('focusin', event => { focused = event.target.matches(':focus-visible'); sync(); });
+    plot.addEventListener('focusout', event => { if (!plot.contains(event.relatedTarget)) { focused = false; sync(); } });
+  });
+  update();
+  return { setMax(v) { max = v; t = Math.min(t, max); if (slider && scrub.max === undefined) slider.max = max; update(); }, set, refresh: update, value: () => t, stop, play, hold() { scrubbing = true; sync(); }, release() { scrubbing = false; sync(); }, button: b, autoplay() { wanted = !reducedMotion(); sync(); }, box };
 }
-function inViewOnce(host,fn){let done=false;const observer=new IntersectionObserver(entries=>{if(entries[0].isIntersecting&&!done){done=true;observer.disconnect();if(!reducedMotion())fn();}},{threshold:.2});observer.observe(host);}
-function settings(host,label='Numerical settings'){const section=el('details',{class:'figure-settings'},host);el('summary',{},section,label);return el('div',{class:'widget-controls'},section);}
+
 function markTooltip(host,svg,mark,heading,body){
   const tooltip=el('div',{class:'plot-tooltip',hidden:''},host);mark.setAttribute('tabindex','0');mark.setAttribute('role','img');mark.setAttribute('aria-label',`${heading}. ${body}`);
   const show=event=>{tooltip.innerHTML=`<strong>${esc(heading)}</strong><br>${esc(body)}`;tooltip.hidden=false;const box=host.getBoundingClientRect(),r=mark.getBoundingClientRect(),x=event?.clientX??(r.left+r.width/2),y=event?.clientY??r.top;tooltip.style.left=`${clamp(x-box.left+10,2,Math.max(2,box.width-tooltip.offsetWidth-2))}px`;tooltip.style.top=`${Math.max(0,y-box.top-tooltip.offsetHeight-8)}px`;};
@@ -82,145 +113,204 @@ function chart(host, config) {
   surface.addEventListener('pointermove', event => { const r = svg.getBoundingClientRect(); show((event.clientX - r.left) * width / r.width, event.clientY - r.top); });
   surface.addEventListener('pointerleave', () => { tooltip.hidden = true; hover.replaceChildren(); }); surface.addEventListener('blur', () => { tooltip.hidden = true; hover.replaceChildren(); });
   let keyboardX = (xd[0] + xd[1]) / 2; surface.addEventListener('focus', () => show(X(keyboardX), 40)); surface.addEventListener('keydown', event => { if (event.key === 'ArrowLeft' || event.key === 'ArrowRight') { event.preventDefault(); keyboardX = clamp(keyboardX + (event.key === 'ArrowRight' ? 1 : -1) * (xd[1] - xd[0]) / 20, ...xd); show(X(keyboardX), 40); } });
-  if (config.onclick) surface.addEventListener('pointerdown', event => { const r = svg.getBoundingClientRect(); config.onclick(xd[0] + clamp(((event.clientX - r.left) * width / r.width - margin.l) / (right - margin.l), 0, 1) * (xd[1] - xd[0])); });
   return { svg, X, Y, width, height, margin, right, bottom };
 }
 function nearest(points, t) { return nearestBy(points, t, p => p.t); }
 function nearestBy(points, x, fn) { let result, delta = Infinity; for (const p of points) { const d = Math.abs(fn(p) - x); if (finite(d) && d < delta) { delta = d; result = p; } } return result; }
 function interpolateValue(points, x, getX, getY) { if (!points.length) return null; for (let i = 1; i < points.length; i++) { const a = points[i - 1], b = points[i], xa = getX(a), xb = getX(b); if (finite(xa) && finite(xb) && x >= Math.min(xa, xb) && x <= Math.max(xa, xb)) { const ya = getY(a), yb = getY(b); if (!finite(ya) || !finite(yb)) return null; return xb === xa ? yb : ya + (yb - ya) * (x - xa) / (xb - xa); } } const p = nearestBy(points, x, getX); return p && finite(getY(p)) ? getY(p) : null; }
-function regimeColor(r) { return /mix/i.test(r) ? C.mixed : /machine|auto|ground/i.test(r) ? C.rust : C.teal; }
 function regimeFill(r) { return /mix/i.test(r) ? C.mixed : /machine|auto|ground/i.test(r) ? C.machineFill : C.humanFill; }
 function regimeLabel(r) { return /mix/i.test(r) ? 'Mixed methods' : /ground/i.test(r) ? 'Grounded machine' : /machine|auto/i.test(r) ? 'Machine research' : 'Human research'; }
-function presetOptions() { return Object.entries(PRESETS).map(([value, p]) => ({ value, label: p.label })); }
 function paramsFor(key) { return { ...DEFAULTS, ...(PRESETS[key]?.options || {}) }; }
-function parameterBounds(key, fallback) { const r = PARAMETER_RANGES[key]; return r ? [r.min, r.max, r.step] : fallback; }
-function makeRegimeTrack(host, points) { host.replaceChildren(); if (!points.length) return; let runs = []; points.forEach(p => { if (!runs.length || runs.at(-1).regime !== p.regime) runs.push({ regime: p.regime, n: 1 }); else runs.at(-1).n++; }); runs.forEach(run => el('span', { style: `width:${run.n / points.length * 100}%;background:${regimeColor(run.regime)}`, title: regimeLabel(run.regime) }, host)); }
 let worker, workerId = 0; const pending = new Map();
 function solvePath(options) { return new Promise((resolve, reject) => { try { if (!worker && window.Worker) { worker = new Worker(new URL('./model-worker.js', import.meta.url), { type: 'module' }); worker.addEventListener('message', event => { const job = pending.get(event.data.id); if (job) { pending.delete(event.data.id); event.data.error ? job.reject(new Error(event.data.error)) : job.resolve(event.data.result); } }); worker.addEventListener('error', event => { for (const job of pending.values()) job.reject(new Error(event.message)); pending.clear(); worker.terminate(); worker = null; }); } if (worker) { const id = ++workerId; pending.set(id, { resolve, reject }); worker.postMessage({ id, type: 'path', options }); } else setTimeout(() => { try { resolve(solveBoundaryPath(options)); } catch (error) { reject(error); } }, 0); } catch (error) { reject(error); } }); }
-function debounce(fn, delay = 180) { let timer; return (...args) => { clearTimeout(timer); timer = setTimeout(() => fn(...args), delay); }; }
 function diagnosticText(result) { const d = result.diagnostics || {}; return `${d.converged === false ? 'Unconverged' : 'Converged'} · ${d.iterations ?? '—'} iterations · equation residual ${fmt(d.maxResidual, 6)} · boundary residual ${fmt(d.boundaryResidual, 6)}`; }
-function tax(host) {
-  title(host,'Filing a return','');
-  const state={scenario:'organized',reasoning:'worked'},owners={organized:['home','home','professional','professional'],draft:['home','home','home','professional']},baseline=['home','professional','professional','professional'];
-  let previous=baseline;
-  const choices=el('div',{class:'tax-choices'},host);
-  tabs(choices,[{value:'organized',label:'Organized records'},{value:'draft',label:'Drafted tax analysis'}],state.scenario,v=>{state.scenario=v;draw(true);});
-  const plot=el('div',{class:'plot-area tax-allocation'},host);
-  const under=el('div',{class:'tax-under'},host);
-  tabs(under,[{value:'worked',label:'Reasoning retained'},{value:'answer',label:'Final answer only'}],state.reasoning,v=>{state.reasoning=v;draw(true);});
-  const replay=button(under,'Replay transfer',()=>{previous=baseline;draw(true);});replay.classList.add('primary-play');
-  const takeaway=el('p',{class:'tax-takeaway','aria-live':'polite'},host);
-  const tasks=[{lines:['Gather','records'],label:'Gather records',description:'Statements and receipts provide the source records for the return.'},{lines:['Reconcile','entries'],label:'Reconcile entries',description:'Reconciliation matches records, resolves duplicates, and explains discrepancies.'},{lines:['Resolve','tax treatment'],label:'Resolve tax treatment',description:'Tax analysis connects the relevant rules to the case and preserves the reasoning behind the treatment.'},{lines:['Review','& file'],label:'Review and file',description:'Professional review verifies the treatment and checks the complete return before filing.'}];
-  function draw(animate=false){
-    const small=plot.clientWidth<560,{svg,width}=svgBase(plot,small?386:352,'Four tax-return tasks, with and without customer AI. Customer preparation changes task ownership while professional review remains.');
-    const left=small?2:17,right=width-(small?2:17),gap=small?7:18,column=(right-left-gap*3)/4,ys=[112,246],current=owners[state.scenario];
-    tx(svg,left,20,'Without customer AI',{class:'svg-label'});tx(svg,left,167,'With customer AI',{class:'svg-label'});
-    const connector=se('line',{x1:left,x2:right,y1:194,y2:194,stroke:C.line,'stroke-width':1},svg);
-    tasks.forEach((task,i)=>{
-      const x=left+i*(column+gap),center=x+column/2;
-      task.lines.forEach((line,j)=>tx(svg,center,54+j*16,line,{'text-anchor':'middle',class:'tax-task-label'}));
-      [baseline,current].forEach((row,rowIndex)=>{
-        const owner=row[i],y=ys[rowIndex],professional=owner==='professional',g=se('g',{'data-tax-task':`${rowIndex}-${i}`},svg),fill=professional?C.humanFill:C.quiet,stroke=professional?C.teal:C.muted;
-        const block=se('rect',{x,y:y-23,width:column,height:46,rx:8,fill,stroke:professional?'none':'#e3e3e3'},g);
-        tx(g,center,y+5,professional?'Paid work':'At home',{'text-anchor':'middle',fill:professional?C.teal:C.muted,class:'tax-owner'});
-        if(rowIndex===1&&owner!==baseline[i]){se('path',{d:`M${center} ${y-55}v22m-4-5 4 5 4-5`,fill:'none',stroke:C.rust,'stroke-width':1.3},svg);}
-        markTooltip(plot,svg,g,`${task.label} · ${professional?'professional':'customer'}`,task.description+(rowIndex===1&&owner!==baseline[i]?' Customer AI moves this preparation into the household.':''));
-        if(animate&&rowIndex===1&&previous[i]!==owner&&!reducedMotion()){g.animate([{transform:'translateY(-60px)',opacity:.35},{transform:'translateY(0)',opacity:1}],{duration:650,delay:i*95,easing:'cubic-bezier(.2,.65,.3,1)'});block.animate([{fill:previous[i]==='professional'?C.humanFill:C.quiet},{fill}],{duration:650,delay:i*95,easing:'ease-out'});}
-      });
-    });
-    const reasonY=small?331:317,worked=state.reasoning==='worked',reasonText=worked?'Records + calculations + reasoning':'Final figures',learnText=worked?'Junior follows the reconstruction':'Junior sees the submitted answer';
-    se('line',{x1:left,x2:right,y1:290,y2:290,stroke:C.line},svg);
-    tx(svg,left,reasonY-14,reasonText,{class:'svg-label',fill:worked?C.teal:C.muted});
-    if(small){tx(svg,left,reasonY+13,learnText,{class:'svg-label'});}else{se('path',{d:`M${width*.48} ${reasonY-18}h${width*.07}m-5-4 5 4-5 4`,fill:'none',stroke:worked?C.teal:C.muted,'stroke-dasharray':worked?'':'3 3'},svg);tx(svg,right,reasonY-14,learnText,{'text-anchor':'end',class:'svg-label'});}
-    previous=[...current];
-    takeaway.textContent=state.scenario==='draft'?'Customer AI prepares the reconciliation and an initial tax analysis. Professional time shifts toward checking the treatment and completing the return.':'Customer AI organizes and reconciles the records before handoff. Professional work begins with the tax treatment and final review.';
+function flowBox(svg, x, y, width, height, lines, subtitle = '') {
+  const g = se('g', { class: 'flow-block' }, svg);
+  se('rect', { x, y, width, height, rx: 10, fill: '#fff', stroke: '#d6d6d6' }, g);
+  const first = y + (height - (lines.length - 1) * 16 - (subtitle ? 22 : 0)) / 2 + 4;
+  lines.forEach((line, i) => tx(g, x + width / 2, first + i * 16, line, { 'text-anchor': 'middle', class: 'flow-label' }));
+  if (subtitle) tx(g, x + width / 2, first + lines.length * 16 + 5, subtitle, { 'text-anchor': 'middle' });
+  return g;
+}
+
+function emphasizeBlock(block, amount, color = C.blue) {
+  const rect = block.querySelector('rect'), strength = clamp(amount, 0, 1);
+  rect.style.fill = `color-mix(in srgb, ${color} ${3 + strength * 7}%, white)`;
+  rect.style.stroke = `color-mix(in srgb, ${color} ${15 + strength * 55}%, #d6d6d6)`;
+}
+
+function flowLink(svg, points, { dash = false, color = '#b8b8b8', width = 1.5 } = {}) {
+  let d = `M${points[0].join(',')}`;
+  for (let i = 1; i < points.length - 1; i++) {
+    const a = points[i - 1], b = points[i], c = points[i + 1], before = Math.hypot(b[0] - a[0], b[1] - a[1]), after = Math.hypot(c[0] - b[0], c[1] - b[1]), r = Math.min(9, before / 2, after / 2);
+    if (!before || !after) continue;
+    d += `L${b[0] - (b[0] - a[0]) / before * r},${b[1] - (b[1] - a[1]) / before * r}Q${b.join(',')} ${b[0] + (c[0] - b[0]) / after * r},${b[1] + (c[1] - b[1]) / after * r}`;
   }
-  watch(plot,()=>draw());inViewOnce(plot,()=>{previous=baseline;draw(true);});
+  d += `L${points.at(-1).join(',')}`;
+  const id = `flow-arrow-${++uid}`, defs = se('defs', {}, svg), marker = se('marker', { id, viewBox: '0 0 8 8', refX: 7, refY: 4, markerWidth: 6, markerHeight: 6, orient: 'auto-start-reverse', markerUnits: 'userSpaceOnUse' }, defs);
+  se('path', { d: 'M1 1L7 4L1 7', fill: 'none', stroke: color, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, marker);
+  return se('path', { d, fill: 'none', stroke: color, 'stroke-width': width, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', 'stroke-dasharray': dash ? '4 4' : '', 'marker-end': `url(#${id})` }, svg);
+}
+
+function flowSignal(svg, path, color = C.blue, weight = 1) {
+  const d = path.getAttribute('d'), width = Math.max(1.5, +path.getAttribute('stroke-width')) + weight;
+  const group = se('g', { class: 'flow-signal', 'pointer-events': 'none' });
+  path.after(group);
+  se('path', { d, fill: 'none', stroke: color, 'stroke-width': width + 5, opacity: .08, 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, group);
+  const reveal = se('path', { d, fill: 'none', stroke: color, 'stroke-width': width, pathLength: 100, 'stroke-dasharray': '100 100', 'stroke-linecap': 'round', 'stroke-linejoin': 'round' }, group);
+  const length = path.getTotalLength(), end = path.getPointAtLength(length), before = path.getPointAtLength(Math.max(0, length - 2)), angle = Math.atan2(end.y - before.y, end.x - before.x) * 180 / Math.PI;
+  const arrow = se('path', { d: 'M-6 -3.5L0 0L-6 3.5', fill: 'none', stroke: color, 'stroke-width': 1.8, 'stroke-linecap': 'round', 'stroke-linejoin': 'round', transform: `translate(${end.x} ${end.y}) rotate(${angle})` }, group);
+  return progress => {
+    const visible = progress >= 0 && progress <= 1, p = clamp(progress, 0, 1), travel = clamp(p / .78, 0, 1), smooth = travel * travel * (3 - 2 * travel);
+    const opacity = visible ? Math.min(1, p / .10, (1 - p) / .22) : 0;
+    group.setAttribute('opacity', Math.max(0, opacity));
+    reveal.setAttribute('stroke-dashoffset', 100 * (1 - smooth));
+    arrow.setAttribute('opacity', clamp((travel - .83) / .17, 0, 1));
+  };
+}
+
+function tax(host) {
+  title(host, 'Filing a return');
+  let retained = true, signals = [], blocks = [];
+  tabs(host, [{ value: 'retained', label: 'Reasoning retained' }, { value: 'answer', label: 'Answer only' }], 'retained', v => { retained = v === 'retained'; draw(); });
+  const plot = el('div', { class: 'plot-area tax-workflow' }, host), phase = el('p', { class: 'workflow-phase' }, host);
+  const play = playback(host, 1, update, { duration: 13000, clock: false, interval: 25 });
+  caption(host, 'AI preparation moves records and reconciled entries into professional review. Keeping the calculations and reasoning lets junior staff reconstruct the case, ask questions, and develop judgment alongside the completed return.');
+  function draw() {
+    signals = []; blocks = [];
+    const small = plot.clientWidth < 580, { svg, width } = svgBase(plot, small ? 452 : 288, 'Household records pass through AI preparation and professional review to a completed return. Retained reasoning supports junior judgment and feedback.');
+    const bw = small ? (width - 46) / 2 : (width - 82) / 4, xs = small ? [8, width - bw - 8, width - bw - 8, 8] : [8, 8 + bw + 22, 8 + 2 * (bw + 22), 8 + 3 * (bw + 22)];
+    const source = [xs[0], small ? 55 : 83, bw, 72], organize = [xs[1], small ? 55 : 72, bw, 44], reconcile = [xs[1], small ? 114 : 129, bw, 44], review = [xs[2], small ? 218 : 102, bw, 64], complete = [xs[3], small ? 218 : 102, bw, 64];
+    const records = [small ? xs[0] : xs[1], small ? 356 : 222, bw, 56], junior = [xs[2], small ? 356 : 222, bw, 56];
+    const center = b => b[0] + b[2] / 2, mid = b => b[1] + b[3] / 2;
+    se('rect', { x: xs[1] - 7, y: small ? 22 : 34, width: bw + 14, height: small ? 153 : 155, rx: 13, fill: '#f0f0f0', stroke: '#d0d0d0', 'stroke-dasharray': '4 5' }, svg);
+    tx(svg, center(organize), small ? 42 : 57, 'AI preparation', { 'text-anchor': 'middle', class: 'svg-label' });
+    const paths = [];
+    paths.push(flowLink(svg, [[source[0] + bw, mid(source)], [organize[0] - 12, mid(source)], [organize[0] - 12, mid(organize)], [organize[0], mid(organize)]]));
+    paths.push(flowLink(svg, [[center(organize), organize[1] + 44], [center(reconcile), reconcile[1]]]));
+    paths.push(flowLink(svg, small ? [[center(reconcile), reconcile[1] + 44], [center(review), review[1]]] : [[reconcile[0] + bw, mid(reconcile)], [review[0] - 11, mid(reconcile)], [review[0] - 11, mid(review)], [review[0], mid(review)]]));
+    paths.push(flowLink(svg, small ? [[review[0], mid(review)], [complete[0] + bw, mid(complete)]] : [[review[0] + bw, mid(review)], [complete[0], mid(complete)]]));
+    const retainedPath = flowLink(svg, small ? [[reconcile[0], mid(reconcile)], [source[0] - 5, mid(reconcile)], [source[0] - 5, 332], [center(records), 332], [center(records), records[1]]] : [[center(reconcile), reconcile[1] + 44], [center(records), records[1]]], { dash: true });
+    const judgmentPath = flowLink(svg, [[records[0] + bw, mid(records)], [junior[0], mid(junior)]], { dash: true });
+    const feedback = flowLink(svg, [[center(junior), junior[1]], [center(review), review[1] + 64]], { dash: true });
+    const questions = flowLink(svg, small ? [[review[0] + bw, mid(review)], [width - 1, mid(review)], [width - 1, 8], [center(organize), 8], [center(organize), 22]] : [[center(review), review[1]], [center(review), 17], [center(organize), 17], [center(organize), 34]], { dash: true });
+    if (!small) tx(svg, (center(review) + center(organize)) / 2, 10, 'Questions', { 'text-anchor': 'middle' });
+    const entries = [
+      [source, ['Household', 'records'], 'Source documents', 'Receipts, statements, and household details start the case.'],
+      [organize, ['Organize records'], 'Organized records', 'AI groups source records for the return.'],
+      [reconcile, ['Reconcile entries'], 'Reconciled entries', 'Entries are matched and discrepancies are traced to source records.'],
+      [review, ['Professional', 'review'], 'Professional review', 'The professional checks tax treatment and returns questions.'],
+      [complete, ['Completed', 'return'], 'Completed return', 'The reviewed case is ready to file.'],
+      [records, retained ? ['Records and', 'reasoning'] : ['Final answer'], 'Learning material', retained ? 'The worked case preserves the route from source documents to the answer.' : 'The handoff contains the final figures.'],
+      [junior, ['Junior judgment'], 'Junior judgment', retained ? 'Junior staff reconstruct the case and bring questions to review.' : 'Junior staff receive the submitted result.'],
+    ];
+    entries.forEach(([box, lines, heading, body]) => { const g = flowBox(svg, ...box, lines); blocks.push(g); markTooltip(plot, svg, g, heading, body); });
+    const times = [[.01, .17], [.15, .29], [.28, .47], [.69, .85]];
+    paths.forEach((path, i) => signals.push({ move: flowSignal(svg, path, i === 3 ? C.teal : C.blue), start: times[i][0], end: times[i][1] }));
+    signals.push({ move: flowSignal(svg, questions, C.machineFill), start: .45, end: .62 });
+    signals.push({ move: flowSignal(svg, retainedPath, retained ? C.humanFill : C.machineFill), start: .30, end: .48 });
+    signals.push({ move: flowSignal(svg, judgmentPath, retained ? C.blue : C.machineFill), start: .49, end: .69 });
+    if (retained) signals.push({ move: flowSignal(svg, feedback, C.machineFill), start: .69, end: .86 });
+    update(play.value());
+  }
+  function update(t) {
+    signals.forEach(p => p.move((t - p.start) / (p.end - p.start)));
+    const active = t < .17 ? 0 : t < .29 ? 1 : t < .47 ? 2 : t < .69 ? 3 : t < .86 ? 6 : 4;
+    blocks.forEach((block, i) => block.classList.toggle('flow-active', i === active || retained && i === 5 && t >= .3 && t < .69));
+    const message = t < .17 ? 'Household records enter the case.' : t < .29 ? 'AI organizes the source documents.' : t < .47 ? 'Entries are reconciled and the reasoning is recorded.' : t < .69 ? 'Professional review returns questions to the preparation stage.' : t < .86 ? retained ? 'Junior staff reconstruct the case and return their questions.' : 'Junior staff receive the completed figures.' : 'The reviewed return is ready to file.';
+    if (phase.textContent !== message) phase.textContent = message;
+  }
+  watch(plot, draw); play.autoplay();
 }
 
 function learning(host) {
   title(host, 'Learning from records', 'Binary experiment');
-  const state = { rB: .8, rA: .8, access: .65, signB: 1, signA: 1 };
-  const cases={worked:1,occasional:.65,answer:0};tabs(host,[{value:'worked',label:'Worked case retained'},{value:'occasional',label:'Occasional access'},{value:'answer',label:'Answer only'}],'occasional',v=>{state.access=cases[v];receipt.set(state.access);draw();});
-  const controls=settings(host,'Signal and access settings');
-  range(controls, 'Foundation reliability rB', state.rB, 0, 1, .01, v => { state.rB = v; draw(); });
-  range(controls, 'Explanation reliability rA', state.rA, 0, 1, .01, v => { state.rA = v; draw(); });
-  const receipt=range(controls, 'Probability of receiving both p', state.access, 0, 1, .01, v => { state.access = v; draw(); }, pct);
-  const signalButtons = el('div', { class: 'widget-select' }, controls); el('span', {}, signalButtons, 'Observed signals');
-  const b = button(signalButtons, 'S = +1', () => { state.signB *= -1; b.textContent = `S = ${state.signB > 0 ? '+1' : '−1'}`; draw(); });
-  const a = button(signalButtons, 'Y = +1', () => { state.signA *= -1; a.textContent = `Y = ${state.signA > 0 ? '+1' : '−1'}`; draw(); });
-  const grid = el('div', { class: 'figure-plots' }, host), riskPlot = el('div', { class: 'plot-area' }, grid), posteriorPlot = el('div', { class: 'plot-area' }, grid);
-  const output = readout(host);
-  caption(host, 'With a target taking values −1 and +1, prediction risk measures mean squared error relative to a prior risk of 1. Observed signals determine the posterior mean, while the pair’s risk remains constant across its four possible realizations.');
+  const state = { rB: .8, rA: .8, access: 0 }; let retained = true;
+  tabs(host, [{ value: 'retained', label: 'Worked case retained' }, { value: 'answer', label: 'Answer only' }], 'retained', v => { retained = v === 'retained'; draw(); });
+  const grid = el('div', { class: 'figure-plots' }, host), information = el('div', { class: 'plot-area' }, grid), riskPlot = el('div', { class: 'plot-area' }, grid);
+  const play = playback(host, 1, draw, { duration: 10000, scrub: { label: 'Receipt probability p', max: 1, step: .01, format: pct, fromTime: t => retained ? t : 0, disabled: () => !retained } });
+  caption(host, 'Learning depends on which parts of a worked case reach the learner. Access to source information alongside an explanation lowers prediction risk, while an answer alone leaves less information for reconstructing the underlying reasoning.');
   function draw() {
-    const risk = learningRisk(state), mean = state.rB * state.rA * state.signB * state.signA;
+    play.refresh();
+    state.access = retained ? play.value() : 0;
+    const risk = learningRisk(state);
     const points = Array.from({ length: 51 }, (_, i) => ({ t: i / 50, ...learningRisk({ ...state, access: i / 50 }) }));
-    chart(riskPlot, { label: 'Learning risk by probability of receiving both signals', yLabel: 'Prediction risk', xLabel: 'Receipt probability p', xDomain: [0, 1], yDomain: [0, 1.06], cursor: state.access, series: [{ label: 'Access-weighted risk', points, y: p => p.risk, color: C.teal }, { label: 'Answer alone', points, y: p => p.explanationOnlyRisk, color: C.muted, dash: true }], onclick: p => { state.access = p; receipt.set(p); draw(); } });
-    const { svg, width } = svgBase(posteriorPlot, 225, 'Posterior distribution for the target after both signals');
-    tx(svg, 15, 13, 'Posterior after both signals', { class: 'svg-label' });
-    const y = 65, left = 24, right = width - 24, center = width / 2, pPlus = (1 + mean) / 2;
-    const minusBar=se('rect', { x: left, y, width: (right - left) * (1 - pPlus), height: 34, fill: C.machineFill }, svg),plusBar=se('rect', { x: left + (right - left) * (1 - pPlus), y, width: (right - left) * pPlus, height: 34, fill: C.humanFill }, svg);
-    markTooltip(posteriorPlot,svg,minusBar,'Posterior probability T = −1',`${pct(1-pPlus)} after both observed signals.`);markTooltip(posteriorPlot,svg,plusBar,'Posterior probability T = +1',`${pct(pPlus)} after both observed signals.`);
-    tx(svg, left, y - 11, 'T = −1'); tx(svg, right, y - 11, 'T = +1', { 'text-anchor': 'end' }); tx(svg, left, y + 55, pct(1 - pPlus), { class: 'svg-number' }); tx(svg, right, y + 55, pct(pPlus), { class: 'svg-number', 'text-anchor': 'end' });
-    tx(svg, center, 163, `E[T | S, Y] = ${fmt(mean, 3)}`, { 'text-anchor': 'middle', class: 'svg-number' }); tx(svg, center, 190, `Risk with the pair ${fmt(risk.pairedRisk, 3)}`, { 'text-anchor': 'middle' });
-    output([['Answer alone', fmt(risk.explanationOnlyRisk, 3)], ['Both signals', fmt(risk.pairedRisk, 3)], ['With access probability p', fmt(risk.risk, 3)]]);
+    chart(riskPlot, { label: 'Learning risk by probability of receiving both signals', height: 248, yLabel: 'Prediction risk', xLabel: 'Receipt probability p', xDomain: [0, 1], yDomain: [0, 1.06], cursor: state.access, series: [{ label: 'Worked case access', points, y: p => p.risk, color: C.teal }, { label: 'Answer alone', points, y: p => p.explanationOnlyRisk, color: C.muted, dash: true }] });
+    const { svg, width } = svgBase(information, 248, 'Foundation and explanation signals jointly support judgment');
+    const bw = (width - 36) / 2, center = width / 2;
+    tx(svg, 6, 13, 'Information reaching the learner', { class: 'svg-label' });
+    const a = flowLink(svg, [[6 + bw / 2, 86], [6 + bw / 2, 113], [center, 113], [center, 142]], { dash: !retained });
+    const b = flowLink(svg, [[width - 6 - bw / 2, 86], [width - 6 - bw / 2, 113], [center, 113], [center, 142]]);
+    const foundation = flowBox(svg, 6, 34, bw, 52, ['Foundation S']);
+    const explanation = flowBox(svg, width - 6 - bw, 34, bw, 52, ['Explanation Y']);
+    const judgment = flowBox(svg, center - 84, 142, 168, 66, ['Joint judgment'], `Risk ${fmt(risk.risk, 3)}`);
+    foundation.setAttribute('opacity', retained ? 1 : .45);
+    markTooltip(information, svg, foundation, 'Foundation signal', 'Source information has reliability 0.8.');
+    markTooltip(information, svg, explanation, 'Explanation signal', 'The explanation has reliability 0.8.');
+    markTooltip(information, svg, judgment, 'Prediction risk', `Risk is 1 − p(rB rA)². Current access p is ${fmt(state.access, 2)}.`);
+    const motion = (play.value() * 2) % 1;
+    if (retained) flowSignal(svg, a, C.blue)(motion);
+    flowSignal(svg, b, C.machineFill)((motion + .35) % 1);
+    emphasizeBlock(foundation, retained ? Math.sin(Math.PI * motion) ** 2 : 0);
+    emphasizeBlock(explanation, Math.sin(Math.PI * ((motion + .35) % 1)) ** 2, C.machineFill);
+    emphasizeBlock(judgment, state.access);
   }
-  watch(grid, draw);
+  watch(grid, draw); play.autoplay();
 }
 
 function careers(host) {
   title(host, 'Careers over time', 'Boundary-value solution');
-  let state = { preset: 'practiceLoss', kappa: DEFAULTS.kappa, horizon: DEFAULTS.horizon }, result, baseline, revision = 0;
-  const picker = select(host, 'Selected economy', presetOptions(), state.preset, v => { state.preset = v; state.kappa = paramsFor(v).kappa; training.set(state.kappa); compute(); });
-  const controls = settings(host,'Career settings');
-  const training = range(controls, 'Training cost κ', state.kappa, ...parameterBounds('kappa', [15, 70, 1]), v => { state.kappa = v; schedule(); });
-  range(controls, 'Career horizon T', state.horizon, 4, 20, 1, v => { state.horizon = v; schedule(); }, v => `${fmt(v, 0)} periods`);
-  const chartGrid = el('div', { class: 'figure-plots' }, host);
-  const plots = ['E', 'Delta', 'w', 'T'].map(key => ({ key, host: el('div', { class: 'plot-area' }, chartGrid) }));
-  legend(host, [{ label: 'Selected economy', color: C.teal }, { label: 'Human baseline · κ = 30', color: C.muted, dash: true }]);
-  const flowPlot=el('div',{class:'plot-area qualification-flow'},host);
-  legend(host,[{label:'Qualifications from practice',color:C.blue,square:true},{label:'Qualifications from formal study',color:C.machineFill,square:true}]);
-  const scrub = playback(host, state.horizon, () => draw());
-  const track = el('div', { class: 'regime-track', 'aria-label': 'Research method along the selected path' }, host);
-  legend(host, [{ label: 'Human research', color: C.teal, square: true }, { label: 'Mixed', color: C.mixed, square: true }, { label: 'Machine / grounded', color: C.rust, square: true }]);
-  const output = readout(host), status = el('p', { class: 'figure-status', role: 'status' }, host);
-  const diagnostics = el('details', { class: 'figure-diagnostics' }, host); el('summary', {}, diagnostics, 'Numerical conditions'); const diagnosticBody = el('p', {}, diagnostics);
-  caption(host, 'Both economies share E(0) = 0.55, A(0) = 1, and the terminal condition Δ(T) = 0, with the human reference retaining κ = 30 as the selected economy changes. Each path solves the coupled career and frontier equations across the full horizon.');
-  const schedule = debounce(compute);
+  const state = { preset: 'practiceLoss', horizon: DEFAULTS.horizon, view: 'E' }; let result, baseline, revision = 0;
+  tabs(host, [{ value: 'practiceLoss', label: 'Practice loss' }, { value: 'discovery', label: 'Discovery' }, { value: 'announcement', label: 'Automation announcement' }], state.preset, v => { state.preset = v; compute(); });
+  const chartGrid = el('div', { class: 'career-panel' }, host), mechanism = el('div', { class: 'plot-area career-mechanism' }, chartGrid), right = el('div', { class: 'career-chart' }, chartGrid);
+  tabs(right, [{ value: 'E', label: 'Experts' }, { value: 'Delta', label: 'Value' }, { value: 'w', label: 'Wage' }], state.view, v => { state.view = v; draw(); });
+  const pathPlot = el('div', { class: 'plot-area' }, right);
+  legend(right, [{ label: 'Selected economy', color: C.teal }, { label: 'Human baseline', color: C.muted, dash: true }]);
+  const scrub = playback(host, state.horizon, draw, { scrub: { label: 'Time', step: .05, format: v => `${fmt(v, 1)} / ${state.horizon}` } }), status = el('p', { class: 'figure-status', role: 'status' }, host);
+  caption(host, 'Practice and formal study replenish expertise while obsolescence reduces it. Comparing career paths shows how changes in work and research alter the expert population, the value of qualifying, and the wage earned by experts.');
   async function compute() {
     const token = ++revision; result = null; baseline = null; scrub.stop(); scrub.setMax(state.horizon); scrub.button.disabled = true;
     status.innerHTML = '<span class="loading-mark" aria-hidden="true"></span>Solving the two boundary problems';
-    const options = { ...paramsFor(state.preset), kappa: state.kappa, horizon: state.horizon, steps: 240, E0: DEFAULTS.E0, A0: 1, terminalDelta: 0 };
+    const options = { ...paramsFor(state.preset), horizon: state.horizon, steps: 240, E0: DEFAULTS.E0, A0: 1, terminalDelta: 0 };
     try {
       const solved = await Promise.all([solvePath(options), solvePath({ ...paramsFor('baseline'), horizon: state.horizon, steps: 240, E0: DEFAULTS.E0, A0: 1, terminalDelta: 0 })]);
       if (token !== revision) return;
-      if (!solved.every(r => r?.ok)) { const failed = solved.find(r => !r?.ok); chartGrid.querySelectorAll('.plot-area').forEach(p => p.replaceChildren()); track.replaceChildren(); status.textContent = `Path unavailable · ${failed?.diagnostics?.message || 'Numerical convergence failed.'}`; diagnosticBody.textContent = JSON.stringify(failed?.diagnostics || {}); output([['Solution', 'Outside the selected feasible region']]); return; }
-      [result, baseline] = solved; scrub.button.disabled = false; status.textContent = ''; diagnosticBody.textContent = diagnosticText(result); makeRegimeTrack(track, result.points); draw();scrub.autoplay();
+      if (!solved.every(r => r?.ok)) { const failed = solved.find(r => !r?.ok); chartGrid.querySelectorAll('.plot-area').forEach(p => p.replaceChildren()); status.textContent = `Path unavailable · ${failed?.diagnostics?.message || 'Numerical convergence failed.'}`; return; }
+      [result, baseline] = solved; scrub.button.disabled = false; status.textContent = ''; host.dataset.numericalConditions = diagnosticText(result); scrub.set(reducedMotion() ? state.horizon * .5 : 0); scrub.autoplay();
     } catch (error) { if (token !== revision) return; status.textContent = `Path unavailable · ${error.message}`; chartGrid.querySelectorAll('.plot-area').forEach(p => p.replaceChildren()); }
   }
   function draw() {
     if (!result?.ok || !baseline?.ok) return;
-    const time = scrub.value(), p = nearest(result.points, time), labels = { E: 'Expert share E', Delta: 'Qualification value Δ', w: 'Hourly wage w', T: 'Formal transitions / period' };
-    plots.forEach(({ key, host: plot }) => chart(plot, { label: labels[key], yLabel: labels[key], xDomain: [0, state.horizon], cursor: time, zero: key === 'Delta' || key === 'T', yFormat: key === 'E' ? v => `${fmt(100 * v, 0)}%` : v => fmt(v, key === 'T' ? 3 : 2), series: [{ label: 'Selected', points: result.points, y: p => p[key], color: C.teal, format: key === 'E' ? pct : fmt }, { label: 'Baseline', points: baseline.points, y: p => p[key], color: C.muted, dash: true, opacity: .7 }], onclick: t => scrub.set(t) }));
-    qualificationFlow(flowPlot,result.points,time,t=>scrub.set(t));
-    output([['At time', fmt(time, 1)], ['Expert share', pct(p.E)], ['Study intensity x', fmt(p.x, 3)], ['Training resources', fmt(p.trainingCost, 4)], ['Research', regimeLabel(p.regime)]]);
+    const time = scrub.value(), p = nearest(result.points, time), key = state.view, labels = { E: 'Expert share E', Delta: 'Qualification value Δ', w: 'Hourly wage w' };
+    chart(pathPlot, { label: labels[key], height: 215, yLabel: labels[key], xDomain: [0, state.horizon], cursor: time, zero: key === 'Delta', yFormat: key === 'E' ? pct : fmt, vertical: paramsFor(state.preset).announcementTime, series: [{ label: 'Selected economy', points: result.points, y: p => p[key], color: C.teal, format: key === 'E' ? pct : fmt }, { label: 'Human baseline', points: baseline.points, y: p => p[key], color: C.muted, dash: true, opacity: .7, format: key === 'E' ? pct : fmt }] });
+    const { svg, width } = svgBase(mechanism, 282, 'Practice and formal study feed the expert population along the solved path');
+    const bw = (width - 40) / 2, center = width / 2, totalMax = Math.max(...result.points.map(point => point.M + point.T));
+    tx(svg, 6, 16, 'Entry into expertise', { class: 'svg-label' });
+    const practice = flowLink(svg, [[6 + bw / 2, 104], [6 + bw / 2, 136], [center, 136], [center, 169]], { width: 1.5 + 3 * p.M / totalMax });
+    const study = flowLink(svg, [[width - 6 - bw / 2, 104], [width - 6 - bw / 2, 136], [center, 136], [center, 169]], { width: 1.5 + 3 * p.T / totalMax });
+    const a = flowBox(svg, 6, 38, bw, 66, ['Practice'], `M ${fmt(p.M, 3)}`), b = flowBox(svg, width - 6 - bw, 38, bw, 66, ['Formal study'], `T ${fmt(p.T, 3)}`);
+    const population = flowBox(svg, 6, 169, width - 12, 66, ['Expert population'], '');
+    population.querySelector('text').setAttribute('y', '188');
+    se('rect', { x: 21, y: 200, width: width - 42, height: 10, rx: 5, fill: '#e8e8e8' }, population);
+    se('rect', { x: 21, y: 200, width: (width - 42) * p.E, height: 10, rx: 5, fill: C.humanFill }, population);
+    tx(population, center, 228, `E ${pct(p.E)}`, { 'text-anchor': 'middle', class: 'svg-number' });
+    const expiry=paramsFor(state.preset).delta*p.E,exit=flowLink(svg,[[center,235],[center,256]],{width:1.5+3*expiry/totalMax});
+    markTooltip(mechanism, svg, a, 'Practice entry', `${fmt(p.M, 4)} qualifications per period from practice.`);
+    markTooltip(mechanism, svg, b, 'Formal entry', `${fmt(p.T, 4)} qualifications per period. Study intensity x is ${fmt(p.x, 3)}.`);
+    markTooltip(mechanism, svg, population, 'Expert population', `Ė = M + T − δE. Current expert share is ${pct(p.E)}.`);
+    const progress = time / state.horizon * 5;
+    if (p.M > 0) flowSignal(svg, practice, C.blue, .6)(progress % 1);
+    if (p.T > 0) flowSignal(svg, study, C.machineFill, .6)((progress + .45) % 1);
+    flowSignal(svg,exit,C.muted,.6)((progress+.2)%1);
+    emphasizeBlock(a, Math.sin(Math.PI * (progress % 1)) ** 2);
+    emphasizeBlock(b, Math.sin(Math.PI * ((progress + .45) % 1)) ** 2, C.machineFill);
+    emphasizeBlock(population, .25 + .45 * Math.sin(Math.PI * (progress % 1)) ** 2);
+    tx(svg,center,277,`Obsolescence  δE ${fmt(expiry,3)}`,{'text-anchor':'middle'});
   }
   watch(chartGrid, draw); compute();
 }
 
-function qualificationFlow(host,points,time,onTime){
-  const max=Math.max(...points.map(p=>p.M+p.T))*1.15;
-  const plot=chart(host,{label:'New qualifications from practice and formal study',yLabel:'New qualifications / period',height:245,xDomain:[0,points.at(-1).t],yDomain:[0,max],cursor:time,series:[{label:'Practice',points,y:p=>p.M,color:C.blue},{label:'Formal study',points,y:p=>p.T,color:C.rust,hideLine:true},{label:'Total entry',points,y:p=>p.M+p.T,color:C.teal}],onclick:onTime});
-  const {svg,X,Y}=plot,curves=svg.querySelector('g[clip-path]');
-  const boundary=fn=>points.map((p,i)=>`${i?'L':'M'}${X(p.t)},${Y(fn(p))}`).join('');
-  const practice=boundary(p=>p.M)+`L${X(points.at(-1).t)},${Y(0)}L${X(points[0].t)},${Y(0)}Z`;
-  const formal=boundary(p=>p.M+p.T)+[...points].reverse().map(p=>`L${X(p.t)},${Y(p.M)}`).join('')+'Z';
-  const a=se('path',{d:practice,fill:C.humanFill,opacity:.9}),b=se('path',{d:formal,fill:C.machineFill,opacity:.8});curves.prepend(b);curves.prepend(a);
-  const direct=nearest(points,points.at(-1).t*.64);tx(svg,X(direct.t),Y(direct.M/2)+4,'Practice',{fill:C.teal,'text-anchor':'middle'});
-  if(Y(direct.M)-Y(direct.M+direct.T)>23)tx(svg,X(direct.t),Y(direct.M+direct.T/2)+4,'Formal study',{fill:C.rust,'text-anchor':'middle'});
-}
-
-function heatmap(host, { label, xLabel, yLabel, xDomain, yDomain, sample, color, selected, onclick, resolution = [40, 28], yFormat = fmt, xFormat = fmt, legendText, regionLabel }) {
+function heatmap(host, { label, xLabel, yLabel, xDomain, yDomain, sample, color, selected, onselect, resolution = [40, 28], yFormat = fmt, xFormat = fmt, legendText, regionLabel }) {
   const height = host.clientWidth < 400 ? 295 : 325, { svg, width } = svgBase(host, height, label), margin = { l: 49, r: 16, t: 24, b: 46 }, right = width - margin.r, bottom = height - margin.b;
   const X = x => margin.l + (x - xDomain[0]) / (xDomain[1] - xDomain[0]) * (right - margin.l), Y = y => bottom - (y - yDomain[0]) / (yDomain[1] - yDomain[0]) * (bottom - margin.t);
   const [nx, ny] = resolution,regions=new Map();
@@ -229,96 +319,173 @@ function heatmap(host, { label, xLabel, yLabel, xDomain, yDomain, sample, color,
   numberTicks(xDomain[0], xDomain[1], 4).forEach(x => tx(svg, X(x), bottom + 18, xFormat(x), { 'text-anchor': 'middle' }));
   numberTicks(yDomain[0], yDomain[1], 4).forEach(y => tx(svg, margin.l - 8, Y(y) + 4, yFormat(y), { 'text-anchor': 'end' }));
   tx(svg, margin.l, 12, yLabel, { class: 'svg-label' }); tx(svg, right, height - 5, xLabel, { 'text-anchor': 'end' });
-  if (selected) { se('line', { x1: X(selected[0]), x2: X(selected[0]), y1: margin.t, y2: bottom, stroke: C.paper, opacity: .75, 'stroke-width': 1 }, svg); se('line', { x1: margin.l, x2: right, y1: Y(selected[1]), y2: Y(selected[1]), stroke: C.paper, opacity: .75, 'stroke-width': 1 }, svg); se('circle', { cx: X(selected[0]), cy: Y(selected[1]), r: 5, class: 'map-pointer' }, svg); }
+  const current = selected ? [...selected] : null;
+  let vertical, horizontal, pointer;
+  if (current) {
+    const cursor = se('g', { 'pointer-events': 'none' }, svg);
+    vertical = se('line', { y1: margin.t, y2: bottom, stroke: C.paper, opacity: .75, 'stroke-width': 1 }, cursor);
+    horizontal = se('line', { x1: margin.l, x2: right, stroke: C.paper, opacity: .75, 'stroke-width': 1 }, cursor);
+    pointer = se('circle', { r: 5, class: 'map-pointer' }, cursor);
+  }
+  function setSelected(x, y) {
+    if (!current) return;
+    current[0] = clamp(x, ...xDomain); current[1] = clamp(y, ...yDomain);
+    const px = X(current[0]), py = Y(current[1]);
+    vertical.setAttribute('x1', px); vertical.setAttribute('x2', px);
+    horizontal.setAttribute('y1', py); horizontal.setAttribute('y2', py);
+    pointer.setAttribute('cx', px); pointer.setAttribute('cy', py);
+  }
+  if (current) setSelected(...current);
   const tooltip = el('div', { class: 'plot-tooltip', hidden: '' }, host), surface = se('rect', { x: margin.l, y: margin.t, width: right - margin.l, height: bottom - margin.t, fill: 'transparent', 'aria-label': label }, svg);
   function coords(event) { const r = svg.getBoundingClientRect(), px = (event.clientX - r.left) * width / r.width, py = (event.clientY - r.top) * height / r.height; return { px, py, x: xDomain[0] + clamp((px - margin.l) / (right - margin.l), 0, 1) * (xDomain[1] - xDomain[0]), y: yDomain[0] + clamp((bottom - py) / (bottom - margin.t), 0, 1) * (yDomain[1] - yDomain[0]) }; }
-  surface.addEventListener('pointermove', event => { const { px, py, x, y } = coords(event); tooltip.innerHTML = `${esc(xLabel)} <strong>${esc(xFormat(x))}</strong><br>${esc(yLabel)} <strong>${esc(yFormat(y))}</strong><br>${esc(legendText(sample(x, y)))}`; tooltip.hidden = false; tooltip.style.left = `${clamp(px + 10, 0, width - tooltip.offsetWidth - 2)}px`; tooltip.style.top = `${clamp(py - 16, 20, height - tooltip.offsetHeight)}px`; });
-  surface.addEventListener('pointerleave', () => { tooltip.hidden = true; }); if (onclick) surface.addEventListener('pointerdown', event => { const { x, y } = coords(event); onclick(x, y); });
-  return { svg, X, Y, width, height, margin, right, bottom };
+  function show(px, py, x, y) { tooltip.innerHTML = `${esc(xLabel)} <strong>${esc(xFormat(x))}</strong><br>${esc(yLabel)} <strong>${esc(yFormat(y))}</strong><br>${esc(legendText(sample(x, y)))}`; tooltip.hidden = false; tooltip.style.left = `${clamp(px + 10, 0, width - tooltip.offsetWidth - 2)}px`; tooltip.style.top = `${clamp(py - 16, 20, height - tooltip.offsetHeight)}px`; }
+  function choose(x, y) { setSelected(x, y); onselect?.(x, y); }
+  surface.addEventListener('pointermove', event => { const { px, py, x, y } = coords(event); show(px, py, x, y); if (onselect) choose(x, y); });
+  if (onselect) {
+    surface.setAttribute('tabindex', '0'); surface.setAttribute('role', 'img');
+    surface.setAttribute('aria-label', `${label}. Move the pointer or use arrow keys to select an allocation.`);
+    surface.addEventListener('pointerdown', event => { const { px, py, x, y } = coords(event); choose(x, y); show(px, py, x, y); });
+    surface.addEventListener('keydown', event => {
+      const delta = { ArrowLeft: [-1, 0], ArrowRight: [1, 0], ArrowDown: [0, -1], ArrowUp: [0, 1] }[event.key];
+      if (!delta || !current) return;
+      event.preventDefault();
+      const x = clamp(current[0] + delta[0] * (xDomain[1] - xDomain[0]) / 50, ...xDomain), y = clamp(current[1] + delta[1] * (yDomain[1] - yDomain[0]) / 50, ...yDomain);
+      choose(x, y); show(X(x), Y(y), x, y);
+    });
+    surface.addEventListener('blur', () => { tooltip.hidden = true; });
+  }
+  surface.addEventListener('pointerleave', () => { tooltip.hidden = true; });
+  return { svg, X, Y, width, height, margin, right, bottom, setSelected };
 }
 
 function regimes(host) {
   title(host, 'Research allocation', 'Frozen-state clearing');
   let state = { E: .55, A: 1.5, machineMultiplier: 1.05, method: 'both' };
+  let mapGraph, mapKey = '', selectionFrame = 0;
   tabs(host, [{ value: 'both', label: 'Competing methods' }, { value: 'human', label: 'Human research' }, { value: 'grounded', label: 'Human grounding' }], state.method, v => { state.method = v; draw(); });
-  const controls = settings(host,'Market settings');
-  const expert = range(controls, 'Expert share E', state.E, .2, .85, .01, v => { state.E = v; draw(); }, pct);
-  const machine = range(controls, 'Machine resource multiplier', state.machineMultiplier, .4, 4, .05, v => { state.machineMultiplier = v; draw(); });
-  const frontier = range(controls, 'Frontier A', state.A, 1, 5, .05, v => { stopSweep(); state.A = v; draw(); });
-  const sweepRow=el('div',{class:'figure-playback'},host);let sweepFrame=0,sweeping=false,sweepStart=0,lastSweep=0;
-  const sweepButton=button(sweepRow,'Animate frontier',()=>sweeping?stopSweep():startSweep());sweepButton.classList.add('primary-play');
-  const sweepOutput=el('output',{class:'playback-time'},sweepRow);
-  function stopSweep(){sweeping=false;cancelAnimationFrame(sweepFrame);sweepButton.textContent='Animate frontier';}
-  function startSweep(){sweeping=true;sweepStart=0;lastSweep=0;sweepButton.textContent='Pause';sweepFrame=requestAnimationFrame(sweep);}
-  function sweep(now){if(!sweeping)return;if(document.hidden){stopSweep();return;}if(!sweepStart)sweepStart=now;const progress=Math.min(1,(now-sweepStart)/9000);if(now-lastSweep>100||progress===1){state.A=1+4*progress;frontier.set(state.A);draw();lastSweep=now;}if(progress===1)stopSweep();else sweepFrame=requestAnimationFrame(sweep);}
   const grid = el('div', { class: 'figure-plots' }, host), map = el('div', { class: 'plot-area' }, grid), clearing = el('div', { class: 'plot-area' }, grid);
   legend(host, [{ label: 'Human', color: C.humanFill, square: true }, { label: 'Mixed', color: C.mixed, square: true }, { label: 'Machine / grounded', color: C.machineFill, square: true }, { label: 'Career premium below zero', color: '#e8e8e8', square: true }]);
   const output = readout(host), explain = detail(host);
-  caption(host, 'Across the map, inherited expertise and machine resource requirements determine which method receives the research budget, with the selected point linked to its wage-clearing diagram. Within the mixed region, both methods supply research at equal packet costs.');
+  const sweep = playback(host, 1, t => { state.A = 1 + 4 * t; draw(); }, { duration: 13000, interval: 140, scrub: { label: 'Frontier A', min: 1, max: 5, step: .01, fromTime: t => 1 + 4 * t, toTime: value => (value - 1) / 4, format: v => fmt(v, 2) } });
+  map.addEventListener('pointerdown', event => { if (event.pointerType === 'touch') sweep.hold(); });
+  ['pointerup', 'pointercancel'].forEach(type => map.addEventListener(type, event => { if (event.pointerType === 'touch') sweep.release(); }));
+  caption(host, 'Research methods compete as the frontier changes their costs. The map locates human, mixed, and machine research, while the adjacent demand curves show the wage that balances expert hours across services and research.');
   function draw() {
     const p = { ...DEFAULTS, ...state }, m = solveMarket(p);
     if (!m.ok) { explain('Allocation unavailable', '', m.diagnostics.message); return; }
-    sweepOutput.value=`Frontier A ${fmt(state.A,2)}`;
-    heatmap(map, { label: 'Research regime by expert population and machine resource requirements', xLabel: 'Expert share E', yLabel: 'Machine resource multiplier', xDomain: [.2, .85], yDomain: [.4, 4], selected: [state.E, state.machineMultiplier], sample: (E, machineMultiplier) => solveMarket({ ...p, E, machineMultiplier }), color: value => value.w < p.b ? '#e8e8e8' : regimeFill(value.regime),regionLabel:value=>value.w<p.b?'':value.regime==='human'?'Human':value.regime==='mixed'?'Mixed':value.regime==='grounded'?'Grounded':'Machine', xFormat: v => pct(v), legendText: value => `${regimeLabel(value.regime)} · ${value.w < p.b ? 'negative career premium' : 'positive career premium'}`, onclick: (E, machineMultiplier) => { state.E = E; state.machineMultiplier = machineMultiplier; expert.set(E); machine.set(machineMultiplier); draw(); } });
+    const nextMapKey = `${state.A}|${state.method}|${Math.round(map.getBoundingClientRect().width)}`;
+    if (nextMapKey !== mapKey) {
+      mapKey = nextMapKey;
+      mapGraph = heatmap(map, { label: 'Research regime by expert population and machine resource requirements', xLabel: 'Expert share E', yLabel: 'Machine resource multiplier', xDomain: [.2, .85], yDomain: [.4, 4], selected: [state.E, state.machineMultiplier], sample: (E, machineMultiplier) => solveMarket({ ...p, E, machineMultiplier }), color: value => value.w < p.b ? '#e8e8e8' : regimeFill(value.regime),regionLabel:value=>value.w<p.b?'':value.regime==='human'?'Human':value.regime==='mixed'?'Mixed':value.regime==='grounded'?'Grounded':'Machine', xFormat: v => pct(v), legendText: value => `${regimeLabel(value.regime)} · ${value.w < p.b ? 'negative career premium' : 'positive career premium'}`, onselect: (E, machineMultiplier) => {
+        state.E = E; state.machineMultiplier = machineMultiplier;
+        if (!selectionFrame) selectionFrame = requestAnimationFrame(() => { selectionFrame = 0; draw(); });
+      } });
+    } else mapGraph.setSelected(state.E, state.machineMultiplier);
     const points = Array.from({ length: 81 }, (_, i) => { const w = Math.max(.05, m.w * .25) + i / 80 * (m.w * 2.05); const DS = m.C * w ** -p.epsilon; let LR; if (p.method === 'grounded') LR = p.BR * m.aG / (p.q * m.aM + w * m.aG); else if (p.method === 'human' || w <= m.wbar) LR = p.BR / (w + p.q * p.xi); else LR = 0; return { t: w, DS, total: DS + LR, supply: state.E }; });
     if (p.method === 'both' && m.wbar > points[0].t && m.wbar < points.at(-1).t) { const DS = m.C * m.wbar ** -p.epsilon; points.push({ t: m.wbar, DS, total: DS + p.BR / (m.wbar + p.q * p.xi), supply: state.E }, { t: m.wbar, DS, total: DS, supply: state.E }); points.sort((a, b) => a.t - b.t); }
     const graph = chart(clearing, { label: 'Expert demand and supply against wage', height: map.clientWidth < 400 ? 295 : 325, yLabel: 'Expert hours / population', xLabel: 'Hourly wage w', xDomain: [points[0].t, points.at(-1).t], yDomain: [0, Math.min(1.6, Math.max(state.E * 1.8, .6))], vertical: m.w, series: [{ label: 'Services', points, y: p => p.DS, color: C.muted }, { label: 'Services + research', points, y: p => p.total, color: C.teal }, { label: 'Expert supply', points, y: p => p.supply, color: C.rust, dash: true }] });
     se('circle', { cx: graph.X(m.w), cy: graph.Y(state.E), r: 4.5, fill: C.ink, stroke: C.paper, 'stroke-width': 2 }, graph.svg);
-    output([['Regime', regimeLabel(m.regime)], ['Wage', fmt(m.w, 3)], ['Career premium w − b', fmt(m.w - p.b, 3)], ['Service hours', fmt(m.DS, 3)], ['Research hours', fmt(m.LR, 3)], ['Frontier drift', fmt(m.F, 4)]]);
+    output([['Wage', fmt(m.w, 3)], ['Research hours', fmt(m.LR, 3)], ['Frontier drift', fmt(m.F, 4)]]);
     const costText = p.method === 'grounded' ? `Grounded packet cost ${fmt(m.kStar, 3)}. Human grounding uses ${fmt(m.aG, 3)} hours per packet.` : `Human packet cost ${fmt(m.kH, 3)}. Machine packet cost ${fmt(m.kM, 3)}. Parity wage ${fmt(m.wbar, 3)}.`;
     explain(regimeLabel(m.regime), `E = Dₛ + Lᵣ = ${fmt(m.DS, 3)} + ${fmt(m.LR, 3)}`, costText);
   }
-  host.addEventListener('pointerover',event=>{if(sweeping&&event.target.closest('.plot-area'))stopSweep();});
-  host.addEventListener('focusin',event=>{if(sweeping&&event.target.closest('.plot-area'))stopSweep();});
-  watch(grid, draw);inViewOnce(grid,startSweep);
+  watch(grid, draw); sweep.set(sweep.value()); sweep.autoplay();
 }
 
 function welfare(host) {
   title(host, 'Private and public value', 'Local preparation margin');
   const market = solveMarket({ ...DEFAULTS, method: 'human', E: DEFAULTS.E0, A: 1 });
-  const state = { P: .2, gap: .8, premium: .5, m: .35, e: .45 };
-  const controls = settings(host,'Local value settings');
-  range(controls, 'Private gain P', state.P, 0, 1, .01, v => { state.P = v; draw(); });
-  range(controls, 'Qualification value gap λ − Δ', state.gap, 0, 2, .02, v => { state.gap = v; draw(); });
-  range(controls, 'Research value premium Π − h', state.premium, -1, 3, .02, v => { state.premium = v; draw(); });
-  const lost = range(controls, 'Learning lost per case m', state.m, 0, 1, .01, v => { state.m = v; draw(); });
-  const released = range(controls, 'Expert hours released e', state.e, 0, 1, .01, v => { state.e = v; draw(); });
+  const state = { P: .2, gap: .8, premium: .5, m: .35, e: .45, scenario: 'learning' };
+  const bounds = { P: [0, .6], gap: [.25, 1.25], premium: [.05, 1] };
+  let anchor = state.gap;
+  const activeKey = () => state.scenario === 'learning' ? 'gap' : 'premium';
+  tabs(host, [{ value: 'learning', label: 'Value of learning' }, { value: 'research', label: 'Research value' }], state.scenario, v => { state.scenario = v; anchor = state[activeKey()]; play.set(0); });
   const grid = el('div', { class: 'figure-plots' }, host), map = el('div', { class: 'plot-area' }, grid), flow = el('div', { class: 'plot-area' }, grid);
-  legend(host, [{ label: 'Positive public value', color: C.teal, square: true }, { label: 'Negative public value', color: C.rust, square: true }]);
-  const output = readout(host);
-  caption(host, 'For one local preparation margin at a strict human research corner, supplied continuation values λ and Π determine how lost learning and released time enter public value. Research absorbs the fraction χᵣ of released expert time obtained from the frozen market.');
+  legend(host, [{ label: 'Positive public value', color: C.teal, square: true }, { label: 'Negative public value', color: C.rust, square: true }, { label: 'Zero public value', color: C.muted, dash: true }]);
+  const output = readout(host), controls = el('div', { class: 'figure-adjustments welfare-coefficients' }, host);
+  const sliders = [['P', 'Private gain P'], ['gap', 'Learning value gap λ − Δ'], ['premium', 'Research premium Π − h']].map(([key, label]) => {
+    const wrap = el('label', { class: 'playback-scrub' }, controls);
+    el('span', {}, wrap, label); const display = el('output', {}, wrap);
+    const [min, max] = bounds[key];
+    const input = el('input', { type: 'range', min, max, step: .01, 'aria-label': label }, wrap);
+    input.addEventListener('pointerdown', () => play.hold());
+    input.addEventListener('input', () => {
+      const value = +input.value;
+      play.hold(); state[key] = value; anchor = state[activeKey()]; play.set(0);
+    });
+    ['change', 'pointerup', 'pointercancel', 'blur'].forEach(event => input.addEventListener(event, () => play.release()));
+    return { key, min, max, input, display };
+  });
+  const play = playback(host, 1, draw, { duration: 12000, interval: 60, clock: false });
+  caption(host, 'Private gains, lost learning, and research benefits jointly determine public value. Changing their valuations shifts the diagonal boundary between positive and negative cases, while the decomposition follows the same prepared case.');
   function value(m, e) { return localWelfare({ P: state.P, lambda: state.gap + 1, Delta: 1, m, Pi: market.h + state.premium, h: market.h, chiR: market.chiR, e }); }
-  function draw() {
-    const w = value(state.m, state.e), scale = Math.max(.2, state.gap, Math.abs(state.premium * market.chiR), state.P);
-    const graph = heatmap(map, { label: 'Local welfare by learning lost and expert hours released', xLabel: 'Learning lost m', yLabel: 'Expert hours released e', xDomain: [0, 1], yDomain: [0, 1], selected: [state.m, state.e], sample: (m, e) => value(m, e).W, color: v => { const strength = clamp(Math.abs(v) / scale, 0, 1); return `color-mix(in srgb, ${v >= 0 ? C.teal : C.rust} ${8 + strength * 75}%, ${C.paper})`; }, legendText: v => `Local public value ${fmt(v, 3)}`, onclick: (m, e) => { state.m = m; state.e = e; lost.set(m); released.set(e); draw(); } });
-    if (state.gap > 0) { const m0 = state.P / state.gap, m1 = (state.P + state.premium * market.chiR) / state.gap; const id = `welfare-clip-${++uid}`; const defs = se('defs', {}, graph.svg), clip = se('clipPath', { id }, defs); se('rect', { x: graph.margin.l, y: graph.margin.t, width: graph.right - graph.margin.l, height: graph.bottom - graph.margin.t }, clip); se('line', { x1: graph.X(m0), y1: graph.Y(0), x2: graph.X(m1), y2: graph.Y(1), stroke: C.ink, 'stroke-width': 1, 'stroke-dasharray': '4 3', 'clip-path': `url(#${id})`, opacity: .65 }, graph.svg); }
-    const { svg, width } = svgBase(flow, map.clientWidth < 400 ? 295 : 325, 'Decomposition of the local public value and released expert time');
-    tx(svg, 12, 13, 'Per-case value · numeraire units', { class: 'svg-label' });
-    const terms = [{ label: 'Private gain', value: w.privateGain, color: C.teal }, { label: 'Learning gap', value: -w.learningCost, color: C.rust }, { label: 'Research value', value: w.researchGain, color: w.researchGain >= 0 ? C.teal : C.rust }, { label: 'Public value', value: w.W, color: C.ink }];
-    const max = Math.max(.2, ...terms.map(t => Math.abs(t.value))), start = width * .60, span = width * .20;
-    se('line', { x1: start, x2: start, y1: 36, y2: 218, class: 'axis' }, svg);
-    terms.forEach((t, i) => { const y = 49 + i * 43, len = t.value / max * span; tx(svg, 12, y + 5, t.label); se('line', { x1: start, x2: start + len, y1: y, y2: y, stroke: t.color, 'stroke-width': 10, opacity: i === 3 ? 1 : .8 }, svg); tx(svg, width - 7, y + 5, fmt(t.value, 3), { 'text-anchor': 'end', class: 'svg-number' }); });
-    const by = (map.clientWidth < 400 ? 295 : 325) - 48, research = market.chiR * state.e, service = (1 - market.chiR) * state.e;
-    tx(svg, 12, by - 11, 'Released expert hours'); se('rect', { x: 12, y: by, width: (width - 24) * market.chiR, height: 6, fill: C.teal }, svg); se('rect', { x: 12 + (width - 24) * market.chiR, y: by, width: (width - 24) * (1 - market.chiR), height: 6, fill: C.muted, opacity: .45 }, svg); tx(svg, 12, by + 25, `Research ${fmt(research, 3)}`); tx(svg, width - 12, by + 25, `Services ${fmt(service, 3)}`, { 'text-anchor': 'end' });
-    output([['Private gain', fmt(w.privateGain, 3)], ['Public value', fmt(w.W, 3)], ['Research absorption χᵣ', pct(market.chiR)], ['Selected case', w.W >= 0 ? 'Positive public value' : 'Negative public value']]);
+  let graph;
+  function fieldColor(v) { const strength = clamp(Math.abs(v) / 1.25, 0, 1); return `color-mix(in srgb, ${v >= 0 ? C.teal : C.rust} ${8 + strength * 75}%, ${C.paper})`; }
+  function drawMap() {
+    const nx = 36, ny = 24;
+    graph = heatmap(map, { label: 'Local welfare by learning lost and expert hours released', xLabel: 'Learning lost m', yLabel: 'Expert hours released e', xDomain: [0, 1], yDomain: [0, 1], resolution: [nx, ny], sample: (m, e) => value(m, e).W, color: fieldColor, legendText: v => `Local public value ${fmt(v, 3)}` });
+    graph.cells = [...graph.svg.querySelectorAll('[data-map-value]')].map((cell, i) => ({ cell, m: (Math.floor(i / ny) + .5) / nx, e: (i % ny + .5) / ny }));
+    const m0 = state.P / state.gap, m1 = (state.P + state.premium * market.chiR) / state.gap, id = `welfare-clip-${++uid}`;
+    const defs = se('defs', {}, graph.svg), clip = se('clipPath', { id }, defs); se('rect', { x: graph.margin.l, y: graph.margin.t, width: graph.right - graph.margin.l, height: graph.bottom - graph.margin.t }, clip);
+    graph.boundary = se('line', { x1: graph.X(m0), y1: graph.Y(0), x2: graph.X(m1), y2: graph.Y(1), stroke: C.ink, 'stroke-width': 1.6, 'stroke-dasharray': '5 4', 'clip-path': `url(#${id})`, 'pointer-events': 'none', 'data-welfare-boundary': '', opacity: .8 }, graph.svg);
+    graph.cursor = se('circle', { cx: graph.X(state.m), cy: graph.Y(state.e), r: 5, class: 'map-pointer', 'pointer-events': 'none' }, graph.svg);
+    const surface = graph.svg.querySelector('rect[aria-label]');
+    surface.setAttribute('tabindex', '0');
+    surface.setAttribute('aria-label', 'Prepared case. Click the field or use arrow keys to move the case.');
+    surface.addEventListener('pointerdown', event => {
+      const rect = graph.svg.getBoundingClientRect(), x = (event.clientX - rect.left) * graph.width / rect.width, y = (event.clientY - rect.top) * graph.height / rect.height;
+      state.m = clamp((x - graph.margin.l) / (graph.right - graph.margin.l), 0, 1);
+      state.e = clamp((graph.bottom - y) / (graph.bottom - graph.margin.t), 0, 1); draw();
+    });
+    surface.addEventListener('keydown', event => {
+      const change = { ArrowLeft: ['m', -.02], ArrowRight: ['m', .02], ArrowDown: ['e', -.02], ArrowUp: ['e', .02] }[event.key];
+      if (change) { event.preventDefault(); state[change[0]] = clamp(state[change[0]] + change[1], 0, 1); draw(); }
+    });
   }
-  watch(grid, draw);
+  function draw() {
+    if (!graph) return;
+    const key = activeKey(), [lo, hi] = bounds[key], phase = Math.acos(1 - 2 * clamp((anchor - lo) / (hi - lo), 0, 1));
+    state[key] = lo + (hi - lo) * (1 - Math.cos(phase + 2 * Math.PI * play.value())) / 2;
+    sliders.forEach(({ key, min, max, input, display }) => {
+      input.value = state[key]; display.value = fmt(state[key], 2); input.setAttribute('aria-valuetext', display.value);
+      input.style.setProperty('--range-progress', `${(state[key] - min) / (max - min) * 100}%`);
+    });
+    const w = value(state.m, state.e);
+    graph.cells.forEach(({ cell, m, e }) => { const W = state.P - state.gap * m + state.premium * market.chiR * e; cell.setAttribute('fill', fieldColor(W)); cell.dataset.mapValue = W; });
+    graph.boundary.setAttribute('x1', graph.X(state.P / state.gap));
+    graph.boundary.setAttribute('x2', graph.X((state.P + state.premium * market.chiR) / state.gap));
+    graph.cursor.setAttribute('cx', graph.X(state.m)); graph.cursor.setAttribute('cy', graph.Y(state.e));
+    const { svg, width } = svgBase(flow, map.clientWidth < 400 ? 295 : 325, 'Decomposition of local public value using supplied continuation values');
+    tx(svg, 12, 13, 'Per-case value', { class: 'svg-label' });
+    const terms = [{ label: 'Private gain', value: w.privateGain, color: C.teal, body: `Supplied private gain P = ${fmt(state.P, 2)}.` }, { label: 'Learning cost', value: -w.learningCost, color: C.rust, body: `Learning value gap λ − Δ = ${fmt(state.gap, 2)}, multiplied by learning lost m.` }, { label: 'Research gain', value: w.researchGain, color: C.blue, body: `Research premium Π − h = ${fmt(state.premium, 2)}. Market absorption χᵣ = ${fmt(market.chiR, 3)}.` }, { label: 'Public value', value: w.W, color: C.ink, body: 'Private gain minus learning cost plus research gain.' }];
+    const max = Math.max(.6, ...terms.map(term => Math.abs(term.value))), startX = width * .60, span = width * .20;
+    se('line', { x1: startX, x2: startX, y1: 36, y2: 218, class: 'axis' }, svg);
+    terms.forEach((term, i) => {
+      const y = 49 + i * 43, len = term.value / max * span, group = se('g', {}, svg);
+      se('rect', { x: 7, y: y - 17, width: width - 14, height: 34, rx: 6, fill: i === 3 ? '#efefef' : 'transparent' }, group);
+      tx(group, 12, y + 5, term.label);
+      se('line', { x1: startX, x2: startX + len, y1: y, y2: y, stroke: term.color, 'stroke-width': 10, opacity: i === 3 ? 1 : .8 }, group);
+      tx(group, width - 7, y + 5, fmt(term.value, 3), { 'text-anchor': 'end', class: 'svg-number' });
+      markTooltip(flow, svg, group, term.label, term.body);
+    });
+    const by = (map.clientWidth < 400 ? 295 : 325) - 48, research = market.chiR * state.e, service = (1 - market.chiR) * state.e;
+    tx(svg, 12, by - 11, 'Released expert hours');
+    se('rect', { x: 12, y: by, width: (width - 24) * market.chiR, height: 6, fill: C.humanFill }, svg);
+    se('rect', { x: 12 + (width - 24) * market.chiR, y: by, width: (width - 24) * (1 - market.chiR), height: 6, fill: C.muted, opacity: .3 }, svg);
+    tx(svg, 12, by + 25, `Research ${fmt(research, 3)}`); tx(svg, width - 12, by + 25, `Services ${fmt(service, 3)}`, { 'text-anchor': 'end' });
+    output([['Learning lost m', fmt(state.m, 3)], ['Hours released e', fmt(state.e, 3)], ['Public value', fmt(w.W, 3)]]);
+  }
+  watch(grid, () => { drawMap(); draw(); }); play.autoplay();
 }
+
 function growth(host) {
   title(host, 'Growth and delay', 'Scalar growth comparisons');
   const state = { eta: 1.9, phi: .7, k: .18, absorptionTime: 1.5, delay: 1.5, horizon: 12, log: false }; let result;
-  const thresholds = tabs(host, [{ value: 'subcritical', label: 'Subcritical' }, { value: 'critical', label: 'Critical' }, { value: 'supercritical', label: 'Supercritical' }], 'supercritical', key => { state.eta = clamp(state.phi + (key === 'subcritical' ? .5 : key === 'critical' ? 1 : 1.6), .3, 3); productivity.set(state.eta); compute(); });
-  const controls = settings(host,'Growth settings');
-  const productivity = range(controls, 'Research exponent η', state.eta, .3, 3, .05, v => { state.eta = v; compute(); });
-  range(controls, 'Difficulty exponent φ', state.phi, 0, 2, .05, v => { state.phi = v; compute(); });
-  range(controls, 'Absorption time ε', state.absorptionTime, .25, 4, .25, v => { state.absorptionTime = v; compute(); }, v => `${fmt(v)} periods`);
-  range(controls, 'Minimum research duration τ', state.delay, .25, 4, .25, v => { state.delay = v; compute(); }, v => `${fmt(v)} periods`);
-  const display = el('div', { class: 'widget-tabs' }, host), logButton = button(display, 'Logarithmic axes', () => { state.log = !state.log; logButton.setAttribute('aria-pressed', String(state.log)); draw(); }); logButton.setAttribute('aria-pressed', 'false');
+  const thresholds = tabs(host, [{ value: 'subcritical', label: 'Subcritical' }, { value: 'critical', label: 'Critical' }, { value: 'supercritical', label: 'Supercritical' }], 'supercritical', key => { state.eta = state.phi + (key === 'subcritical' ? .5 : key === 'critical' ? 1 : 1.2); compute(); });
   const grid = el('div', { class: 'figure-plots' }, host), timePlot = el('div', { class: 'plot-area' }, grid), phasePlot = el('div', { class: 'plot-area' }, grid);
   legend(host, [{ label: 'Pure power', color: C.muted, dash: true }, { label: 'Gradual absorption', color: C.teal }, { label: 'Fixed delay', color: C.rust }]);
-  const scrub = playback(host, state.horizon, () => draw()), output = readout(host), status = el('p', { class: 'figure-status', role: 'status' }, host);
-  const diagnostics = el('details', { class: 'figure-diagnostics' }, host); el('summary', {}, diagnostics, 'Growth equations and numerical conditions'); const text = el('p', {}, diagnostics);
-  caption(host, 'All paths begin at A(0) = 1 with k = 0.18. Pure power uses its analytic solution. Absorption adds εḂ = A − B and uses B in research. Fixed delay uses A(t − τ), with constant history before time zero.');
+  const scrub = playback(host, state.horizon, () => draw(), { scrub: { label: 'Time', step: .05, format: v => `${fmt(v, 1)} / ${state.horizon}` } }), output = readout(host), status = el('p', { class: 'figure-status', role: 'status' }, host);
+  caption(host, 'Research capability reaches productive use through absorption and delay. Comparing the growth paths shows how these timing differences reshape frontier progress and its rate of change under each research productivity scenario.');
   function compute() { result = growthPaths({ ...state, A0: 1, steps: 600 }); if (!result.ok) { status.textContent = result.diagnostics?.message || 'Growth comparison unavailable'; timePlot.replaceChildren(); phasePlot.replaceChildren(); return; } thresholds.set(result.class); draw();scrub.autoplay(); }
   function draw() {
     if (!result?.ok) return;
@@ -327,7 +494,7 @@ function growth(host) {
     const points = result.points.map((p, i, all) => { const left = all[Math.max(0, i - 1)], right = all[Math.min(all.length - 1, i + 1)]; const out = { ...p }; for (const { key } of keys) out[`${key}Rate`] = finite(left[key]) && finite(right[key]) && right.t > left.t ? (right[key] - left[key]) / (right.t - left.t) : null; return out; });
     const available = points.flatMap(p => keys.map(({ key }) => p[key])).filter(finite), largest = Math.max(...available), normalBound = !state.log && largest > 80 ? 80 : null;
     const series = keys.map(s => ({ label: s.label, color: s.color, dash: s.dash, points, y: p => transform(p[s.key]) }));
-    chart(timePlot, { label: 'Frontier trajectories through time', yLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', xDomain: [0, state.horizon], ...(normalBound ? { yDomain: [0, normalBound] } : {}), height: 260, cursor: scrub.value(), vertical: result.powerDivergenceTime, series, onclick: t => scrub.set(t) });
+    chart(timePlot, { label: 'Frontier trajectories through time', yLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', xDomain: [0, state.horizon], ...(normalBound ? { yDomain: [0, normalBound] } : {}), height: 260, cursor: scrub.value(), vertical: result.powerDivergenceTime, series });
     const phaseSeries = keys.map(s => ({ label: s.label, color: s.color, dash: s.dash, points, x: p => transform(p[s.key]), y: p => transform(p[`${s.key}Rate`]) }));
     chart(phasePlot, { label: 'Frontier growth rates against the frontier', yLabel: state.log ? 'Growth rate · log₁₀ Ȧ' : 'Growth rate Ȧ / period', xLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', height: 260, cursor: scrub.value(), phase: true, ...(normalBound ? { xDomain: [0, 80], yDomain: [0, 30] } : {}), series: phaseSeries });
     const selected = nearest(points, scrub.value()), beta = state.eta - state.phi;
@@ -335,7 +502,7 @@ function growth(host) {
     const divergence = finite(result.powerDivergenceTime) ? `Pure-power divergence at t = ${fmt(result.powerDivergenceTime, 2)}.` : `Pure-power growth is ${beta === 1 ? 'exponential' : 'global'}.`;
     const warnings = (result.diagnostics.warnings || []).filter(w => w.code !== 'analytic-divergence').map(w => w.message).join(' ');
     status.textContent = `${divergence}${normalBound ? ' Large values extend beyond the linear display and remain visible with logarithmic axes.' : ''}${warnings ? ` ${warnings}` : ''}`;
-    text.textContent = `Ȧ = kA^(η−φ). Absorption uses Ȧ = kB^η/A^φ and εḂ = A−B. Fixed delay uses Ȧ = kA(t−τ)^η/A^φ. Phase rates use centered differences along the solved paths. ${JSON.stringify(result.diagnostics)}`;
+    host.dataset.numericalConditions = `Ȧ = kA^(η−φ). Absorption uses Ȧ = kB^η/A^φ and εḂ = A−B. Fixed delay uses Ȧ = kA(t−τ)^η/A^φ. Phase rates use centered differences along the solved paths. ${JSON.stringify(result.diagnostics)}`;
   }
   watch(grid, draw); compute();
 }
