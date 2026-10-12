@@ -5,3 +5,5 @@ tmp/
 node_modules/
 *.tar.gz
 .DS_Store
+/FEEDBACK_NOTES.md
+/MODEL_NOTES.md
