@@ -10,11 +10,13 @@ const files = await fs.readdir(dist, { recursive: true });
 const htmlFiles = files.filter(file => file.endsWith('.html'));
 const pages = new Map(await Promise.all(htmlFiles.map(async file => [file, await fs.readFile(path.join(dist, file), 'utf8')])));
 let links = 0, imports = 0;
-assert.equal(pages.size, 9, 'All nine chapters must be built');
+assert.equal(pages.size, 10, 'Nine reading chapters and the feedback page must be built');
 for (const [file, html] of pages) {
   assert(!html.includes('math-error'), `${file} contains an equation rendering failure`);
   assert(!/chatgpt\.site|window\.openai/i.test(html), `${file} depends on the previous host`);
   assert(!/Blake|Jianghanyuan|Mike Jiang|An interactive research essay/i.test(html), `${file} contains removed presentation copy`);
+  assert(!/class="(?:read-progress|site-footer|chapter-next|chapter-companion)"/.test(html), `${file} contains removed navigation chrome`);
+  assert(!html.includes('↗'), `${file} contains the removed outbound arrow`);
   const ids = [...html.matchAll(/\bid="([^"]+)"/g)].map(match => match[1]);
   assert.equal(new Set(ids).size, ids.length, `${file} has duplicate HTML IDs`);
   for (const match of html.matchAll(/(?:href|src)="([^"]+)"/g)) {
@@ -35,7 +37,7 @@ for (const [file, html] of pages) {
 for (const file of files.filter(file => file.endsWith('.js'))) {
   const code = await fs.readFile(path.join(dist, file), 'utf8');
   for (const match of code.matchAll(/(?:from\s*|import\s*|new URL\()(['"])(\.\.?\/[^'"]+)\1/g)) {
-    await fs.access(path.resolve(dist, path.dirname(file), match[2]));
+    await fs.access(path.resolve(dist, path.dirname(file), match[2].split(/[?#]/)[0]));
     imports++;
   }
 }
