@@ -22,7 +22,7 @@
   padding:7px 0 6px;
   color:#767676;
   border:0;
-  border-bottom:1.5px solid transparent;
+  border-bottom:2px solid transparent;
   border-radius:0;
   background:transparent;
   font:13px/1.4 var(--font-ui,system-ui,sans-serif);
@@ -268,4 +268,13 @@
 @media (max-width:899px) {
   .feedback-interactive .fb-economy-figure { position:static; top:auto; }
   .feedback-interactive.fb-fullscreen .fb-surface { height:620px; min-height:620px; }
+}
+.feedback-interactive .fb-surface { border-radius:14px; }
+.feedback-interactive.fb-fullscreen .fb-surface { border-radius:14px; }
+.feedback-interactive.fb-embedded .fb-surface { height:260px; }
+.feedback-interactive.fb-embedded .fb-surface[data-part="machines"] { height:278px; }
+@media(min-width:1051px) {
+  .feedback-workspace { max-width:1020px; }
+  .feedback-interactive .fb-economy-layout { grid-template-columns:minmax(310px,330px) minmax(0,580px);gap:22px; }
+  .feedback-interactive.fb-fullscreen .fb-surface { height:min(590px,calc(100svh - 125px)); }
 }

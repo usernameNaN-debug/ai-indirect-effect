@@ -15,9 +15,9 @@ export const pages = {
         widget: 'tax',
         note: { title: 'Household production', text: html`${cite('becker1965')} treats household time and purchased inputs as ingredients in production, giving work completed at home a place in the resource account.` },
         paragraphs: [
-          html`Before a household reaches its tax preparer, work has already begun around the kitchen table, where receipts, statements, and records of unfamiliar transactions have to become a file that someone else can understand. With access to AI, the household can organize those records, investigate a question, and bring the preparer a partly completed return whose remaining difficulty has become easier to describe, even while the office continues using the same software and procedures (<a href="/story/#figure-1">fig. 1</a>).`,
+          html`Before a household reaches its tax preparer, work has already begun around the kitchen table. Receipts, statements, and records of unfamiliar transactions have to become a file someone else can understand. With AI, the household can organize those records and investigate a question before bringing in a partly completed return. Its remaining difficulty is easier to describe, even while the office uses the same software and procedures (<a href="/story/#figure-1">fig. 1</a>).`,
           html`For that household, the immediate gain may be a shorter appointment or fewer hours purchased, while another conversation may reveal a question that gives a household a reason to seek advice for the first time. Following the household-production account of ${cite('becker1965')}, we count preparation time alongside purchased inputs, then follow the completed file into the professional work that remains.`,
-          html`Keeping office tools fixed reveals how household preparation reaches professional income through a transaction. Even when the same preparer handles the same underlying matter, the submitted material can change the hours required, the price worth paying, and the remaining work assigned to a junior colleague. Following this change over time also brings us to recursive self-improvement (RSI), through which current AI helps produce the next generation of AI and changes the capability reaching future households.`
+          html`Keeping office tools fixed lets us compare what happens when the same preparer receives a different file for the same matter. Its contents change the hours required, the price worth paying, and the remaining work assigned to a junior colleague. We follow that colleague through the records received and the judgment learned while completing the return.`
         ]
       },
       {
@@ -35,7 +35,7 @@ export const pages = {
         title: 'Prices and learning',
         paragraphs: [
           html`When a novice can pay for an informative placement through a wage concession or a separate payment, the learning opportunity helps finance the service received by the household. Removing that opportunity also removes its contribution to the fee, so the private calculation already includes some of the future value of what the novice would have learned.`,
-          html`We then follow a fixed-demand comparison in which diagnostic practice falls, total formal training rises, and the eventual expert population becomes smaller, with higher hourly earnings where expert demand slopes downward. Those career and price effects begin with <a href="/work/">what the prepared file teaches</a>, through the records and feedback that remain after the household has finished its work.`
+          html`For the household choosing what to hand over, a file’s remaining work and learning value enter the same fee. We now examine <a href="/work/">what the prepared file teaches</a> by following the records and feedback that reach the junior preparer after the household has finished its work.`
         ]
       }
     ]
@@ -58,11 +58,11 @@ export const pages = {
       },
       {
         id: 'foundation',
-        title: 'Interpreting an explanation',
+        title: 'Understanding explanations',
         widget: 'learning',
         note: { title: 'Unaided learning', text: html`${cite('bastani2025')} compares practice assistance with later unaided mathematics performance, showing why the design of help matters for retained ability.` },
         paragraphs: [
-          html`For a junior preparer reviewing a completed calculation, an explanation can depend on knowing how the underlying transaction fits the supporting records, so the route from documents to an answer can teach something that the answer alone leaves unresolved. We represent the needed foundation by a hidden sign \(B\) and the principle used in a later judgment by a hidden sign \(T\), with one observation revealing \(B\) imperfectly and a relational explanation revealing their product \(BT\) imperfectly.`,
+          html`For a junior preparer reviewing a calculation, understanding the explanation can require knowing how the transaction fits its supporting records. Working from those documents to an answer can teach something the answer alone leaves unresolved. We represent the needed foundation by a hidden sign \(B\) and the principle used in a later judgment by a hidden sign \(T\). One observation reveals \(B\) imperfectly, while a relational explanation reveals their product \(BT\) imperfectly.`,
           html`When the foundation remains unknown, either target sign fits the observed product because changing both hidden signs preserves the explanation. After processing both observations, the learner can multiply them to cancel the foundation, leaving information about the target through the remaining noise, which explains why a stronger explanation has more educational value when its recipient understands the records on which it depends (<a href="/work/#figure-2">fig. 2</a>).`,
           html`Within this calculation, foundation reliability \(r_B\) and explanation reliability \(r_A\) determine later unaided prediction error through \(1-r_B^2r_A^2\), while receipt probability \(p\) determines how often the learner processes the pair. As either reliability improves, a received pair becomes more informative, and increasing access passes that gain to more learners, with prior error normalized to one in the figure.`,
           html`At zero foundational reliability, either possible foundation remains equally plausible, so increasing explanation reliability alone leaves the learner’s target uncertainty unchanged. Once the foundation carries information, improving the explanation has a positive return, and a person who already knows the foundation can use the explanation immediately, giving the same material different educational value according to the knowledge brought to it.`,
@@ -106,7 +106,7 @@ export const pages = {
           html`For a junior preparer deciding whether to pay for instruction between filing seasons, acquired judgment has value through the future work it permits, including work at another office. Following the competitive general-training logic of ${cite('becker1962')}, qualification belongs to its holder, whose value difference \(\Delta\) connects today’s financing to the future earnings available as an expert.`,
           html`As the novice intensifies study, the resources used in instruction rise according to \(\kappa x^2/2\), where \(x\) is the rate of acquiring qualification and \(\kappa\) governs teaching cost. Balancing marginal expense against the expected value of qualification gives \(x=\Delta/\kappa\), while obsolescence at rate \(\delta\) returns some qualified people to novice status and creates a continuing need for entry.`,
           html`At a given career value, cheaper instruction increases the study intensity worth purchasing, because each additional unit of effort reaches the same expected qualification gain at a lower marginal resource cost. Once the resulting entrants affect the professional wage, the value itself also adjusts, so the immediate response to teaching costs becomes part of a market process operating through later earnings.`,
-          html`Through an informative customer file, the novice gains another path into qualification, with its private capital gain paid to the placement’s seller under complete pricing. After accounting for that apprenticeship payment, received practice still changes the number of qualified people, while future wage premia determine the value guiding purchased study, as the worker equations on <a href="/assets/paper.pdf#page=16">pages 16–18</a> show.`
+          html`Through an informative customer file, the novice gains another path into qualification. Under complete pricing, the placement’s seller receives its private capital gain as payment. Practice still changes the number of qualified people after that payment is accounted for. Future wage premia determine the value guiding purchased study, as the worker equations on <a href="/assets/paper.pdf#page=16">pages 16–18</a> show.`
         ]
       },
       {
@@ -153,12 +153,12 @@ export const pages = {
     sections: [
       {
         id: 'complete-result',
-        title: 'Beyond household services',
+        title: 'Shared expertise',
         note: { title: 'Specialized knowledge', text: html`${cite('garicano2000')} connects problems to specialized knowledge, while ${cite('jones2009')} relates deeper knowledge to educational burden and teamwork.` },
         paragraphs: [
           html`Following the household’s tax return has shown how customer choices change the work arriving at a profession, whose specialized knowledge can be organized around the problems people know how to solve, as in ${cite('garicano2000')}. We now extend the service economy to a field where the same assessed expertise also supplies research, allowing qualified people to divide their time between customers and the production of new knowledge.`,
           html`Acquiring that expertise uses resources, with ${cite('jones2009')} connecting accumulated knowledge to a greater educational burden, narrower specialization, and increased teamwork in innovation. Within our extension, a portable qualification supports both services and research, so the shared wage carries customer demand into research costs while the career mechanism determines how many qualified people become available.`,
-          html`To give research demand an explicit source, we assign a fund a fixed expenditure flow and a mandate to purchase completed, validated research packets, whose cost includes generation and checking. Within the human method, both stages use expert time together with computation, while a feasible autonomous method purchases both stages through computation, allowing procurement to compare two complete ways of producing a result.`,
+          html`To give research demand an explicit source, we assign a fund a fixed expenditure flow to buy completed, validated research packets. Each packet’s cost includes generation and checking. In the human method, both stages use expert time and computation. In a feasible autonomous method, computation supplies both stages. Procurement can then compare two complete ways of producing a result.`,
           html`Because each packet includes every stage required for completion, validation can determine the eventual productivity of the method even as generation becomes faster. We first follow the hours and computation needed to finish that work, then allow their market prices to determine which method the fund purchases and how its decision affects the earnings available to qualified people.`,
           html`When research uses the current frontier, each completed advance can enter the generation and validation of the research that follows, forming a recursive connection between today’s AI and the next frontier. Human-led research carries this connection through people using improved tools, while complete autonomous research carries it through machine generation and validation, with both routes supplying capability that also changes the work customers bring to professionals.`
         ]
@@ -222,7 +222,7 @@ export const pages = {
         title: 'Learning payments',
         note: { title: 'Training institutions', text: html`${cite('acemogluPischke1999')} shows how wage compression can support employer-financed general training, locating financing incentives in the wage structure.` },
         paragraphs: [
-          html`For a junior worker acquiring experience through a client file, the payment arrangement determines how much learning value reaches the household’s fee. Institutions also shape who finances general training in ${cite('acemogluPischke1999')}, where wage compression can give employers an incentive to pay, while our contract comparison follows a minimum cash payment combined with a prohibition on separately charging for the placement. For a case using one basic hour, the permitted learning credit is capped by the outside basic wage less that cash payment.`,
+          html`For a junior worker acquiring experience through a client file, the payment arrangement determines how much learning value reaches the household’s fee. Institutions also shape who finances general training in ${cite('acemogluPischke1999')}, where wage compression can give employers an incentive to pay. Our contract comparison combines a minimum cash payment with a prohibition on separately charging for the placement. For a case using one basic hour, the permitted learning credit is capped by the outside basic wage less that cash payment.`,
           html`When this cap binds, a household can prefer preparation because the resources it saves exceed the permitted learning discount, while the qualification displaced is worth more than that saving in the benchmark social account. In symbols, the interval is \(b-s<b-r_C<\Delta m\), where \(s\) is minimum cash compensation, \(r_C\) is the cost of preparation, and \(m\) is the lost transition probability.`,
           html`Permitting a larger learning payment would lower the fee attached to the informative mode and increase what the household gives up by replacing it with preparation. In this comparison, the novice’s financing carries the value of future expertise into the current choice, so limiting that payment changes the relative attractiveness of two ways to handle the same matter.`,
           html`Within the case analyzed in <a href="/assets/paper.pdf#page=24">Appendix E</a>, \(b=1\), \(s=1/2\), \(r_C=3/8\), and \(\Delta m=3/4\) give a positive private saving of \(1/8\) and a negative resource gain of \(-1/8\). By following the permitted credit through the fee, we can locate the difference in a payment that values the lost experience below its contribution to future services.`,
@@ -285,7 +285,7 @@ export const pages = {
       },
       {
         id: 'stationary-entry',
-        title: 'Stationary entry',
+        title: 'Long-run entry',
         equation: tex`R=\rho+\delta,\qquad x(E)=\sqrt{R^2+\frac{2[w(E)-b]}{\kappa}}-R,\qquad M+(1-E)x(E)=\delta E`,
         paragraphs: [
           html`When the material retained for junior learning changes while the remaining expert work in purchased files stays fixed, we obtain the diagnostic-portfolio comparison by keeping the selected modes within their strict purchase margins. Its inverse wage \(w(E)>b\) is independent of \(M\) and \(\Delta\), and a continuous nonincreasing wage schedule gives weakly decreasing individual study and strictly decreasing aggregate formal transitions \(T(E)=(1-E)x(E)\), since the novice population also contracts as \(E\) rises.`,
@@ -300,7 +300,7 @@ export const pages = {
         note: { title: 'Expert services', text: html`${cite('dulleckKerschbamer2006')} studies diagnosis and treatment when customers have difficulty assessing expert services, motivating the joint account of fees and reliability.` },
         equation: tex`\mathcal T(w,c)=\min_{v\ge0}\{w[e(c)+v]+k(c)+r_\gamma(\pi(c)e^{-v})\},\qquad P=\frac{\varepsilon}{\varepsilon-1}\mathcal T`,
         paragraphs: [
-          html`For a household comparing advice with the consequence of an unresolved mistake, the fee and the reliability of the completed return enter the same decision, as the credence-goods analysis of ${cite('dulleckKerschbamer2006')} explains. Within our extension, fixed franchises face isoelastic demand with \(\varepsilon>1\), and generalized price \(P\) combines the fee with the certainty-equivalent loss from error, while each case uses generation time \(e(c)\), checking time \(v\), and resources \(k(c)\), with error probability \(\pi(c)e^{-v}\) declining as experts validate the work.`,
+          html`For a household deciding whether to purchase advice, both the fee and the risk of an unresolved mistake matter, as the credence-goods analysis of ${cite('dulleckKerschbamer2006')} explains. Within our extension, fixed franchises face isoelastic demand with \(\varepsilon>1\). Generalized price \(P\) combines the fee with the certainty-equivalent loss from error. Each case uses generation time \(e(c)\), checking time \(v\), and resources \(k(c)\). Its error probability \(\pi(c)e^{-v}\) declines as experts validate the work.`,
           html`With constant absolute risk aversion \(\gamma\) and error loss \(L\), the certainty-equivalent cost is \(r_\gamma(z)=\gamma^{-1}\log[1+z(e^{\gamma L}-1)]\), whose risk-neutral limit is \(Lz\). Optimized generalized unit cost \(\mathcal T\) enters the isoelastic markup shown above, and its wage derivative counts the expert hours needed per completed case, giving aggregate demand \(D_S=\mathcal T_w N(c)P^{-\varepsilon}\).`,
           html`For risk-neutral customers, optimal checking is \(v^*=[\log(L\pi(c)/w)]_+\), so more reliable files reduce validation at a fixed wage while a larger possible loss raises its return. <a href="/assets/paper.pdf#page=25">Lemma F.1</a> proves that the resulting expert demand decreases strictly with the wage, including the points at which validation enters or leaves the selected service.`,
           html`At an interior checking choice, the marginal reduction in expected error loss equals the wage paid for the additional expert time. More reliable household material reduces that marginal benefit at the old checking intensity, while greater potential loss raises it, carrying the content and consequences of a submitted file into the amount of professional review purchased.`,
@@ -308,7 +308,7 @@ export const pages = {
       },
       {
         id: 'research-production',
-        title: 'Shared research',
+        title: 'Research production',
         note: { title: 'Research difficulty', text: html`${cite('bloom2020')} documents rising research effort alongside declining research productivity across several settings, motivating explicit difficulty in producing the next advance.` },
         equation: tex`\begin{aligned}a_H(A)&=A^{-\alpha}+v_RA^{-\nu},& k_H&=a_H(A)(w+q\xi),\\a_M(A)&=A^{-\mu}+m_RA^{-\zeta},& k_M&=qa_M(A),\\E&=D_S+L_R,& (w+q\xi)L_R+qQ_M&=B_R,\\\dot A&=A^{-\phi}\frac{B_R}{\min_{j\in\mathcal F(A)}k_j},& c(A)&=\kappa_c\log(A/A_0).\end{aligned}`,
         paragraphs: [
@@ -328,12 +328,12 @@ export const pages = {
     sections: [
       {
         id: 'two-boundaries',
-        title: 'Inherited conditions',
+        title: 'Initial conditions',
         note: { title: 'Boundary conditions', text: html`Within the <a href="/assets/paper.pdf#page=31">finite-horizon equilibrium result</a>, inherited expertise and frontier productivity are joined to the terminal value of qualification.` },
         equation: tex`E(0)=E_0,\qquad A(0)=A_0,\qquad \Delta(T)=\overline\Delta,\qquad \dot X=H(X,\Delta),\quad \dot\Delta=G(X,\Delta),\quad X=(E,A)`,
         paragraphs: [
           html`At the beginning of a filing season, the people available to advise households carry the learning acquired during earlier seasons, while a novice’s decision to study depends on the professional work expected ahead. In the shared research economy, inherited expertise \(E\) and frontier productivity \(A\) supply the initial states, while a terminal career payoff \(\overline\Delta\) records the value of qualification in the continuation occupation.`,
-          html`Given a trial qualification-value path, we can integrate population and frontier forward while clearing the labor market at each date, then integrate the value equation backward from its terminal payoff using the resulting wages. Repeating those updates seeks a path whose physical evolution and anticipated earnings agree, the same logical construction used in the paper’s finite-horizon existence proof.`,
+          html`Given a trial qualification-value path, we integrate population and frontier forward while clearing the labor market at each date. Using the resulting wages, we then integrate the value equation backward from its terminal payoff. Repeating these updates seeks agreement between physical evolution and anticipated earnings, following the construction in the paper’s finite-horizon existence proof.`,
           html`Choosing a current qualification value changes study immediately and thus changes the population that later wages must clear, while those wages determine whether the original value was justified. Specifying the terminal payoff closes this relationship through what a qualification is worth after the modeled interval, allowing the initial value to adjust until the whole earnings path supports it.`,
           html`Within a compact feasible region, uniformly decreasing service demand gives regular wage roots, bounded wages keep private values bounded, and a sufficiently short horizon limits the feedback between the two path updates. <a href="/assets/paper.pdf#page=31">Proposition H.1</a> supplies an explicit contraction condition under which the boundary problem has one equilibrium inside that region, including endogenous changes in the active research allocation.`
         ],
@@ -345,7 +345,7 @@ export const pages = {
       },
       {
         id: 'feedback',
-        title: 'Connected channels',
+        title: 'Research feedback',
         widget: 'feedback-parts',
         note: { title: 'Conditional response', text: html`At a fixed frontier, the <a href="/assets/paper.pdf#page=28">shared-wage derivative</a> follows expert supply and service demand through research costs.` },
         equation: tex`\mathcal J=-D_{S,w}+\frac{B_R}{h^2},\qquad h=w+q\xi,\qquad d\log F=\frac{dE-dD_S|_w}{h\mathcal J}`,
@@ -382,13 +382,13 @@ export const pages = {
     ]
   },
   growth: {
-    title: 'Capability and time',
+    title: 'AI growth',
     deck: '',
     part: 'Mathematics',
     sections: [
       {
         id: 'human-input',
-        title: 'Persistent expertise',
+        title: 'Expert supply',
         paragraphs: [
           html`Across successive filing seasons, the experience left in household submissions can diminish as customers complete more work, while novices retain the option of purchasing instruction when future professional earnings justify its cost. In the shared-expertise extension with persistent human research, the budget and labor market imply \(w+q\xi\ge B_R/E\), so a small qualified population supports a strong training incentive through the research fund’s demand for scarce expertise.`,
           html`Along a global feasible career path with nonnegative qualification values, that scarcity condition prevents expertise from remaining arbitrarily close to zero, because study below replacement would force the value equation downward too quickly to preserve a nonnegative career value. <a href="/assets/paper.pdf#page=45">Proposition J.1</a> gives an explicit positive population bound even with \(M=0\), and a bounded service-demand envelope then gives an upper wage bound.`,
@@ -416,13 +416,13 @@ export const pages = {
           html`Within the CES task economy of ${cite('jonesTonetti2026')}, substitution elasticity below one leaves output constrained by remaining tasks when a fixed subset becomes arbitrarily productive. Their dynamic extension also automates idea production, linking innovation to further automation while weak links slow its consequences, and our serial research methods follow each required stage through a sum of generation and validation inputs.`,
           html`Within that sum, the stage whose input requirement declines more slowly dominates the eventual requirement per completed packet. Factoring the smaller exponent from \(a_H\) or \(a_M\) leaves a positive bounded factor, giving the complete-method exponents above and a direct route from stage-level productivity to packet cost.`,
           html`Within a method, completion requires both stages, so the smaller productivity exponent governs the input requirement that remains costly longest. Across complete methods, the fund can choose the cheaper route, so the larger eventual exponent can govern the selected cost under bounded input prices, giving the minimum within each method and the maximum across available methods distinct economic roles.`,
-          html`With updating tools \(r=A\) and the effective human input price bounded above and away from zero, persistent human research gives \(p=p_H\), while two continuously available methods give \(p=\max\{p_H,p_M\}\) because procurement selects the cheaper complete route. Idea difficulty then subtracts \(\phi\) from that productivity exponent, producing power growth for \(p<1+\phi\), exponential order at equality, and a finite production endpoint for \(p>1+\phi\) under the stated continuation conditions. Within the power-growth region, improving research tools coexist with a proportional growth rate that tends to zero.`,
+          html`With updating tools \(r=A\) and the effective human input price bounded above and away from zero, persistent human research gives \(p=p_H\). With two continuously available methods, procurement selects the cheaper complete route and gives \(p=\max\{p_H,p_M\}\). Idea difficulty subtracts \(\phi\) from that productivity exponent. Under the stated continuation conditions, we obtain power growth for \(p<1+\phi\), exponential order at equality, and a finite production endpoint for \(p>1+\phi\). Within the power-growth region, research tools keep improving while the proportional growth rate tends to zero.`,
           html`For a grounded machine method, completing each packet additionally requires \(a_G=g_GA^{-\chi}\) expert hours, and under the paper’s bounded-overhead conditions with \(\chi\le p_M\), that human stage governs its complete-route exponent. When \(\chi\le1+\phi<p_M\), the grounding requirement gives a global frontier path in a comparison whose fully autonomous route has a finite endpoint, as developed in <a href="/assets/paper.pdf#page=49">Proposition J.7</a>.`
         ]
       },
       {
         id: 'growth-comparison',
-        title: 'Levels and rates',
+        title: 'Growth rates',
         widget: 'growth',
         equation: tex`\dot A=kA^\beta,\qquad \ddot A=\beta k^2A^{2\beta-1},\qquad g_A=\dot A/A,\qquad \dot g_A=(\beta-1)g_A^2`,
         paragraphs: [
@@ -463,7 +463,7 @@ export const pages = {
     sections: [
       {
         id: 'information-proof',
-        title: 'Information and transfer',
+        title: 'Learning signals',
         note: { title: 'Retained judgment', text: html`Within the <a href="/assets/paper.pdf#page=15">information experiment</a>, prediction error follows from the signals actually processed before a later unaided judgment.` },
         paragraphs: [
           html`To follow what a junior preparer retains from a worked return, we represent the needed foundation and later target judgment by independent symmetric signs \(B\) and \(T\). Observations \(S=B\eta\) and \(Y=BT\epsilon\) contain independent noise with means \(r_B\) and \(r_A\), and averaging over the unknown foundation gives \(\Pr(Y=y\mid T=t)=1/2\), so the explanation alone leaves the target’s prior unchanged while the joint likelihood retains the shared foundation.`,
@@ -485,7 +485,7 @@ export const pages = {
       },
       {
         id: 'career-proof',
-        title: 'Qualification and replacement',
+        title: 'Replacing practice',
         paragraphs: [
           html`Following experience from a household file into the novice’s career requires accounting for the payment used to acquire it, because complete pricing assigns both capital gain \(\Delta\) and payment \(\Delta\) to a successful practice transition. Formal study contributes optimized surplus \(\Delta^2/(2\kappa)\), and subtracting the novice and expert value equations gives the career law with qualification discount \(\rho+\delta\), reflecting ordinary discounting and obsolescence.`,
           html`For stationary wages above \(b\), the positive quadratic root gives study \(x(E)\), and differentiating the identity \(\kappa Rx+\kappa x^2/2=w(E)-b\) yields \(x_E=w_E/[\kappa(R+x)]\). Under a nonincreasing wage, \(T(E)=(1-E)x(E)\) is strictly decreasing, so the stationary accumulation equation has one root when its endpoint signs differ.`,
@@ -508,13 +508,13 @@ export const pages = {
         title: 'Research equilibrium',
         paragraphs: [
           html`Within the extension where services and research share qualified labor, continuous strictly decreasing service demand gives unique roots \(D_S(w_0)=E\) and \(D_S(w_1)+B_R/(w_1+q\xi)=E\) in the stated wage interval, with \(w_0<w_1\) because human research adds positive demand. Procurement buys the cheaper feasible packet, and equal packet costs define \(\overline w=qa_M/a_H-q\xi\), which determines the mixed wage.`,
-          html`Once both research methods are feasible, clamping that equal-cost wage between the two clearing roots gives the allocation rule, whose continuity at the boundaries allows paths to change regime while preserving the wage level. Before autonomous research becomes feasible, human research clears at \(w_1\), and implicit differentiation gives regular root derivatives under a uniform negative bound on demand’s wage derivative, so finite minima and maxima preserve local Lipschitz continuity across the subsequent regime boundaries.`,
+          html`Once both research methods are feasible, clamping the equal-cost wage between the two clearing roots gives the allocation rule. Its continuity lets paths cross regime boundaries while preserving the wage level. Before autonomous research becomes feasible, human research clears at \(w_1\). Under a uniform negative bound on demand’s wage derivative, implicit differentiation gives regular root derivatives. Finite minima and maxima then preserve local Lipschitz continuity across the subsequent regime boundaries.`,
           html`With these cleared prices, the joint equilibrium combines the two inherited states and the terminal private value described in <a href="/dynamics/">the dynamics chapter</a>. <a href="/assets/paper.pdf#page=31">Propositions H.1–H.3</a> connect the short-horizon contraction, local shooting selection, and stationary saddle structure, supplying explicit conditions for the paths used in comparative exercises.`
         ],
         equation: tex`w=\min\{w_1,\max\{w_0,\overline w\}\}`,
         details: [
           {
-            title: 'Shared-wage derivative',
+            title: 'Research response',
             paragraphs: [html`At a strict human corner, differentiating \(E=D_S(w,c,\Delta)+B_R/(w+q\xi)\) gives \(dE=dD_S|_w-\mathcal J\,dw\). Since frontier output at fixed \(A\) is proportional to \(1/(w+q\xi)\), dividing its differential by its level yields the research feedback below, with released professional hours entering through a negative demand shift.`],
             equation: tex`w_E=-\mathcal J^{-1},\qquad \frac{F_E}{F}=\frac1{h\mathcal J},\qquad (L_R)_E=\frac{B_R}{h^2\mathcal J}`
           },
@@ -527,14 +527,14 @@ export const pages = {
             paragraphs: [html`With both paths interior mixed, frontier output depends only on the machine method, so identical pre-adoption methods give identical pre-adoption frontiers and wages. Lower subsequent machine requirements raise the scalar frontier field, while machine productivity elasticity at least as large as human productivity elasticity keeps the improved equal-cost wage weakly decreasing along that faster frontier, giving the future wage ordering that the positive career-value kernel transmits to current study.`]
           },
           {
-            title: 'Wage-value kernel',
+            title: 'Valuing future wages',
             paragraphs: [html`For value difference \(d=\Delta_1-\Delta_0\), the identity \(\Delta_1^2-\Delta_0^2=(\Delta_1+\Delta_0)d\) turns subtraction of the career equations into \(\dot d=a(t)d-(w_1-w_0)\), where \(a=\rho+\delta+(\Delta_1+\Delta_0)/(2\kappa)\). Multiplication by its integrating factor and integration backward from the terminal payoff gives the positive weights in <a href="/assets/paper.pdf#page=29">Proposition G.3</a>.`, html`For an infinitesimal wage change around one baseline, the coefficient becomes \(\rho+\delta+x(t)\), so only earnings at dates after the valuation date contribute to its remaining career value (<a href="/dynamics/#figure-10">fig. 10</a>). Holding the supplied wage perturbation as the input to this equation identifies a conditional value response, while the joint economy determines that input through its market adjustment.`]
           }
         ]
       },
       {
         id: 'welfare-proof',
-        title: 'Social qualification value',
+        title: 'Social value',
         note: { title: 'Public research return', text: html`Within the <a href="/assets/paper.pdf#page=40">qualification-value comparison</a>, both the fund’s wage response and the continuation value of frontier improvements enter social value.` },
         paragraphs: [
           html`Along a smooth selected equilibrium continuation, resource value \(V(t,E,A)\) has derivatives \(\lambda=V_E\) and \(\Theta=V_A\), while the expert and frontier drifts are \(f\) and \(F\). In <a href="/assets/paper.pdf#page=40">Proposition I.1</a>, differentiating the continuation equation in expertise and subtracting the private value equation gives the gap law below, whose forcing combines the fund’s wage response with the social return to innovation.`,
@@ -544,7 +544,7 @@ export const pages = {
         equation: tex`\frac{d}{dt}(\lambda-\Delta)=(\rho-f_E)(\lambda-\Delta)-\Gamma_E,\qquad \Gamma_E=L_Rw_E+\Theta F_E`,
         details: [
           {
-            title: 'Competitive service welfare',
+            title: 'Service welfare',
             paragraphs: [html`In the service-and-training benchmark, aggregate formal entry \(I\) uses resources \(\kappa I^2/[2(1-E)]\), a convex perspective of the quadratic study cost. Together with affine feasibility and qualification constraints, that structure gives a concave resource objective, so the competitive customer choices, expert wage, and private qualification value support the global allocation when basic time is slack and discounted private value tends to zero.`, html`At those prices, \(\lambda=\Delta\) aligns both the learning credit and the marginal return to formal instruction with their social values, while preserving earlier customer modes keeps the earlier allocation feasible after an optional technology expansion. Across the resulting welfare comparison, complete feasible paths can include different expert populations and teaching expenditures as part of the efficient adjustment.`]
           },
           {

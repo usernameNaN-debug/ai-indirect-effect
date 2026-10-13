@@ -1,5 +1,5 @@
 import { DEFAULTS, PRESETS, solveMarket, solveBoundaryPath, learningRisk, localWelfare, growthPaths } from './model.js';
-import { mountFeedback } from './feedback-ui.js?v=20261013d';
+import { mountFeedback } from './feedback-ui.js?v=20261014a';
 
 const NS = 'http://www.w3.org/2000/svg';
 const C = { teal: '#0F4D92', rust: '#B64342', blue: '#3775BA', ink: 'var(--ink, #242424)', muted: '#767676', line: 'var(--line, #dedede)', paper: '#ffffff', mixed: '#E4CCD8', humanFill: '#B4C0E4', machineFill: '#F0C0CC', quiet: '#f4f4f4' };
@@ -178,19 +178,19 @@ function tax(host) {
   caption(host, 'AI preparation moves records and reconciled entries into professional review. Keeping the calculations and reasoning lets junior staff reconstruct the case, ask questions, and develop judgment alongside the completed return.');
   function draw() {
     signals = []; blocks = [];
-    const small = plot.clientWidth < 580, { svg, width } = svgBase(plot, small ? 452 : 288, 'Household records pass through AI preparation and professional review to a completed return. Retained reasoning supports junior judgment and feedback.');
+    const small = plot.clientWidth < 580, { svg, width } = svgBase(plot, small ? 370 : 250, 'Household records pass through AI preparation and professional review to a completed return. Retained reasoning supports junior judgment and feedback.');
     const bw = small ? (width - 46) / 2 : (width - 82) / 4, xs = small ? [8, width - bw - 8, width - bw - 8, 8] : [8, 8 + bw + 22, 8 + 2 * (bw + 22), 8 + 3 * (bw + 22)];
-    const source = [xs[0], small ? 55 : 83, bw, 72], organize = [xs[1], small ? 55 : 72, bw, 44], reconcile = [xs[1], small ? 114 : 129, bw, 44], review = [xs[2], small ? 218 : 102, bw, 64], complete = [xs[3], small ? 218 : 102, bw, 64];
-    const records = [small ? xs[0] : xs[1], small ? 356 : 222, bw, 56], junior = [xs[2], small ? 356 : 222, bw, 56];
+    const source = [xs[0], small ? 55 : 73, bw, 72], organize = [xs[1], small ? 55 : 62, bw, 44], reconcile = [xs[1], small ? 114 : 119, bw, 44], review = [xs[2], small ? 198 : 92, bw, 64], complete = [xs[3], small ? 198 : 92, bw, 64];
+    const records = [small ? xs[0] : xs[1], small ? 296 : 192, bw, 56], junior = [xs[2], small ? 296 : 192, bw, 56];
     const center = b => b[0] + b[2] / 2, mid = b => b[1] + b[3] / 2;
-    se('rect', { x: xs[1] - 7, y: small ? 22 : 34, width: bw + 14, height: small ? 153 : 155, rx: 13, fill: '#f0f0f0', stroke: '#d0d0d0', 'stroke-dasharray': '4 5' }, svg);
-    tx(svg, center(organize), small ? 42 : 57, 'AI preparation', { 'text-anchor': 'middle', class: 'svg-label' });
+    se('rect', { x: xs[1] - 7, y: small ? 22 : 24, width: bw + 14, height: small ? 153 : 145, rx: 9, fill: '#f0f0f0', stroke: '#d0d0d0', 'stroke-dasharray': '4 5' }, svg);
+    tx(svg, center(organize), small ? 42 : 47, 'AI preparation', { 'text-anchor': 'middle', class: 'svg-label' });
     const paths = [];
     paths.push(flowLink(svg, [[source[0] + bw, mid(source)], [organize[0] - 12, mid(source)], [organize[0] - 12, mid(organize)], [organize[0], mid(organize)]]));
     paths.push(flowLink(svg, [[center(organize), organize[1] + 44], [center(reconcile), reconcile[1]]]));
     paths.push(flowLink(svg, small ? [[center(reconcile), reconcile[1] + 44], [center(review), review[1]]] : [[reconcile[0] + bw, mid(reconcile)], [review[0] - 11, mid(reconcile)], [review[0] - 11, mid(review)], [review[0], mid(review)]]));
     paths.push(flowLink(svg, small ? [[review[0], mid(review)], [complete[0] + bw, mid(complete)]] : [[review[0] + bw, mid(review)], [complete[0], mid(complete)]]));
-    const retainedPath = flowLink(svg, small ? [[reconcile[0], mid(reconcile)], [source[0] - 5, mid(reconcile)], [source[0] - 5, 332], [center(records), 332], [center(records), records[1]]] : [[center(reconcile), reconcile[1] + 44], [center(records), records[1]]], { dash: true });
+    const retainedPath = flowLink(svg, small ? [[reconcile[0], mid(reconcile)], [source[0] - 5, mid(reconcile)], [source[0] - 5, 278], [center(records), 278], [center(records), records[1]]] : [[center(reconcile), reconcile[1] + 44], [center(records), records[1]]], { dash: true });
     const judgmentPath = flowLink(svg, [[records[0] + bw, mid(records)], [junior[0], mid(junior)]], { dash: true });
     const feedback = flowLink(svg, [[center(junior), junior[1]], [center(review), review[1] + 64]], { dash: true });
     const questions = flowLink(svg, small ? [[review[0] + bw, mid(review)], [width - 1, mid(review)], [width - 1, 8], [center(organize), 8], [center(organize), 22]] : [[center(review), review[1]], [center(review), 17], [center(organize), 17], [center(organize), 34]], { dash: true });
@@ -235,15 +235,15 @@ function learning(host) {
     state.access = retained ? play.value() : 0;
     const risk = learningRisk(state);
     const points = Array.from({ length: 51 }, (_, i) => ({ t: i / 50, ...learningRisk({ ...state, access: i / 50 }) }));
-    chart(riskPlot, { label: 'Learning risk by probability of receiving both signals', height: 248, yLabel: 'Prediction risk', xLabel: 'Receipt probability p', xDomain: [0, 1], yDomain: [0, 1.06], cursor: state.access, series: [{ label: 'Worked case access', points, y: p => p.risk, color: C.teal }, { label: 'Answer alone', points, y: p => p.explanationOnlyRisk, color: C.muted, dash: true }] });
-    const { svg, width } = svgBase(information, 248, 'Foundation and explanation signals jointly support judgment');
+    chart(riskPlot, { label: 'Learning risk by probability of receiving both signals', height: 210, yLabel: 'Prediction risk', xLabel: 'Receipt probability p', xDomain: [0, 1], yDomain: [0, 1.06], cursor: state.access, series: [{ label: 'Worked case access', points, y: p => p.risk, color: C.teal }, { label: 'Answer alone', points, y: p => p.explanationOnlyRisk, color: C.muted, dash: true }] });
+    const { svg, width } = svgBase(information, 210, 'Foundation and explanation signals jointly support judgment');
     const bw = (width - 36) / 2, center = width / 2;
     tx(svg, 6, 13, 'Information reaching the learner', { class: 'svg-label' });
-    const a = flowLink(svg, [[6 + bw / 2, 86], [6 + bw / 2, 113], [center, 113], [center, 142]], { dash: !retained });
-    const b = flowLink(svg, [[width - 6 - bw / 2, 86], [width - 6 - bw / 2, 113], [center, 113], [center, 142]]);
-    const foundation = flowBox(svg, 6, 34, bw, 52, ['Foundation S']);
-    const explanation = flowBox(svg, width - 6 - bw, 34, bw, 52, ['Explanation Y']);
-    const judgment = flowBox(svg, center - 84, 142, 168, 66, ['Joint judgment'], `Risk ${fmt(risk.risk, 3)}`);
+    const a = flowLink(svg, [[6 + bw / 2, 74], [6 + bw / 2, 95], [center, 95], [center, 120]], { dash: !retained });
+    const b = flowLink(svg, [[width - 6 - bw / 2, 74], [width - 6 - bw / 2, 95], [center, 95], [center, 120]]);
+    const foundation = flowBox(svg, 6, 28, bw, 46, ['Foundation S']);
+    const explanation = flowBox(svg, width - 6 - bw, 28, bw, 46, ['Explanation Y']);
+    const judgment = flowBox(svg, center - 80, 120, 160, 56, ['Joint judgment'], `Risk ${fmt(risk.risk, 3)}`);
     foundation.setAttribute('opacity', retained ? 1 : .45);
     markTooltip(information, svg, foundation, 'Foundation signal', 'Source information has reliability 0.8.');
     markTooltip(information, svg, explanation, 'Explanation signal', 'The explanation has reliability 0.8.');
@@ -282,19 +282,19 @@ function careers(host) {
   function draw() {
     if (!result?.ok || !baseline?.ok) return;
     const time = scrub.value(), p = nearest(result.points, time), key = state.view, labels = { E: 'Expert share E', Delta: 'Qualification value Δ', w: 'Hourly wage w' };
-    chart(pathPlot, { label: labels[key], height: 215, yLabel: labels[key], xDomain: [0, state.horizon], cursor: time, zero: key === 'Delta', yFormat: key === 'E' ? pct : fmt, vertical: paramsFor(state.preset).announcementTime, series: [{ label: 'Selected economy', points: result.points, y: p => p[key], color: C.teal, format: key === 'E' ? pct : fmt }, { label: 'Human baseline', points: baseline.points, y: p => p[key], color: C.muted, dash: true, opacity: .7, format: key === 'E' ? pct : fmt }] });
-    const { svg, width } = svgBase(mechanism, 282, 'Practice and formal study feed the expert population along the solved path');
+    chart(pathPlot, { label: labels[key], height: 184, yLabel: labels[key], xDomain: [0, state.horizon], cursor: time, zero: key === 'Delta', yFormat: key === 'E' ? pct : fmt, vertical: paramsFor(state.preset).announcementTime, series: [{ label: 'Selected economy', points: result.points, y: p => p[key], color: C.teal, format: key === 'E' ? pct : fmt }, { label: 'Human baseline', points: baseline.points, y: p => p[key], color: C.muted, dash: true, opacity: .7, format: key === 'E' ? pct : fmt }] });
+    const { svg, width } = svgBase(mechanism, 242, 'Practice and formal study feed the expert population along the solved path');
     const bw = (width - 40) / 2, center = width / 2, totalMax = Math.max(...result.points.map(point => point.M + point.T));
     tx(svg, 6, 16, 'Entry into expertise', { class: 'svg-label' });
-    const practice = flowLink(svg, [[6 + bw / 2, 104], [6 + bw / 2, 136], [center, 136], [center, 169]], { width: 1.5 + 3 * p.M / totalMax });
-    const study = flowLink(svg, [[width - 6 - bw / 2, 104], [width - 6 - bw / 2, 136], [center, 136], [center, 169]], { width: 1.5 + 3 * p.T / totalMax });
-    const a = flowBox(svg, 6, 38, bw, 66, ['Practice'], `M ${fmt(p.M, 3)}`), b = flowBox(svg, width - 6 - bw, 38, bw, 66, ['Formal study'], `T ${fmt(p.T, 3)}`);
-    const population = flowBox(svg, 6, 169, width - 12, 66, ['Expert population'], '');
-    population.querySelector('text').setAttribute('y', '188');
-    se('rect', { x: 21, y: 200, width: width - 42, height: 10, rx: 5, fill: '#e8e8e8' }, population);
-    se('rect', { x: 21, y: 200, width: (width - 42) * p.E, height: 10, rx: 5, fill: C.humanFill }, population);
-    tx(population, center, 228, `E ${pct(p.E)}`, { 'text-anchor': 'middle', class: 'svg-number' });
-    const expiry=paramsFor(state.preset).delta*p.E,exit=flowLink(svg,[[center,235],[center,256]],{width:1.5+3*expiry/totalMax});
+    const practice = flowLink(svg, [[6 + bw / 2, 88], [6 + bw / 2, 116], [center, 116], [center, 145]], { width: 1.5 + 3 * p.M / totalMax });
+    const study = flowLink(svg, [[width - 6 - bw / 2, 88], [width - 6 - bw / 2, 116], [center, 116], [center, 145]], { width: 1.5 + 3 * p.T / totalMax });
+    const a = flowBox(svg, 6, 32, bw, 56, ['Practice'], `M ${fmt(p.M, 3)}`), b = flowBox(svg, width - 6 - bw, 32, bw, 56, ['Formal study'], `T ${fmt(p.T, 3)}`);
+    const population = flowBox(svg, 6, 145, width - 12, 56, ['Expert population'], '');
+    population.querySelector('text').setAttribute('y', '162');
+    se('rect', { x: 21, y: 172, width: width - 42, height: 8, rx: 4, fill: '#e8e8e8' }, population);
+    se('rect', { x: 21, y: 172, width: (width - 42) * p.E, height: 8, rx: 4, fill: C.humanFill }, population);
+    tx(population, center, 195, `E ${pct(p.E)}`, { 'text-anchor': 'middle', class: 'svg-number' });
+    const expiry=paramsFor(state.preset).delta*p.E,exit=flowLink(svg,[[center,201],[center,220]],{width:1.5+3*expiry/totalMax});
     markTooltip(mechanism, svg, a, 'Practice entry', `${fmt(p.M, 4)} qualifications per period from practice.`);
     markTooltip(mechanism, svg, b, 'Formal entry', `${fmt(p.T, 4)} qualifications per period. Study intensity x is ${fmt(p.x, 3)}.`);
     markTooltip(mechanism, svg, population, 'Expert population', `Ė = M + T − δE. Current expert share is ${pct(p.E)}.`);
@@ -305,13 +305,13 @@ function careers(host) {
     emphasizeBlock(a, Math.sin(Math.PI * (progress % 1)) ** 2);
     emphasizeBlock(b, Math.sin(Math.PI * ((progress + .45) % 1)) ** 2, C.machineFill);
     emphasizeBlock(population, .25 + .45 * Math.sin(Math.PI * (progress % 1)) ** 2);
-    tx(svg,center,277,`Obsolescence  δE ${fmt(expiry,3)}`,{'text-anchor':'middle'});
+    tx(svg,center,238,`Obsolescence  δE ${fmt(expiry,3)}`,{'text-anchor':'middle'});
   }
   watch(chartGrid, draw); compute();
 }
 
 function heatmap(host, { label, xLabel, yLabel, xDomain, yDomain, sample, color, selected, onselect, resolution = [40, 28], yFormat = fmt, xFormat = fmt, legendText, regionLabel }) {
-  const height = host.clientWidth < 400 ? 295 : 325, { svg, width } = svgBase(host, height, label), margin = { l: 49, r: 16, t: 24, b: 46 }, right = width - margin.r, bottom = height - margin.b;
+  const height = host.clientWidth < 400 ? 255 : 275, { svg, width } = svgBase(host, height, label), margin = { l: 49, r: 16, t: 24, b: 46 }, right = width - margin.r, bottom = height - margin.b;
   const X = x => margin.l + (x - xDomain[0]) / (xDomain[1] - xDomain[0]) * (right - margin.l), Y = y => bottom - (y - yDomain[0]) / (yDomain[1] - yDomain[0]) * (bottom - margin.t);
   const [nx, ny] = resolution,regions=new Map();
   for (let ix = 0; ix < nx; ix++) for (let iy = 0; iy < ny; iy++) { const x = xDomain[0] + (ix + .5) / nx * (xDomain[1] - xDomain[0]), y = yDomain[0] + (iy + .5) / ny * (yDomain[1] - yDomain[0]); const value = sample(x, y); se('rect', { x: margin.l + ix / nx * (right - margin.l), y: bottom - (iy + 1) / ny * (bottom - margin.t), width: (right - margin.l) / nx + .3, height: (bottom - margin.t) / ny + .3, fill: color(value), 'data-map-value': typeof value === 'number' ? value : '' }, svg);if(regionLabel){const key=regionLabel(value);if(key){const group=regions.get(key)||{x:0,y:0,n:0};group.x+=x;group.y+=y;group.n++;regions.set(key,group);}} }
@@ -383,7 +383,7 @@ function regimes(host) {
     } else mapGraph.setSelected(state.E, state.machineMultiplier);
     const points = Array.from({ length: 81 }, (_, i) => { const w = Math.max(.05, m.w * .25) + i / 80 * (m.w * 2.05); const DS = m.C * w ** -p.epsilon; let LR; if (p.method === 'grounded') LR = p.BR * m.aG / (p.q * m.aM + w * m.aG); else if (p.method === 'human' || w <= m.wbar) LR = p.BR / (w + p.q * p.xi); else LR = 0; return { t: w, DS, total: DS + LR, supply: state.E }; });
     if (p.method === 'both' && m.wbar > points[0].t && m.wbar < points.at(-1).t) { const DS = m.C * m.wbar ** -p.epsilon; points.push({ t: m.wbar, DS, total: DS + p.BR / (m.wbar + p.q * p.xi), supply: state.E }, { t: m.wbar, DS, total: DS, supply: state.E }); points.sort((a, b) => a.t - b.t); }
-    const graph = chart(clearing, { label: 'Expert demand and supply against wage', height: map.clientWidth < 400 ? 295 : 325, yLabel: 'Expert hours / population', xLabel: 'Hourly wage w', xDomain: [points[0].t, points.at(-1).t], yDomain: [0, Math.min(1.6, Math.max(state.E * 1.8, .6))], vertical: m.w, series: [{ label: 'Services', points, y: p => p.DS, color: C.muted }, { label: 'Services + research', points, y: p => p.total, color: C.teal }, { label: 'Expert supply', points, y: p => p.supply, color: C.rust, dash: true }] });
+    const graph = chart(clearing, { label: 'Expert demand and supply against wage', height: map.clientWidth < 400 ? 255 : 275, yLabel: 'Expert hours / population', xLabel: 'Hourly wage w', xDomain: [points[0].t, points.at(-1).t], yDomain: [0, Math.min(1.6, Math.max(state.E * 1.8, .6))], vertical: m.w, series: [{ label: 'Services', points, y: p => p.DS, color: C.muted }, { label: 'Services + research', points, y: p => p.total, color: C.teal }, { label: 'Expert supply', points, y: p => p.supply, color: C.rust, dash: true }] });
     se('circle', { cx: graph.X(m.w), cy: graph.Y(state.E), r: 4.5, fill: C.ink, stroke: C.paper, 'stroke-width': 2 }, graph.svg);
     output([['Wage', fmt(m.w, 3)], ['Research hours', fmt(m.LR, 3)], ['Frontier drift', fmt(m.F, 4)]]);
     const costText = p.method === 'grounded' ? `Grounded packet cost ${fmt(m.kStar, 3)}. Human grounding uses ${fmt(m.aG, 3)} hours per packet.` : `Human packet cost ${fmt(m.kH, 3)}. Machine packet cost ${fmt(m.kM, 3)}. Parity wage ${fmt(m.wbar, 3)}.`;
@@ -441,20 +441,20 @@ function welfare(host) {
     graph.cells.forEach(({ cell, m, e }) => { const W = state.P - state.gap * m + state.premium * market.chiR * e; cell.setAttribute('fill', fieldColor(W)); cell.dataset.mapValue = W; });
     graph.boundary.setAttribute('x1', graph.X(state.P / state.gap));
     graph.boundary.setAttribute('x2', graph.X((state.P + state.premium * market.chiR) / state.gap));
-    const { svg, width } = svgBase(flow, map.clientWidth < 400 ? 295 : 325, 'Decomposition of local public value using supplied continuation values');
+    const { svg, width } = svgBase(flow, map.clientWidth < 400 ? 255 : 275, 'Decomposition of local public value using supplied continuation values');
     tx(svg, 12, 13, 'Per-case value', { class: 'svg-label' });
     const terms = [{ label: 'Private gain', value: w.privateGain, color: C.teal, body: `Supplied private gain P = ${fmt(state.P, 2)}.` }, { label: 'Learning cost', value: -w.learningCost, color: C.rust, body: `Learning value gap λ − Δ = ${fmt(state.gap, 2)}, multiplied by learning lost m.` }, { label: 'Research gain', value: w.researchGain, color: C.blue, body: `Research premium Π − h = ${fmt(state.premium, 2)}. Market absorption χᵣ = ${fmt(market.chiR, 3)}.` }, { label: 'Public value', value: w.W, color: C.ink, body: 'Private gain minus learning cost plus research gain.' }];
     const max = Math.max(.6, ...terms.map(term => Math.abs(term.value))), startX = width * .60, span = width * .20;
-    se('line', { x1: startX, x2: startX, y1: 36, y2: 218, class: 'axis' }, svg);
+    se('line', { x1: startX, x2: startX, y1: 30, y2: 186, class: 'axis' }, svg);
     terms.forEach((term, i) => {
-      const y = 49 + i * 43, len = term.value / max * span, group = se('g', {}, svg);
-      se('rect', { x: 7, y: y - 17, width: width - 14, height: 34, rx: 6, fill: i === 3 ? '#efefef' : 'transparent' }, group);
+      const y = 42 + i * 36, len = term.value / max * span, group = se('g', {}, svg);
+      se('rect', { x: 7, y: y - 15, width: width - 14, height: 30, rx: 5, fill: i === 3 ? '#efefef' : 'transparent' }, group);
       tx(group, 12, y + 5, term.label);
       se('line', { x1: startX, x2: startX + len, y1: y, y2: y, stroke: term.color, 'stroke-width': 10, opacity: i === 3 ? 1 : .8 }, group);
       tx(group, width - 7, y + 5, fmt(term.value, 3), { 'text-anchor': 'end', class: 'svg-number' });
       markTooltip(flow, svg, group, term.label, term.body);
     });
-    const by = (map.clientWidth < 400 ? 295 : 325) - 48, research = market.chiR * state.e, service = (1 - market.chiR) * state.e;
+    const by = (map.clientWidth < 400 ? 255 : 275) - 43, research = market.chiR * state.e, service = (1 - market.chiR) * state.e;
     tx(svg, 12, by - 11, 'Released expert hours');
     se('rect', { x: 12, y: by, width: (width - 24) * market.chiR, height: 6, fill: C.humanFill }, svg);
     se('rect', { x: 12 + (width - 24) * market.chiR, y: by, width: (width - 24) * (1 - market.chiR), height: 6, fill: C.muted, opacity: .3 }, svg);
@@ -480,9 +480,9 @@ function growth(host) {
     const points = result.points.map((p, i, all) => { const left = all[Math.max(0, i - 1)], right = all[Math.min(all.length - 1, i + 1)]; const out = { ...p }; for (const { key } of keys) out[`${key}Rate`] = finite(left[key]) && finite(right[key]) && right.t > left.t ? (right[key] - left[key]) / (right.t - left.t) : null; return out; });
     const available = points.flatMap(p => keys.map(({ key }) => p[key])).filter(finite), largest = Math.max(...available), normalBound = !state.log && largest > 80 ? 80 : null;
     const series = keys.map(s => ({ label: s.label, color: s.color, dash: s.dash, points, y: p => transform(p[s.key]) }));
-    chart(timePlot, { label: 'Frontier trajectories through time', yLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', xDomain: [0, state.horizon], ...(normalBound ? { yDomain: [0, normalBound] } : {}), height: 260, cursor: scrub.value(), vertical: result.powerDivergenceTime, series });
+    chart(timePlot, { label: 'Frontier trajectories through time', yLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', xDomain: [0, state.horizon], ...(normalBound ? { yDomain: [0, normalBound] } : {}), height: 220, cursor: scrub.value(), vertical: result.powerDivergenceTime, series });
     const phaseSeries = keys.map(s => ({ label: s.label, color: s.color, dash: s.dash, points, x: p => transform(p[s.key]), y: p => transform(p[`${s.key}Rate`]) }));
-    chart(phasePlot, { label: 'Frontier growth rates against the frontier', yLabel: state.log ? 'Growth rate · log₁₀ Ȧ' : 'Growth rate Ȧ / period', xLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', height: 260, cursor: scrub.value(), phase: true, ...(normalBound ? { xDomain: [0, 80], yDomain: [0, 30] } : {}), series: phaseSeries });
+    chart(phasePlot, { label: 'Frontier growth rates against the frontier', yLabel: state.log ? 'Growth rate · log₁₀ Ȧ' : 'Growth rate Ȧ / period', xLabel: state.log ? 'Frontier · log₁₀ A' : 'Frontier A', height: 220, cursor: scrub.value(), phase: true, ...(normalBound ? { xDomain: [0, 80], yDomain: [0, 30] } : {}), series: phaseSeries });
     const selected = nearest(points, scrub.value()), beta = state.eta - state.phi;
     output([['Net exponent η − φ', fmt(beta)], ['Pure power', finite(selected.power) ? fmt(selected.power, 3) : 'Beyond divergence'], ['Absorption', fmt(selected.absorption, 3)], ['Fixed delay', fmt(selected.delay, 3)]]);
     const divergence = finite(result.powerDivergenceTime) ? `Pure-power divergence at t = ${fmt(result.powerDivergenceTime, 2)}.` : `Pure-power growth is ${beta === 1 ? 'exponential' : 'global'}.`;

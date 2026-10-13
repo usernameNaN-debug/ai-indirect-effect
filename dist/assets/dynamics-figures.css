@@ -9,7 +9,7 @@
 .dynamic-figure [hidden] { display:none!important; }
 .dynamic-figure :focus-visible { outline:2px solid #3775ba; outline-offset:4px; }
 .dynamic-figure .dyn-tabs { display:flex; flex-wrap:wrap; gap:8px 23px; margin:-5px 0 12px; }
-.dynamic-figure .dyn-tabs button { border-bottom:1px solid transparent; }
+.dynamic-figure .dyn-tabs button { border-bottom:1.5px solid transparent; }
 .dynamic-figure .dyn-tabs button[aria-pressed="true"] { color:#0f4d92; border-bottom-color:#0f4d92; }
 .dynamic-figure .dyn-plot { width:100%; min-width:0; background:#fff; }
 .dynamic-figure svg { width:100%; display:block; overflow:visible; touch-action:pan-y; }

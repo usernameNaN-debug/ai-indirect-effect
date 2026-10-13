@@ -1,22 +1,22 @@
 .interactive { --plot-human:#0F4D92; --plot-machine:#B64342; --plot-mixed:#E4CCD8; position:relative; margin:2.8rem 0 3.4rem; padding:0; border:0; color:var(--ink,#242424); background:#fff; font:13px/1.55 var(--font-ui,system-ui,sans-serif); }
-.interactive .widget-surface { background:#f8f8f8;border-radius:20px;padding:26px 26px 20px; }
+.interactive .widget-surface { background:#f8f8f8;border-radius:14px;padding:20px 20px 16px; }
 .interactive *, .interactive *::before, .interactive *::after { box-sizing:border-box; }
 .interactive [hidden] { display:none !important; }
-.interactive .figure-heading { display:flex; justify-content:space-between; align-items:baseline; gap:18px; margin:0 0 1.2rem; }
-.interactive .figure-heading h3 { margin:0; font:500 21px/1.35 var(--font-ui,system-ui,sans-serif); letter-spacing:-.025em; }
+.interactive .figure-heading { display:flex; justify-content:space-between; align-items:baseline; gap:18px; margin:0 0 .8rem; }
+.interactive .figure-heading h3 { margin:0; font:500 19px/1.35 var(--font-ui,system-ui,sans-serif); letter-spacing:-.025em; }
 .interactive .figure-kind { display:none; }
 .interactive .figure-caption, .interactive .figure-status { max-width:none; margin:1rem 0 .15rem; color:#767676; font:13px/1.65 var(--font-ui,system-ui,sans-serif); }
 .interactive .figure-status:empty { display:none; }
 .interactive .figure-caption a { text-underline-offset:3px; }
-.interactive button { min-height:42px; min-width:42px; padding:8px 12px; border:0; border-radius:0; background:transparent; color:inherit; font:13px/1.35 var(--font-ui,system-ui,sans-serif); cursor:pointer; }
+.interactive button { min-height:36px; min-width:36px; padding:6px 10px; border:0; border-radius:0; background:transparent; color:inherit; font:13px/1.35 var(--font-ui,system-ui,sans-serif); cursor:pointer; }
 .interactive button:disabled { opacity:.4; cursor:wait; }
 .interactive :focus-visible { outline:2px solid #3775BA; outline-offset:3px; }
-.interactive .widget-tabs { display:flex; flex-wrap:wrap; align-items:center; gap:6px 17px; margin:0 0 1.1rem; }
-.interactive .widget-tabs button { position:relative; padding:8px 0; min-width:0; min-height:42px; color:#767676; border-bottom:2px solid transparent; }
+.interactive .widget-tabs { display:flex; flex-wrap:wrap; align-items:center; gap:6px 17px; margin:0 0 .75rem; }
+.interactive .widget-tabs button { position:relative; padding:6px 0; min-width:0; min-height:36px; color:#767676; border-bottom:2px solid transparent; }
 .interactive .widget-tabs button[aria-pressed="true"] { color:#272727; border-bottom-color:#777; background:transparent; }
 .interactive .primary-play { padding:9px 18px; border-radius:999px; background:#eaeaea; color:#303030; min-width:78px; }
 .interactive .restart-play { padding:9px 10px; color:#767676; font-size:12px; }
-.interactive .figure-playback { display:flex; flex-wrap:wrap; gap:8px 13px; align-items:center; justify-content:flex-end; margin:1rem 0 .15rem; }
+.interactive .figure-playback { display:flex; flex-wrap:wrap; gap:8px 13px; align-items:center; justify-content:flex-end; margin:.6rem 0 .1rem; }
 .interactive .playback-time { order:-1;margin-right:auto;color:#767676;font:12px var(--font-mono,monospace); }
 .interactive .playback-scrub { display:grid;grid-template-columns:1fr auto;gap:0 14px;align-items:center;flex:1 1 150px;max-width:285px;margin-right:auto;color:#737373;font:12px/1.4 var(--font-ui,system-ui,sans-serif); }
 .interactive .playback-scrub output { color:#555;font:12px var(--font-mono,monospace); }
@@ -49,14 +49,14 @@
 .interactive svg .hover-layer { pointer-events:none; }
 .interactive .plot-tooltip { position:absolute; z-index:8; max-width:250px; padding:10px 12px; border:1px solid #dedede; border-radius:7px; box-shadow:0 3px 15px #00000008; background:#fff; color:#303030; font:12px/1.65 var(--font-ui,system-ui,sans-serif); font-variant-numeric:tabular-nums; pointer-events:none; }
 .interactive .plot-tooltip strong { font-weight:500; }
-.interactive .figure-legend { display:flex; flex-wrap:wrap; gap:7px 21px; margin:.75rem 0 1rem; color:#767676; font-size:12px; }
+.interactive .figure-legend { display:flex; flex-wrap:wrap; gap:7px 21px; margin:.5rem 0 .6rem; color:#767676; font-size:12px; }
 .interactive .figure-legend span { display:inline-flex; align-items:center; gap:7px; }
 .interactive .legend-line { display:inline-block; width:23px; border-top:2px solid currentColor; }
 .interactive .legend-square { display:inline-block; width:10px; height:10px; background:currentColor; }
-.interactive .figure-readout { display:flex; flex-wrap:wrap; gap:9px 23px; padding:.75rem 0; margin:.45rem 0; font-size:12px; }
+.interactive .figure-readout { display:flex; flex-wrap:wrap; gap:9px 23px; padding:.45rem 0; margin:.3rem 0; font-size:12px; }
 .interactive .figure-readout span { color:#767676; }
 .interactive .figure-readout strong { color:#303030; font:12px var(--font-mono,monospace); margin-left:.45em; }
-.interactive .figure-detail { margin:.9rem 0; padding:.55rem 0 .55rem 15px; border-left:2px solid #B4C0E4; min-height:65px; }
+.interactive .figure-detail { margin:.5rem 0; padding:.45rem 0 .45rem 13px; border-left:2px solid #B4C0E4; min-height:55px; }
 .interactive .figure-detail h4 { margin:0 0 5px; font:500 13px var(--font-ui,system-ui,sans-serif); }
 .interactive .figure-detail p { margin:4px 0; font:12px/1.65 var(--font-ui,system-ui,sans-serif); }
 .interactive .figure-detail .formula { color:#0F4D92; font:12px var(--font-mono,monospace); overflow-wrap:anywhere; }
@@ -75,7 +75,7 @@
 .interactive .career-chart .figure-legend { margin:.3rem 0 0;gap:7px 14px;justify-content:flex-end; }
 .interactive .sr-widget { position:absolute; width:1px; height:1px; padding:0; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 @media (max-width:660px) {
-  .interactive .widget-surface { padding:22px 14px 16px;border-radius:16px; }
+  .interactive .widget-surface { padding:18px 14px 14px;border-radius:12px; }
   .interactive .figure-plots { grid-template-columns:1fr; gap:17px; }
   .interactive .figure-adjustments { grid-template-columns:1fr;gap:10px; }
   .interactive .career-panel { grid-template-columns:1fr;gap:15px; }
