@@ -28,7 +28,7 @@ export async function buildSite(options = {}) {
   const ui = {...defaultUI,...options.ui}, labels = {...defaultLabels,...options.labels};
   const copies = options.overviewLabels ?? overviewLabels;
   const outDir = options.outDir ?? path.join(root,'dist'), basePath = options.basePath ?? '/ai-indirect-effect';
-  const origin = options.origin ?? 'https://usernameNaN-debug.github.io', lang = options.lang ?? 'en', revision = options.revision ?? '20261015a';
+  const origin = options.origin ?? 'https://usernameNaN-debug.github.io', lang = options.lang ?? 'en', revision = options.revision ?? '20261015b';
   const pages = {...content,...intros,story:content.home,home:{title:ui.siteTitle,deck:'',sections:[]},economy:{title:ui.explore,deck:'',sections:[]}};
   const mathErrors = [];
   const attrs = key => {const number=figureInfo[key]?.[0];if(!number)throw new Error(`Missing figure ${key}`);return `id="figure-${number}" data-figure-number="${number}" style="--figure-label:'${ui.fig} ${number}. ';"`;};
