@@ -1,0 +1,337 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tax Preparation Labor</title>
+<style>/* Editorial reading style (white page, serif reading text, sans UI).
+   Chart colors: blue/rose validated as a categorical pair on #f8f8f8 (dataviz validator, all pairs). */
+:root {
+  --paper: #ffffff;
+  --ink: #272727;
+  --ink-2: #4f4f4f;
+  --muted: #6f6f6f;
+  --line: #e5e5e5;
+  --panel: #f8f8f8;
+  --button: #ededed;
+  --grid: #e7e7e7;
+  --axis: #c9c9c9;
+  --blue: #3775BA;
+  --blue-deep: #0F4D92;
+  --rose: #B64342;
+  --blue-fill: #B4C0E4;
+  --rose-fill: #F0C0CC;
+  --deemph: #cfcfcf;
+  --body-font: 'Linux Libertine', 'Linux Libertine O', 'Libertinus Serif', Georgia, serif;
+  --ui-font: 'GT America', 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 400 19px/1.6 var(--body-font); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration-thickness: 1.5px; text-decoration-color: #bdbdbd; text-underline-offset: 4px; }
+:focus-visible { outline: 2px solid #555; outline-offset: 3px; }
+
+.page { max-width: 690px; margin: 0 auto; padding: 64px 0 72px; }
+.page.wide { max-width: 780px; }
+@media (max-width: 760px) { .page, .page.wide { padding: 40px 20px 56px; } }
+
+.crumb { font: 500 13px/1.4 var(--ui-font); color: var(--muted); margin: 0 0 22px; }
+.crumb a { text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+h1 { font: 400 36px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
+@media (max-width: 700px) { h1 { font-size: 30px; } body { font-size: 18px; } }
+.lede p { margin: 0 0 18px; }
+.figno { font: 500 12px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+
+.lab { background: var(--panel); border-radius: 14px; padding: 20px 20px 14px; margin: 28px 0 0; font-family: var(--ui-font); }
+@media (max-width: 700px) { .lab { border-radius: 12px; padding: 16px 12px 12px; } }
+.lab-title { font: 500 15px/1.4 var(--ui-font); color: var(--ink); margin: 0 0 4px; }
+.lab-sub { font: 400 13px/1.5 var(--ui-font); color: var(--muted); margin: 0 0 14px; }
+.caption { margin: 12px 0 0; color: #767676; font: 400 13px/1.65 var(--ui-font); }
+.caption a { color: #5f5f5f; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: flex-end; margin: 0 0 14px; }
+.ctl { display: flex; flex-direction: column; gap: 2px; }
+.ctl-label { font: 500 11px/1.3 var(--ui-font); letter-spacing: .05em; text-transform: uppercase; color: #8a8a8a; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 5px 0; min-height: 32px; color: #767676; font: 400 13px/1.35 var(--ui-font); cursor: pointer; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed='true'] { color: var(--ink); border-bottom-color: #777; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font: 400 12.5px/1.4 var(--ui-font); color: var(--ink-2); }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.text-btn { font: 400 12.5px/1.4 var(--ui-font); color: #6a6a6a; background: none; border: 0; padding: 4px 0; cursor: pointer; }
+.text-btn:hover, .text-btn:focus-visible { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+svg { display: block; overflow: visible; max-width: 100%; font-family: var(--ui-font); }
+svg text { fill: var(--ink-2); font-size: 12px; }
+.axis-label { fill: #8a8a8a; font-size: 11.5px; }
+.tick text { fill: #8a8a8a; font-size: 11px; font-variant-numeric: tabular-nums; }
+.gridline { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.baseline { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+
+#tip { position: fixed; pointer-events: none; z-index: 10; opacity: 0; transition: opacity .12s; background: #fff; color: var(--ink);
+  border-radius: 10px; padding: 9px 12px; min-width: 150px; max-width: 280px; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.08); font: 400 13px/1.45 var(--ui-font); }
+#tip .v { font-size: 17px; font-weight: 600; line-height: 1.2; }
+#tip .l { color: var(--ink-2); }
+#tip .m { color: #8a8a8a; font-size: 12px; margin-top: 3px; }
+#tip .row { display: flex; align-items: flex-start; gap: 8px; }
+#tip .lk { width: 12px; height: 2px; border-radius: 1px; flex: none; margin-top: 10px; }
+
+table.data { width: 100%; border-collapse: collapse; font: 400 12.5px/1.4 var(--ui-font); margin-top: 12px; }
+table.data th, table.data td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data th { color: #8a8a8a; font-weight: 500; }
+.hidden { display: none; }
+
+.after { margin-top: 30px; }
+.after p { margin: 0 0 18px; }
+.foot { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font: 400 12.5px/1.6 var(--ui-font); color: #7a7a7a; }
+.foot p { margin: 0 0 6px; }
+.pagenav { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 28px; font: 400 15px/1.5 var(--ui-font); color: #696969; }
+.pagenav > :first-child { justify-self: start; } .pagenav > :nth-child(2) { justify-self: center; } .pagenav > :last-child { justify-self: end; }
+.pagenav a { text-decoration: none; }
+.pagenav a:hover, .pagenav a:focus-visible { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+.enter { animation: enter 480ms cubic-bezier(.16,1,.3,1) both; }
+@keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .enter { animation: none; } }
+svg [tabindex]:focus { outline: none; }
+svg [tabindex]:focus-visible { outline: 2px solid #555; outline-offset: 2px; }
+/* Embed mode: the essay page shows only the figure panel, sized by its content. */
+html.embed body { background: transparent; }
+html.embed .page { padding: 0; max-width: none; animation: none; }
+html.embed .page > :not(.lab) { display: none; }
+html.embed .lab { margin: 0; }
+.source { margin: 8px 0 0; color: #8a8a8a; font: 400 12.5px/1.6 var(--ui-font); }
+.source a { color: #6f6f6f; }
+
+.endlab { font-size: 11.5px; fill: var(--ink-2); }
+.endval { font-size: 11.5px; fill: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.mark { stroke: #9a9a9a; stroke-width: 1; }
+.marklab { font-size: 10.5px; fill: #8a8a8a; }
+</style>
+</head>
+<body>
+<main class="page wide enter">
+  <p class="figno">Figure 11</p>
+  <h1>The tax-preparation workforce shows slow pressure, not a new shock</h1>
+  <div class="lede">
+    <p>If consumers stopped buying help with their returns, the first labor-market signal would show up among tax preparers: a seasonal, mostly non-credentialed workforce whose hours rise and fall with the filing calendar. Three public series track it from different angles.</p>
+  </div>
+  <section class="lab" aria-labelledby="td">
+    <p class="lab-title" id="td">Employment and hiring demand in tax preparation and accounting</p>
+    <div class="controls"><div class="ctl"><span class="ctl-label">Series</span><div id="c-view"></div></div></div>
+    <div id="chart"></div>
+    <div class="toolbar">
+      <div class="legend" id="legend"></div>
+      <button class="text-btn" id="tbtn">Show data table</button>
+    </div>
+    <div id="tpanel" class="hidden"></div>
+  </section>
+  <p class="caption" id="cap"></p>
+  <p class="source">Sources: BLS, <a href="https://www.bls.gov/oes/tables.htm">Occupational Employment and Wage Statistics</a>, May 2019–May 2025; BLS, <a href="https://data.bls.gov/timeseries/CEU6054121301">Current Employment Statistics, tax preparation services (NAICS 541213)</a>; Indeed Hiring Lab via <a href="https://fred.stlouisfed.org/series/IHLIDXUSTPACCO">FRED</a> (accounting and total job postings indexes); observed AI exposure from <a href="https://www.anthropic.com/research/labor-market-impacts">Massenkoff and McCrory (2026)</a>.</p>
+  <div class="after">
+    <p>Occupational employment of tax preparers was 76,000 in May 2025, about 6% below 2023, while accountants and auditors held steady at 1.45 million. Employment at tax-preparation firms still peaks every February or March, and the 2026 peak of about 155,000 was the highest since 2020. Indeed postings for accounting jobs ran well above the all-occupation average through 2022. Relative to that average they have fallen steadily since, from 1.28 in January 2023 to 0.99 in September 2026, a decline that began well before AI tax help was common and that the series cannot attribute to any single cause.</p>
+    <p>Anthropic's measure of observed exposure, which combines what language models can do with what Claude is actually used for, puts tax preparers at 0.13, far below accountants and auditors at 0.35. On current evidence the tax-preparation labor market looks like an industry under slow structural pressure, not one hit by a new shock.</p>
+  </div>
+  <nav class="pagenav"><a href="fig5_reported_effects.html">prev</a><a href="index.html#figD_labor">back to the essay</a><span></span></nav>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>const EXT = {"adoption":[{"source":"Qlik / Censuswide","date":"Feb 2026","value":0.11,"kind":"Used or plan to use","pop":"US adults required to file, n=2,001","what":"AI for help with taxes","url":"https://www.qlik.com/us/news/company/press-room/press-releases/qlik-survey-mid-career-americans-emerge-as-ai-power-users-during-the-2026-tax-season"},{"source":"Adobe Acrobat survey","date":"Feb 2025","value":0.11,"kind":"Plan to use","pop":"US full-time employees, n=1,010","what":"AI for 2024 returns","url":"https://www.pymnts.com/taxes/2026/as-tax-deadline-approaches-consumers-are-going-to-ai-before-filing/"},{"source":"Adobe Acrobat survey","date":"Feb 2026","value":0.26,"kind":"Plan to use","pop":"US full-time employees, n=1,010","what":"AI for 2025 returns","url":"https://www.pymnts.com/taxes/2026/as-tax-deadline-approaches-consumers-are-going-to-ai-before-filing/"},{"source":"Gallup / Edward Jones","date":"Mar\u2013Apr 2026","value":0.18,"kind":"Used","pop":"US adults 21+, n=5,075","what":"AI for financial guidance, past 12 months","url":"https://abcnews.com/Technology/wireStory/us-adults-ai-financial-guidance-trust-gallup-poll-135452999"},{"source":"Our survey \u00d7 Pew","date":"Aug 2026","value":0.16219,"kind":"Used","pop":"US adults (33.1% of chatbot users \u00d7 49% who use chatbots)","what":"Main chatbot for finances, budgeting or taxes","url":"https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026-chatbots-smart-devices-and-views-on-impact/"},{"source":"Sensor Tower","date":"Apr 2024","value":0.13,"kind":"App overlap","pop":"US TurboTax app users","what":"Also used ChatGPT that month","url":"https://sensortower.com/blog/ai-tax-filing-chatgpt"},{"source":"Sensor Tower","date":"Apr 2025","value":0.36,"kind":"App overlap","pop":"US TurboTax app users","what":"Also used ChatGPT that month","url":"https://sensortower.com/blog/ai-tax-filing-chatgpt"}],"intensity":[{"source":"OpenAI","value":4.0,"what":"US tax-related ChatGPT queries, Q1 2026 vs Q1 2025","url":"https://x.com/OpenAINewsroom/status/2044161573405765767"},{"source":"Anthropic Economic Index","value":8.0,"what":"Tax-related Claude conversations, April 14 2026 vs an average day in May","url":"https://www.anthropic.com/research/economic-index-june-2026-report"},{"source":"Anthropic Economic Index","value":2.4285714285714284,"what":"Taxation share of US Claude conversations, April vs May 2026 (0.34% vs 0.14%)","url":"https://huggingface.co/datasets/Anthropic/EconomicIndex/tree/main/release_2026_06_26"},{"source":"Sensor Tower","value":2.769230769230769,"what":"US TurboTax users who also used ChatGPT, April 2025 vs April 2024 (36% vs 13%)","url":"https://sensortower.com/blog/ai-tax-filing-chatgpt"},{"source":"Google ATLAS","value":20.0,"what":"Government services and civic obligations: share of Gemini conversations relative to share of time use","url":"https://arxiv.org/abs/2608.00038"}],"intuit":{"units_m":{"2022":42.7,"2023":40.5,"2024":39.9,"2025":39.2,"2026":38.32},"revenue_m":{"2022":3915.0,"2023":4135.0,"2024":4445.0,"2025":4870.0,"2026":5228.4},"live_share":{"2024":0.3,"2025":0.41,"2026":0.53},"url_units":"https://www.sec.gov/Archives/edgar/data/0000896878/000089687826000029/fy26q4earningspressrelease.htm","url_revenue":"https://www.sec.gov/Archives/edgar/data/896878/000089687826000037/intu-20260731.htm"},"hrb":{"years":{"2022":{"assisted_k":11954.0,"assisted_rev_k":2094612.0,"diy_rev_k":319086.0,"derived":false},"2023":{"assisted_k":11571,"assisted_rev_k":2167138.0,"diy_rev_k":314758.0,"derived":true},"2024":{"assisted_k":11400.0,"assisted_rev_k":2274835.0,"diy_rev_k":349812.0,"derived":false},"2025":{"assisted_k":11300.0,"assisted_rev_k":2413229.0,"diy_rev_k":383738.0,"derived":false},"2026":{"assisted_k":11300.0,"assisted_rev_k":2560895.0,"diy_rev_k":384618.0,"derived":false}},"url":"https://www.sec.gov/Archives/edgar/data/0000012659/000001265926000026/hrb-20260630.htm"},"oews":{"series":{"Tax Preparers":{"2019":{"emp":66670,"wage":49550},"2020":{"emp":62600,"wage":52710},"2021":{"emp":83190,"wage":51080},"2022":{"emp":82370,"wage":55840},"2023":{"emp":81650,"wage":58160},"2024":{"emp":73570,"wage":58860},"2025":{"emp":76480,"wage":60930}},"Accountants and Auditors":{"2019":{"emp":1280700,"wage":79520},"2020":{"emp":1274620,"wage":81660},"2021":{"emp":1318550,"wage":83980},"2022":{"emp":1402420,"wage":86740},"2023":{"emp":1435770,"wage":90780},"2024":{"emp":1448290,"wage":93520},"2025":{"emp":1449500,"wage":94750}}},"url":"https://www.bls.gov/oes/tables.htm"},"ces_taxprep":{"series":[{"y":2019,"m":1,"v":153.9},{"y":2019,"m":2,"v":169.8},{"y":2019,"m":3,"v":159.6},{"y":2019,"m":4,"v":154.6},{"y":2019,"m":5,"v":59.9},{"y":2019,"m":6,"v":54.6},{"y":2019,"m":7,"v":53.0},{"y":2019,"m":8,"v":53.5},{"y":2019,"m":9,"v":54.8},{"y":2019,"m":10,"v":57.3},{"y":2019,"m":11,"v":78.8},{"y":2019,"m":12,"v":104.2},{"y":2020,"m":1,"v":145.8},{"y":2020,"m":2,"v":159.2},{"y":2020,"m":3,"v":153.0},{"y":2020,"m":4,"v":149.2},{"y":2020,"m":5,"v":62.0},{"y":2020,"m":6,"v":56.8},{"y":2020,"m":7,"v":54.0},{"y":2020,"m":8,"v":52.4},{"y":2020,"m":9,"v":52.7},{"y":2020,"m":10,"v":54.8},{"y":2020,"m":11,"v":73.4},{"y":2020,"m":12,"v":92.1},{"y":2021,"m":1,"v":140.4},{"y":2021,"m":2,"v":151.9},{"y":2021,"m":3,"v":143.8},{"y":2021,"m":4,"v":141.8},{"y":2021,"m":5,"v":59.9},{"y":2021,"m":6,"v":53.5},{"y":2021,"m":7,"v":58.5},{"y":2021,"m":8,"v":57.8},{"y":2021,"m":9,"v":54.8},{"y":2021,"m":10,"v":58.5},{"y":2021,"m":11,"v":68.4},{"y":2021,"m":12,"v":93.9},{"y":2022,"m":1,"v":124.4},{"y":2022,"m":2,"v":136.5},{"y":2022,"m":3,"v":141.1},{"y":2022,"m":4,"v":137.3},{"y":2022,"m":5,"v":72.4},{"y":2022,"m":6,"v":73.8},{"y":2022,"m":7,"v":65.5},{"y":2022,"m":8,"v":64.5},{"y":2022,"m":9,"v":65.0},{"y":2022,"m":10,"v":71.7},{"y":2022,"m":11,"v":83.3},{"y":2022,"m":12,"v":99.0},{"y":2023,"m":1,"v":130.2},{"y":2023,"m":2,"v":146.0},{"y":2023,"m":3,"v":145.4},{"y":2023,"m":4,"v":144.5},{"y":2023,"m":5,"v":80.1},{"y":2023,"m":6,"v":69.0},{"y":2023,"m":7,"v":66.1},{"y":2023,"m":8,"v":62.8},{"y":2023,"m":9,"v":64.9},{"y":2023,"m":10,"v":67.9},{"y":2023,"m":11,"v":82.6},{"y":2023,"m":12,"v":104.8},{"y":2024,"m":1,"v":137.2},{"y":2024,"m":2,"v":149.2},{"y":2024,"m":3,"v":145.6},{"y":2024,"m":4,"v":142.1},{"y":2024,"m":5,"v":88.7},{"y":2024,"m":6,"v":70.7},{"y":2024,"m":7,"v":67.8},{"y":2024,"m":8,"v":66.5},{"y":2024,"m":9,"v":68.0},{"y":2024,"m":10,"v":72.0},{"y":2024,"m":11,"v":83.2},{"y":2024,"m":12,"v":100.9},{"y":2025,"m":1,"v":132.0},{"y":2025,"m":2,"v":145.6},{"y":2025,"m":3,"v":145.7},{"y":2025,"m":4,"v":143.2},{"y":2025,"m":5,"v":88.2},{"y":2025,"m":6,"v":74.3},{"y":2025,"m":7,"v":73.0},{"y":2025,"m":8,"v":70.1},{"y":2025,"m":9,"v":71.3},{"y":2025,"m":10,"v":76.1},{"y":2025,"m":11,"v":93.3},{"y":2025,"m":12,"v":111.6},{"y":2026,"m":1,"v":140.4},{"y":2026,"m":2,"v":154.6},{"y":2026,"m":3,"v":152.7},{"y":2026,"m":4,"v":148.3},{"y":2026,"m":5,"v":81.3},{"y":2026,"m":6,"v":75.7},{"y":2026,"m":7,"v":71.7},{"y":2026,"m":8,"v":70.5}],"url":"https://data.bls.gov/timeseries/CEU6054121301"},"indeed":{"series":[{"month":"2020-02","acct":101.08,"total":100.05},{"month":"2020-03","acct":94.59,"total":94.52},{"month":"2020-04","acct":61.02,"total":68.2},{"month":"2020-05","acct":60.14,"total":62.9},{"month":"2020-06","acct":64.9,"total":70.05},{"month":"2020-07","acct":69.58,"total":78.26},{"month":"2020-08","acct":73.17,"total":82.96},{"month":"2020-09","acct":78.98,"total":86.31},{"month":"2020-10","acct":89.3,"total":90.46},{"month":"2020-11","acct":105.09,"total":93.54},{"month":"2020-12","acct":116.12,"total":94.84},{"month":"2021-01","acct":101.69,"total":97.68},{"month":"2021-02","acct":104.31,"total":103.22},{"month":"2021-03","acct":113.77,"total":110.59},{"month":"2021-04","acct":122.31,"total":121.96},{"month":"2021-05","acct":129.49,"total":128.69},{"month":"2021-06","acct":137.4,"total":133.37},{"month":"2021-07","acct":144.2,"total":137.36},{"month":"2021-08","acct":156.69,"total":139.13},{"month":"2021-09","acct":167.01,"total":143.12},{"month":"2021-10","acct":179.23,"total":146.98},{"month":"2021-11","acct":192.65,"total":152.91},{"month":"2021-12","acct":196.96,"total":157.17},{"month":"2022-01","acct":189.73,"total":156.5},{"month":"2022-02","acct":201.15,"total":159.19},{"month":"2022-03","acct":209.32,"total":160.38},{"month":"2022-04","acct":202.98,"total":159.82},{"month":"2022-05","acct":201.75,"total":160.42},{"month":"2022-06","acct":201.05,"total":158.61},{"month":"2022-07","acct":201.59,"total":155.67},{"month":"2022-08","acct":207.69,"total":153.45},{"month":"2022-09","acct":199.9,"total":150.6},{"month":"2022-10","acct":196.31,"total":148.52},{"month":"2022-11","acct":192.95,"total":147.73},{"month":"2022-12","acct":188.58,"total":144.42},{"month":"2023-01","acct":180.46,"total":140.58},{"month":"2023-02","acct":174.23,"total":136.57},{"month":"2023-03","acct":159.8,"total":134.95},{"month":"2023-04","acct":152.16,"total":136.03},{"month":"2023-05","acct":150.24,"total":134.69},{"month":"2023-06","acct":146.06,"total":131.81},{"month":"2023-07","acct":151.18,"total":129.43},{"month":"2023-08","acct":154.6,"total":128.5},{"month":"2023-09","acct":149.41,"total":127.04},{"month":"2023-10","acct":147.12,"total":124.94},{"month":"2023-11","acct":146.18,"total":123.26},{"month":"2023-12","acct":143.36,"total":121.28},{"month":"2024-01","acct":141.01,"total":119.38},{"month":"2024-02","acct":137.99,"total":118.21},{"month":"2024-03","acct":130.65,"total":118.58},{"month":"2024-04","acct":118.95,"total":118.51},{"month":"2024-05","acct":118.99,"total":115.85},{"month":"2024-06","acct":118.41,"total":114.22},{"month":"2024-07","acct":119.63,"total":113.66},{"month":"2024-08","acct":125.22,"total":113.36},{"month":"2024-09","acct":132.45,"total":112.42},{"month":"2024-10","acct":128.61,"total":110.05},{"month":"2024-11","acct":128.77,"total":109.49},{"month":"2024-12","acct":128.62,"total":110.27},{"month":"2025-01","acct":126.12,"total":110.15},{"month":"2025-02","acct":121.73,"total":109.3},{"month":"2025-03","acct":121.28,"total":107.76},{"month":"2025-04","acct":96.97,"total":106.76},{"month":"2025-05","acct":98.75,"total":105.89},{"month":"2025-06","acct":101.56,"total":105.3},{"month":"2025-07","acct":106.05,"total":104.31},{"month":"2025-08","acct":112.92,"total":104.77},{"month":"2025-09","acct":110.33,"total":102.8},{"month":"2025-10","acct":110.96,"total":100.95},{"month":"2025-11","acct":109.82,"total":101.34},{"month":"2025-12","acct":111.4,"total":102.9},{"month":"2026-01","acct":112.79,"total":103.27},{"month":"2026-02","acct":116.5,"total":104.57},{"month":"2026-03","acct":117.45,"total":103.86},{"month":"2026-04","acct":98.56,"total":102.68},{"month":"2026-05","acct":95.81,"total":101.94},{"month":"2026-06","acct":92.01,"total":100.77},{"month":"2026-07","acct":92.24,"total":101.59},{"month":"2026-08","acct":92.12,"total":101.88},{"month":"2026-09","acct":102.45,"total":103.24},{"month":"2026-10","acct":104.77,"total":103.98}],"url":"https://fred.stlouisfed.org/series/IHLIDXUSTPACCO"},"exposure":{"Tax Preparers":0.1283,"Accountants and Auditors":0.3478,"Bookkeeping, Accounting and Auditing Clerks":0.3104,"Personal Financial Advisors":0.3504,"Tax Examiners and Collectors":0.0275,"url":"https://huggingface.co/datasets/Anthropic/EconomicIndex/resolve/main/labor_market_impacts/job_exposure.csv"},"taxcalcbench":{"rows":[{"set":"TY2025","model":"Meta Muse Wonder w/ Web Search (49/50)","strict":0.7755,"lenient":0.8162999999999999},{"set":"TY2025","model":"GPT-6 Sol w/ Web Search","strict":0.72,"lenient":0.78},{"set":"TY2025","model":"GPT-6.1 Sol w/ Web Search","strict":0.7,"lenient":0.78},{"set":"TY2025","model":"Claude Opus 5.5 w/ Web Search","strict":0.7,"lenient":0.76},{"set":"TY2025","model":"GPT-5.6 Sol w/ Web Search","strict":0.68,"lenient":0.74},{"set":"TY2025","model":"GPT-6 Astra w/ Web Search","strict":0.68,"lenient":0.74},{"set":"TY2025","model":"GPT-5.5 w/ Web Search","strict":0.64,"lenient":0.72},{"set":"TY2025","model":"Gemini 3.8 Flash w/ Web Search (41/50)","strict":0.6098,"lenient":0.7073},{"set":"TY2025","model":"Claude Fable 5.1 w/ Web Search","strict":0.54,"lenient":0.64},{"set":"TY2025","model":"Claude Opus 5 w/ Web Search","strict":0.5,"lenient":0.62},{"set":"TY2025","model":"Claude Sonnet 5.5 w/ Web Search","strict":0.48,"lenient":0.6},{"set":"TY2025","model":"GPT-6 Astra","strict":0.44,"lenient":0.54},{"set":"TY2025","model":"Claude Fable 5 w/ Web Search","strict":0.44,"lenient":0.52},{"set":"TY2025","model":"Claude Opus 5.5","strict":0.42,"lenient":0.5},{"set":"TY2025","model":"Claude Fable 5.1","strict":0.42,"lenient":0.5},{"set":"TY2025","model":"GPT-6.1 Sol","strict":0.38,"lenient":0.52},{"set":"TY2025","model":"Kimi K3 w/ Web Search","strict":0.38,"lenient":0.5},{"set":"TY2025","model":"Claude Opus 4.8 w/ Web Search","strict":0.36,"lenient":0.42},{"set":"TY2025","model":"GPT-6 Luna w/ Web Search","strict":0.36,"lenient":0.4},{"set":"TY2025","model":"Meta Muse Spark 1.3 w/ Web Search","strict":0.32,"lenient":0.32},{"set":"TY2025","model":"GPT-5.6 Sol","strict":0.3,"lenient":0.42},{"set":"TY2025","model":"Claude Fable 5","strict":0.3,"lenient":0.36},{"set":"TY2025","model":"GPT-6 Sol","strict":0.28,"lenient":0.36},{"set":"TY2025","model":"Gemini 3.7 Flash w/ Web Search","strict":0.26,"lenient":0.34},{"set":"TY2025","model":"GPT-5.5","strict":0.24,"lenient":0.32},{"set":"TY2025","model":"Claude Haiku 5.5 w/ Web Search","strict":0.22,"lenient":0.32},{"set":"TY2025","model":"Meta Muse Wonder","strict":0.22,"lenient":0.28},{"set":"TY2025","model":"Gemini 3.6 Flash w/ Web Search","strict":0.2,"lenient":0.34},{"set":"TY2025","model":"Claude Opus 5","strict":0.2,"lenient":0.32},{"set":"TY2025","model":"Claude Opus 4.8","strict":0.2,"lenient":0.22},{"set":"TY2025","model":"Meta Muse Spark 1.2 w/ Web Search","strict":0.2,"lenient":0.22},{"set":"TY2025","model":"Claude Sonnet 5.5","strict":0.18,"lenient":0.3},{"set":"TY2025","model":"GPT-6 Luna","strict":0.14,"lenient":0.22},{"set":"TY2025","model":"Gemini 3.7 Flash","strict":0.14,"lenient":0.14},{"set":"TY2025","model":"Gemini 3.6 Flash","strict":0.08,"lenient":0.12},{"set":"TY2025","model":"Kimi K3","strict":0.06,"lenient":0.12},{"set":"TY2025","model":"Claude Sonnet 5","strict":0.06,"lenient":0.1},{"set":"TY2025","model":"Meta Muse Spark 1.3","strict":0.06,"lenient":0.08},{"set":"TY2025","model":"Meta Muse Spark 1.2","strict":0.06,"lenient":0.08},{"set":"TY2025","model":"Gemini 3.8 Flash","strict":0.06,"lenient":0.06},{"set":"TY2025","model":"Mistral Large 4 w/ Web Search","strict":0.04,"lenient":0.1},{"set":"TY2025","model":"DeepSeek V4.1 Flash","strict":0.04,"lenient":0.06},{"set":"TY2025","model":"Claude Haiku 5.5","strict":0.02,"lenient":0.08},{"set":"TY2025","model":"Gemini 3.5 Flash","strict":0.02,"lenient":0.04},{"set":"TY2025","model":"GLM 5.3","strict":0.0,"lenient":0.02},{"set":"TY2025","model":"Gemini 3.1 Pro Preview","strict":0.0,"lenient":0.02},{"set":"TY2025","model":"Mistral Large 4","strict":0.0,"lenient":0.0},{"set":"TY2024","model":"GPT-5.4 Pro","strict":0.6275,"lenient":0.7254999999999999},{"set":"TY2024","model":"GPT-5.4","strict":0.6275,"lenient":0.6667000000000001},{"set":"TY2024","model":"Claude Opus 4.6","strict":0.5294,"lenient":0.6470999999999999},{"set":"TY2024","model":"Gemini 3.1 Pro","strict":0.4902,"lenient":0.6862999999999999},{"set":"TY2024","model":"GPT-5 w/ Web Search","strict":0.4167,"lenient":0.5440999999999999},{"set":"TY2024","model":"GPT-5.2 Pro","strict":0.4118,"lenient":0.7059000000000001},{"set":"TY2024","model":"Claude Sonnet 4.6","strict":0.3725,"lenient":0.5686},{"set":"TY2024","model":"Gemini 3 Pro","strict":0.3627,"lenient":0.7353000000000001},{"set":"TY2024","model":"Claude Opus 4.5","strict":0.3627,"lenient":0.5832999999999999},{"set":"TY2024","model":"GPT-5.2","strict":0.3382,"lenient":0.6373},{"set":"TY2024","model":"Gemini 2.5 Pro","strict":0.3235,"lenient":0.5196000000000001},{"set":"TY2024","model":"GPT-5","strict":0.3186,"lenient":0.5440999999999999},{"set":"TY2024","model":"Claude Sonnet 4.5","strict":0.31370000000000003,"lenient":0.5146999999999999},{"set":"TY2024","model":"Claude Opus 4.1","strict":0.2843,"lenient":0.4755},{"set":"TY2024","model":"Claude Opus 4","strict":0.27449999999999997,"lenient":0.4265},{"set":"TY2024","model":"Gemini 2.5 Flash","strict":0.25980000000000003,"lenient":0.4118},{"set":"TY2024","model":"Claude Sonnet 4","strict":0.2304,"lenient":0.3824},{"set":"TY2024","model":"Claude Haiku 4.5 w/ Web Search","strict":0.1373,"lenient":0.3333},{"set":"TY2024","model":"Claude Haiku 4.5","strict":0.1324,"lenient":0.3922}],"url":"https://github.com/column-tax/tax-calc-bench","paper":"https://arxiv.org/abs/2507.16126"}};</script>
+<script>// Shared helpers: tooltip, theme toggle, table view, segmented controls.
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const pct = (p, d = 0) => p == null ? '—' : (100 * p).toFixed(d) + '%';
+
+const Tip = (() => {
+  const el = document.createElement('div');
+  el.id = 'tip';
+  el.setAttribute('role', 'status');
+  document.body.appendChild(el);
+  // rows: [{value, label, meta, color}] — built with textContent, never innerHTML
+  function show(evt, rows) {
+    el.replaceChildren();
+    rows.forEach((r, i) => {
+      const box = document.createElement('div');
+      if (r.color) { box.className = 'row'; const k = document.createElement('span'); k.className = 'lk'; k.style.background = r.color; box.appendChild(k); }
+      const inner = document.createElement('div');
+      if (r.value != null) { const v = document.createElement('div'); v.className = 'v'; v.textContent = r.value; inner.appendChild(v); }
+      if (r.label) { const l = document.createElement('div'); l.className = 'l'; l.textContent = r.label; inner.appendChild(l); }
+      if (r.meta) { const m = document.createElement('div'); m.className = 'm'; m.textContent = r.meta; inner.appendChild(m); }
+      box.appendChild(inner);
+      if (i) box.style.marginTop = '8px';
+      el.appendChild(box);
+    });
+    move(evt);
+    el.style.opacity = 1;
+  }
+  function move(evt) {
+    let x, y;
+    if (evt && evt.clientX != null && evt.type !== 'focus') { x = evt.clientX; y = evt.clientY; }
+    else if (evt && evt.target && evt.target.getBoundingClientRect) { const b = evt.target.getBoundingClientRect(); x = b.right; y = b.top; }
+    else return;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    let left = x + 14, top = y + 14;
+    if (left + w > innerWidth - 8) left = x - w - 14;
+    if (top + h > innerHeight - 8) top = y - h - 14;
+    el.style.left = Math.max(8, left) + 'px';
+    el.style.top = Math.max(8, top) + 'px';
+  }
+  function hide() { el.style.opacity = 0; }
+  return { show, move, hide };
+})();
+
+function bindTip(sel, rowsFn) {
+  sel.attr('tabindex', 0).classed('focusable', true)
+    .on('pointerenter pointermove', function (e, d) { Tip.show(e, rowsFn(d, this)); })
+    .on('focus', function (e, d) { Tip.show(e, rowsFn(d, this)); })
+    .on('pointerleave blur', () => Tip.hide());
+}
+
+// Underlined tabs: options [{key,label}]
+function segmented(container, options, initial, onPick) {
+  const seg = document.createElement('div');
+  seg.className = 'tabs';
+  seg.setAttribute('role', 'group');
+  const btns = options.map(o => {
+    const b = document.createElement('button');
+    b.textContent = o.label;
+    b.setAttribute('aria-pressed', o.key === initial);
+    b.onclick = () => { btns.forEach(x => x.setAttribute('aria-pressed', x === b)); onPick(o.key); };
+    seg.appendChild(b);
+    return b;
+  });
+  container.appendChild(seg);
+  return seg;
+}
+
+// Table view twin: columns [{label, get}], rows array
+function tableView(container, columns, rows) {
+  const t = document.createElement('table');
+  t.className = 'data';
+  const thead = t.createTHead().insertRow();
+  columns.forEach(c => { const th = document.createElement('th'); th.textContent = c.label; thead.appendChild(th); });
+  const tb = t.createTBody();
+  rows.forEach(r => { const tr = tb.insertRow(); columns.forEach(c => { tr.insertCell().textContent = c.get(r); }); });
+  container.replaceChildren(t);
+}
+
+function tableToggle(btn, panel, render) {
+  btn.onclick = () => {
+    const open = panel.classList.toggle('hidden') === false;
+    btn.textContent = open ? 'Hide table' : 'Show data table';
+    if (open) render();
+  };
+}
+
+function onResize(fn) { let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(fn, 120); }); }
+
+// Rounded data-end bar path (square at baseline). Horizontal bars grow from x0.
+function hbarPath(x0, x1, y, h, r = 4) {
+  const w = Math.max(0, x1 - x0); r = Math.min(r, w, h / 2);
+  return `M${x0},${y}H${x0 + w - r}Q${x0 + w},${y} ${x0 + w},${y + r}V${y + h - r}Q${x0 + w},${y + h} ${x0 + w - r},${y + h}H${x0}Z`;
+}
+function vbarPath(x, w, y0, y1, r = 4) {
+  const h = Math.max(0, y0 - y1); r = Math.min(r, h, w / 2);
+  return `M${x},${y0}V${y1 + r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 + r}V${y0}Z`;
+}
+
+// Embed mode (?embed): render only the figure panel and report height to the parent essay page.
+(function () {
+  if (!/[?&]embed\b/.test(location.search)) return;
+  document.documentElement.classList.add('embed');
+  const send = () => parent.postMessage({ type: 'fig-height', id: location.pathname.split('/').pop(), h: document.documentElement.scrollHeight }, '*');
+  new ResizeObserver(send).observe(document.documentElement);
+  addEventListener('load', send);
+})();
+</script>
+<script>
+const VIEWS = [{ key: 'oews', label: 'Occupational employment' }, { key: 'ces', label: 'Seasonal employment at tax firms' }, { key: 'indeed', label: 'Job postings' }];
+let view = 'oews';
+segmented(document.getElementById('c-view'), VIEWS, view, k => { view = k; render(); });
+const svg = d3.select('#chart').append('svg');
+function legend(items) {
+  const lg = document.getElementById('legend'); lg.replaceChildren();
+  items.forEach(([t, c]) => { const k = document.createElement('span'); k.className = 'key'; const s = document.createElement('span'); s.className = 'sw';
+    s.style.cssText = `background:${c};height:2px;width:14px;border-radius:1px`; k.append(s, document.createTextNode(t)); lg.appendChild(k); });
+}
+function frame(H) { const W = document.getElementById('chart').clientWidth; svg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`); return W; }
+function gptMark(g, x, y0, y1) {
+  const xv = x(new Date('2022-11-30'));
+  g.append('line').attr('class', 'mark').attr('x1', xv).attr('x2', xv).attr('y1', y0).attr('y2', y1);
+  g.append('text').attr('class', 'marklab').attr('x', xv + 4).attr('y', y0 + 10).text('ChatGPT');
+}
+
+function render() {
+  svg.selectAll('*').remove();
+  const cap = document.getElementById('cap');
+  const H = 300, m = { t: 18, r: 92, b: 26, l: 44 };
+  const W = frame(H);
+  if (view === 'oews') {
+    legend([['Tax preparers', 'var(--rose)'], ['Accountants and auditors', 'var(--blue)']]);
+    cap.textContent = 'National employment by occupation, May of each year, indexed to May 2019 = 100. Tax preparers are counted as an occupation regardless of employer; estimates have relative standard errors of about 3%. The 2021 jump coincides with a pandemic-era survey disruption.';
+    const S = EXT.oews.series, years = d3.range(2019, 2026);
+    const x = d3.scaleLinear().domain([2019, 2025]).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([80, 140]).range([H - m.b, m.t]);
+    [80, 100, 120, 140].forEach(v => { svg.append('line').attr('class', v === 100 ? 'baseline' : 'gridline').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(v)).attr('y2', y(v));
+      svg.append('text').attr('class', 'axis-label').attr('x', m.l - 6).attr('y', y(v) + 4).attr('text-anchor', 'end').text(v); });
+    years.forEach(yr => svg.append('text').attr('class', 'axis-label').attr('x', x(yr)).attr('y', H - 6).attr('text-anchor', 'middle').text(yr));
+    const xv = x(2022 + 11 / 12); svg.append('line').attr('class', 'mark').attr('x1', xv).attr('x2', xv).attr('y1', m.t).attr('y2', H - m.b);
+    svg.append('text').attr('class', 'marklab').attr('x', xv + 4).attr('y', m.t + 10).text('ChatGPT');
+    [['Tax Preparers', 'var(--rose)', 'Tax preparers'], ['Accountants and Auditors', 'var(--blue)', 'Accountants']].forEach(([k, c, lab]) => {
+      const pts = years.map(yr => ({ yr, v: 100 * S[k][yr].emp / S[k][2019].emp, emp: S[k][yr].emp }));
+      svg.append('path').attr('d', d3.line().x(d => x(d.yr)).y(d => y(d.v))(pts)).attr('fill', 'none').attr('stroke', c).attr('stroke-width', 2);
+      const hits = svg.selectAll(null).data(pts).join('circle').attr('cx', d => x(d.yr)).attr('cy', d => y(d.v)).attr('r', 10).attr('fill', 'transparent');
+      svg.selectAll(null).data(pts).join('circle').attr('cx', d => x(d.yr)).attr('cy', d => y(d.v)).attr('r', 3.5).attr('fill', c).attr('pointer-events', 'none');
+      bindTip(hits, d => [{ value: d3.format(',')(d.emp), label: `${lab}, May ${d.yr}`, meta: `Index ${d.v.toFixed(0)} (May 2019 = 100)` }]);
+      const l = pts[pts.length - 1];
+      svg.append('text').attr('class', 'endval').attr('x', x(l.yr) + 8).attr('y', y(l.v) - 1).text(d3.format(',')(l.emp));
+      svg.append('text').attr('class', 'endlab').attr('x', x(l.yr) + 8).attr('y', y(l.v) + 13).text(lab);
+    });
+  } else if (view === 'ces') {
+    legend([['Employees at tax-preparation firms, thousands', 'var(--rose)']]);
+    cap.textContent = 'All employees in tax preparation services (NAICS 541213), monthly, not seasonally adjusted. The annual peak falls in February or March.';
+    const S = EXT.ces_taxprep.series.map(d => ({ ...d, date: new Date(d.y, d.m - 1, 15) }));
+    const x = d3.scaleTime().domain(d3.extent(S, d => d.date)).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0, d3.max(S, d => d.v) * 1.1]).nice().range([H - m.b, m.t]);
+    y.ticks(5).forEach(v => { svg.append('line').attr('class', v ? 'gridline' : 'baseline').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(v)).attr('y2', y(v));
+      svg.append('text').attr('class', 'axis-label').attr('x', m.l - 6).attr('y', y(v) + 4).attr('text-anchor', 'end').text(v + 'K'); });
+    d3.range(2019, 2027).forEach(yr => svg.append('text').attr('class', 'axis-label').attr('x', x(new Date(yr, 6, 1))).attr('y', H - 6).attr('text-anchor', 'middle').text(yr));
+    gptMark(svg, x, m.t, H - m.b);
+    svg.append('path').attr('d', d3.line().x(d => x(d.date)).y(d => y(d.v)).curve(d3.curveMonotoneX)(S)).attr('fill', 'none').attr('stroke', 'var(--rose)').attr('stroke-width', 2);
+    const peaks = d3.rollups(S, v => d3.greatest(v, d => d.v), d => d.y).map(d => d[1]);
+    svg.selectAll(null).data(peaks).join('circle').attr('cx', d => x(d.date)).attr('cy', d => y(d.v)).attr('r', 4).attr('fill', 'var(--rose)').attr('stroke', 'var(--panel)').attr('stroke-width', 2);
+    const hits = svg.selectAll(null).data(S).join('rect').attr('x', d => x(d.date) - 3).attr('width', 6).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill', 'transparent');
+    bindTip(hits, d => [{ value: d.v.toFixed(1) + 'K', label: d.date.toLocaleString('en-US', { month: 'long', year: 'numeric' }), meta: 'Employees, tax preparation services' }]);
+    const lp = peaks[peaks.length - 1];
+    svg.append('text').attr('class', 'endval').attr('x', x(lp.date) + 8).attr('y', y(lp.v) + 4).text(`${lp.y} peak ${lp.v.toFixed(0)}K`);
+  } else {
+    legend([['Accounting postings relative to all postings', 'var(--blue)']]);
+    cap.textContent = 'Monthly average of the Indeed accounting job postings index divided by the all-occupation index (both February 2020 = 100, seasonally adjusted). A value of 1 means accounting postings have moved in line with all postings since early 2020.';
+    const S = EXT.indeed.series.map(d => ({ date: new Date(d.month + '-15'), v: d.acct / d.total, acct: d.acct, total: d.total, month: d.month }));
+    const x = d3.scaleTime().domain(d3.extent(S, d => d.date)).range([m.l, W - m.r]);
+    const y = d3.scaleLinear().domain([0.8, 1.5]).range([H - m.b, m.t]);
+    [0.8, 1.0, 1.2, 1.4].forEach(v => { svg.append('line').attr('class', v === 1 ? 'baseline' : 'gridline').attr('x1', m.l).attr('x2', W - m.r).attr('y1', y(v)).attr('y2', y(v));
+      svg.append('text').attr('class', 'axis-label').attr('x', m.l - 6).attr('y', y(v) + 4).attr('text-anchor', 'end').text(v.toFixed(1)); });
+    d3.range(2020, 2027).forEach(yr => svg.append('text').attr('class', 'axis-label').attr('x', x(new Date(yr, 6, 1))).attr('y', H - 6).attr('text-anchor', 'middle').text(yr));
+    gptMark(svg, x, m.t, H - m.b);
+    svg.append('path').attr('d', d3.line().x(d => x(d.date)).y(d => y(d.v)).curve(d3.curveMonotoneX)(S)).attr('fill', 'none').attr('stroke', 'var(--blue)').attr('stroke-width', 2);
+    const hits = svg.selectAll(null).data(S).join('rect').attr('x', d => x(d.date) - 3).attr('width', 6).attr('y', m.t).attr('height', H - m.t - m.b).attr('fill', 'transparent');
+    bindTip(hits, d => [{ value: d.v.toFixed(2), label: d.month, meta: `Accounting ${d.acct.toFixed(1)}, all postings ${d.total.toFixed(1)}` }]);
+    const l = S[S.length - 1];
+    svg.append('text').attr('class', 'endval').attr('x', x(l.date) + 8).attr('y', y(l.v) + 4).text(l.v.toFixed(2));
+  }
+}
+render();
+onResize(render);
+tableToggle(document.getElementById('tbtn'), document.getElementById('tpanel'), () => {
+  const S = EXT.oews.series;
+  tableView(document.getElementById('tpanel'), [{ label: 'May', get: y => y }, { label: 'Tax preparers', get: y => d3.format(',')(S['Tax Preparers'][y].emp) },
+    { label: 'Mean wage', get: y => '$' + d3.format(',')(S['Tax Preparers'][y].wage) }, { label: 'Accountants and auditors', get: y => d3.format(',')(S['Accountants and Auditors'][y].emp) }], d3.range(2019, 2026));
+});
+</script>
+</body>
+</html>

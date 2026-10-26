@@ -1,0 +1,333 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="canonical" href="https://usernameNaN-debug.github.io/ai-indirect-effect/empirical/">
+<title>The Invisible Tax Season</title>
+<style>/* Editorial reading style (white page, serif reading text, sans UI).
+   Chart colors: blue/rose validated as a categorical pair on #f8f8f8 (dataviz validator, all pairs). */
+:root {
+  --paper: #ffffff;
+  --ink: #272727;
+  --ink-2: #4f4f4f;
+  --muted: #6f6f6f;
+  --line: #e5e5e5;
+  --panel: #f8f8f8;
+  --button: #ededed;
+  --grid: #e7e7e7;
+  --axis: #c9c9c9;
+  --blue: #3775BA;
+  --blue-deep: #0F4D92;
+  --rose: #B64342;
+  --blue-fill: #B4C0E4;
+  --rose-fill: #F0C0CC;
+  --deemph: #cfcfcf;
+  --body-font: 'Linux Libertine', 'Linux Libertine O', 'Libertinus Serif', Georgia, serif;
+  --ui-font: 'GT America', 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 400 19px/1.6 var(--body-font); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration-thickness: 1.5px; text-decoration-color: #bdbdbd; text-underline-offset: 4px; }
+:focus-visible { outline: 2px solid #555; outline-offset: 3px; }
+
+.page { max-width: 690px; margin: 0 auto; padding: 64px 0 72px; }
+.page.wide { max-width: 780px; }
+@media (max-width: 760px) { .page, .page.wide { padding: 40px 20px 56px; } }
+
+.crumb { font: 500 13px/1.4 var(--ui-font); color: var(--muted); margin: 0 0 22px; }
+.crumb a { text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+h1 { font: 400 36px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
+@media (max-width: 700px) { h1 { font-size: 30px; } body { font-size: 18px; } }
+.lede p { margin: 0 0 18px; }
+.figno { font: 500 12px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+
+.lab { background: var(--panel); border-radius: 14px; padding: 20px 20px 14px; margin: 28px 0 0; font-family: var(--ui-font); }
+@media (max-width: 700px) { .lab { border-radius: 12px; padding: 16px 12px 12px; } }
+.lab-title { font: 500 15px/1.4 var(--ui-font); color: var(--ink); margin: 0 0 4px; }
+.lab-sub { font: 400 13px/1.5 var(--ui-font); color: var(--muted); margin: 0 0 14px; }
+.caption { margin: 12px 0 0; color: #767676; font: 400 13px/1.65 var(--ui-font); }
+.caption a { color: #5f5f5f; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: flex-end; margin: 0 0 14px; }
+.ctl { display: flex; flex-direction: column; gap: 2px; }
+.ctl-label { font: 500 11px/1.3 var(--ui-font); letter-spacing: .05em; text-transform: uppercase; color: #8a8a8a; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 5px 0; min-height: 32px; color: #767676; font: 400 13px/1.35 var(--ui-font); cursor: pointer; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed='true'] { color: var(--ink); border-bottom-color: #777; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font: 400 12.5px/1.4 var(--ui-font); color: var(--ink-2); }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.text-btn { font: 400 12.5px/1.4 var(--ui-font); color: #6a6a6a; background: none; border: 0; padding: 4px 0; cursor: pointer; }
+.text-btn:hover, .text-btn:focus-visible { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+svg { display: block; overflow: visible; max-width: 100%; font-family: var(--ui-font); }
+svg text { fill: var(--ink-2); font-size: 12px; }
+.axis-label { fill: #8a8a8a; font-size: 11.5px; }
+.tick text { fill: #8a8a8a; font-size: 11px; font-variant-numeric: tabular-nums; }
+.gridline { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.baseline { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+
+#tip { position: fixed; pointer-events: none; z-index: 10; opacity: 0; transition: opacity .12s; background: #fff; color: var(--ink);
+  border-radius: 10px; padding: 9px 12px; min-width: 150px; max-width: 280px; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.08); font: 400 13px/1.45 var(--ui-font); }
+#tip .v { font-size: 17px; font-weight: 600; line-height: 1.2; }
+#tip .l { color: var(--ink-2); }
+#tip .m { color: #8a8a8a; font-size: 12px; margin-top: 3px; }
+#tip .row { display: flex; align-items: flex-start; gap: 8px; }
+#tip .lk { width: 12px; height: 2px; border-radius: 1px; flex: none; margin-top: 10px; }
+
+table.data { width: 100%; border-collapse: collapse; font: 400 12.5px/1.4 var(--ui-font); margin-top: 12px; }
+table.data th, table.data td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data th { color: #8a8a8a; font-weight: 500; }
+.hidden { display: none; }
+
+.after { margin-top: 30px; }
+.after p { margin: 0 0 18px; }
+.foot { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font: 400 12.5px/1.6 var(--ui-font); color: #7a7a7a; }
+.foot p { margin: 0 0 6px; }
+.pagenav { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 28px; font: 400 15px/1.5 var(--ui-font); color: #696969; }
+.pagenav > :first-child { justify-self: start; } .pagenav > :nth-child(2) { justify-self: center; } .pagenav > :last-child { justify-self: end; }
+.pagenav a { text-decoration: none; }
+.pagenav a:hover, .pagenav a:focus-visible { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+.enter { animation: enter 480ms cubic-bezier(.16,1,.3,1) both; }
+@keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .enter { animation: none; } }
+svg [tabindex]:focus { outline: none; }
+svg [tabindex]:focus-visible { outline: 2px solid #555; outline-offset: 2px; }
+/* Embed mode: the essay page shows only the figure panel, sized by its content. */
+html.embed body { background: transparent; }
+html.embed .page { padding: 0; max-width: none; animation: none; }
+html.embed .page > :not(.lab) { display: none; }
+html.embed .lab { margin: 0; }
+.source { margin: 8px 0 0; color: #8a8a8a; font: 400 12.5px/1.6 var(--ui-font); }
+.source a { color: #6f6f6f; }
+
+.layout { display: grid; grid-template-columns: minmax(160px, 1fr) minmax(0, 690px) minmax(160px, 1fr); gap: 56px; max-width: 1440px; margin: 0 auto; padding: 0 40px; }
+.article { grid-column: 2; min-width: 0; padding: 72px 0 80px; }
+.toc { grid-column: 1; position: sticky; top: 100px; align-self: start; margin-top: 260px; font: 400 13px/1.45 var(--ui-font); max-height: calc(100dvh - 124px); overflow-y: auto; }
+.toc a { display: block; padding: 5px 0 5px 14px; color: #7a7a7a; text-decoration: none; position: relative; }
+.toc a:hover { color: var(--ink); }
+.toc a[aria-current="true"] { color: var(--ink); font-weight: 600; }
+.toc a[aria-current="true"]::before { content: ''; position: absolute; left: 0; top: 50%; width: 4px; height: 4px; margin-top: -2px; border-radius: 50%; background: var(--ink); }
+@media (max-width: 1179px) { .layout { grid-template-columns: minmax(0, 690px); justify-content: center; padding: 0 36px; } .article { grid-column: 1; } .toc { display: none; } }
+@media (max-width: 700px) { .layout { padding: 0 22px; } .article { padding-top: 44px; } }
+
+.kicker { font: 500 12px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: #8a8a8a; margin: 0 0 16px; }
+.title { font: 400 40px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
+@media (max-width: 700px) { .title { font-size: 32px; } }
+.dek { font: 400 20px/1.55 var(--body-font); color: #4a4a4a; margin: 0 0 22px; }
+.byline { font: 400 13px/1.5 var(--ui-font); color: #7a7a7a; margin: 0 0 36px; }
+.article p { margin: 0 0 20px; }
+.article h2 { font: 500 24px/1.3 var(--ui-font); margin: 52px 0 16px; letter-spacing: -0.01em; scroll-margin-top: 24px; }
+.article h3 { font: 500 18px/1.35 var(--ui-font); margin: 32px 0 12px; }
+.takeaways { background: var(--panel); border-radius: 14px; padding: 22px 26px 8px; margin: 0 0 40px; }
+.takeaways h2 { font: 500 13px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: #7a7a7a; margin: 0 0 12px; }
+.takeaways ul { margin: 0; padding-left: 18px; }
+.takeaways li { margin: 0 0 14px; font-size: 17.5px; line-height: 1.55; }
+
+.fig { margin: 34px -45px 38px; }
+@media (max-width: 860px) { .fig { margin-left: 0; margin-right: 0; } }
+.fig-head { display: block; text-decoration: none; font: 500 14px/1.45 var(--ui-font); color: var(--ink); margin: 0 0 10px; }
+.fig-head .no { color: #8a8a8a; margin-right: 8px; letter-spacing: .02em; }
+.fig-head:hover .t { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 4px; }
+.fig iframe { display: block; width: 100%; border: 0; height: 420px; background: transparent; }
+.fig figcaption { margin: 10px 0 0; font: 400 13px/1.6 var(--ui-font); color: #767676; }
+.fig figcaption a { color: #5f5f5f; }
+.fig .open { white-space: nowrap; }
+.callout { border-left: 2px solid #d9d9d9; padding: 2px 0 2px 18px; margin: 26px 0; color: #3d3d3d; }
+.table-wrap { overflow-x: auto; margin: 22px 0 26px; }
+table.essay { border-collapse: collapse; width: 100%; font: 400 13.5px/1.45 var(--ui-font); }
+table.essay th, table.essay td { text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--line); vertical-align: top; }
+table.essay th { color: #7a7a7a; font-weight: 500; }
+table.essay td.num { text-align: right; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.refs { font: 400 13.5px/1.6 var(--ui-font); color: #4f4f4f; padding-left: 20px; }
+.refs li { margin: 0 0 8px; }
+.methods p { font-size: 16.5px; line-height: 1.6; color: #3d3d3d; }
+sup a { text-decoration: none; font: 500 11px var(--ui-font); color: #6f6f6f; }
+</style>
+</head>
+<body>
+<div class="layout">
+<nav class="toc" aria-label="Contents" id="toc">
+  <a href="#why-taxes">Why taxes</a>
+  <a href="#how-many">How many people</a>
+  <a href="#what-replaced">What AI replaces</a>
+  <a href="#market">Did the market move?</a>
+  <a href="#ledgers">The ledger GDP does not keep</a>
+  <a href="#quality">Quality and compliance</a>
+  <a href="#labor">Preparers and learning</a>
+  <a href="#next">What to measure next</a>
+  <a href="#methods">Data and methods</a>
+  <a href="#references">References</a>
+</nav>
+<article class="article enter">
+  <p class="crumb"><a href="../">Indirect effects of AI</a> / Empirical</p>
+  <p class="kicker">Indirect effects of AI · October 2026</p>
+  <h1 class="title">The invisible tax season: AI changed how Americans file, and the market barely noticed</h1>
+  <p class="dek">Tax questions to chatbots quadrupled in a year. Paid preparers filed slightly more returns than before. Reconciling the two shows where the first effects of consumer AI land: in household time and in the mix of services people buy, not in the headline volume of an industry.</p>
+  <p class="byline">October 26, 2026</p>
+
+  <section class="takeaways" aria-label="Key takeaways">
+    <h2>Key takeaways</h2>
+    <ul>
+      <li>Between 11% and 26% of US filers used, or planned to use, AI for their 2025 taxes, depending on how the question is asked. Tax activity on ChatGPT rose fourfold year on year, and tax conversations on Claude spiked eightfold on the day before the deadline.</li>
+      <li>In our survey of 1,850 chatbot users, money and taxes is the domain where chatbots most often stand in for paid help: 47% of those who use a chatbot for it report cutting back on a professional, a paid product, or both.</li>
+      <li>The IRS counts show no shift away from paid preparers. By early May 2026, professionals had e-filed 52.0% of returns, the highest share in six seasons. Taken literally, the survey answers would imply a 9% drop.</li>
+      <li>The two fit if most substitution happens inside existing channels: fewer questions to a preparer, a cheaper software tier, less time spent searching. The largest firms sell fewer returns at higher prices, with losses concentrated among simple returns.</li>
+      <li>The effect that matters most for welfare is probably time, which GDP does not count. A middle scenario saves about 68 million hours a year, worth roughly $1.4 billion, more than the preparer revenue a plausible switch would move. The open risk is accuracy.</li>
+    </ul>
+  </section>
+
+  <h2 id="why-taxes">Why taxes are a good place to look</h2>
+  <p>Most discussion of AI's economic effects is about the firms that build it and the workers who use it. A large part of its effect, though, may run through everyone else: the professionals whose customers now ask a chatbot first, the software companies whose features it duplicates, and the households whose unpaid time it frees. We call these indirect effects. They are hard to measure because the activity that changes is spread across millions of private decisions, most of which no statistical agency records.</p>
+  <p>Individual income tax filing is unusually well suited to measuring them. It is a task almost every adult performs, on a fixed calendar, which gives a sharp annual event. The IRS counts every return and whether a professional prepared it. A large paid market exists alongside a large unpaid one: in tax year 2024, paid preparers filed 51% of returns, commercial software accounted for 42%, and free government programs and paper made up the rest (<a href="https://home.treasury.gov/system/files/131/Report-Replacement-of-Direct-File-2025.pdf">Treasury, 2025</a>). The IRS also estimates what the task costs households in time: about 2.1 billion hours and $49 billion out of pocket a year (<a href="https://www.federalregister.gov/documents/full_text/text/2024/12/19/2024-30074.txt">IRS burden model, 2024</a>). And a return has a right answer, so quality can be checked.</p>
+  <p>Our approach is descriptive. We combine a new survey of chatbot users with administrative counts, company filings, AI usage data and benchmarks, and ask whether the pieces tell a consistent story. We keep three ledgers separate throughout: the market ledger (money paid to preparers and software firms), the time ledger (hours households spend), and the quality ledger (whether returns are right).</p>
+
+  <h2 id="how-many">How many people use AI for their taxes</h2>
+  <p>There is no official count, and the available estimates differ by a factor of two. A nationally representative survey by Qlik found that 11% of required filers used or planned to use AI for tax help in early 2026. An Adobe survey of full-time workers found that 26% planned to use it for their 2025 returns, up from 11% a year earlier. Gallup found that 18% of adults had sought financial guidance from AI in the past year. Our own survey implies about 16% of adults use a chatbot for money matters. The level is uncertain, but every source points in the same direction (fig. 1).</p>
+  <figure class="fig" id="figA_adoption">
+    <a class="fig-head" href="figA_adoption.html"><span class="no">Figure 1</span><span class="t">Estimates of AI use for taxes, and growth in tax-related AI activity</span></a>
+    <iframe src="figA_adoption.html?embed" title="Estimates of AI use for taxes" loading="lazy"></iframe>
+    <figcaption>Surveys differ in population and wording; usage ratios measure different things. Sources: Qlik, Adobe, Gallup, Sensor Tower, OpenAI, Anthropic Economic Index, Google ATLAS, authors' survey. <a class="open" href="figA_adoption.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>Usage data from the AI companies agree on intensity and timing. OpenAI reported that US tax-related queries on ChatGPT were four times higher in the first quarter of 2026 than a year earlier (<a href="https://x.com/OpenAINewsroom/status/2044161573405765767">OpenAI, 2026</a>). In the Anthropic Economic Index, tax-related conversations on April 14 were eight times as common as on an average day in May, and taxation's share of US conversations fell from 0.34% in April to 0.14% in May (<a href="https://www.anthropic.com/research/economic-index-june-2026-report">Anthropic, 2026</a>). Google's ATLAS study of Gemini conversations found government services and civic obligations, a category led by licenses, fines, fees and taxes, overrepresented almost twentyfold relative to the time Americans spend on them (<a href="https://arxiv.org/abs/2608.00038">Google, 2026</a>). People bring disproportionately many administrative chores to chatbots, and taxes are the most concentrated of them.</p>
+
+  <h2 id="what-replaced">What AI replaces</h2>
+  <p>Usage alone says nothing about what it displaces. In August 2026 we asked 1,850 US chatbot users which of ten areas of life they use their main chatbot for and, for each, which inputs they now use less: a professional, a paid product, unpaid help from others, free resources such as tutorials, or their own unaided effort. Finances, budgeting and taxes ranks first on paid inputs (fig. 2). It is also the domain with the highest share cutting a paid product or app, which means the software layer is as exposed as the human one.</p>
+  <figure class="fig" id="fig1_substitution_atlas">
+    <a class="fig-head" href="fig1_substitution_atlas.html"><span class="no">Figure 2</span><span class="t">Share of each domain's users who say they now do less of each input</span></a>
+    <iframe src="fig1_substitution_atlas.html?embed" title="Substitution by domain" loading="lazy"></iframe>
+    <figcaption>Source: authors' survey of 1,850 US chatbot users, August 2026. <a class="open" href="fig1_substitution_atlas.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>The headline share hides what most people actually changed. Looking at the combinations each finance user reported, the single most common answer is that they no longer work things out entirely on their own. About half reported cuts only to unpaid inputs (fig. 3). For these people the chatbot replaced search, guesswork and asking a relative, and none of that appears in anyone's revenue.</p>
+  <figure class="fig" id="fig2_finance_combinations">
+    <a class="fig-head" href="fig2_finance_combinations.html"><span class="no">Figure 3</span><span class="t">The most common combinations of reduced inputs among finance users</span></a>
+    <iframe src="fig2_finance_combinations.html?embed" title="Combinations of reduced inputs" loading="lazy"></iframe>
+    <figcaption>Source: authors' survey, 613 respondents who use their main chatbot for finances, budgeting or taxes. <a class="open" href="fig2_finance_combinations.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>It also matters who these people are. Use of a chatbot for money rises steeply with how heavily someone uses chatbots in general, from 14% among occasional users to 44% among those who use one many times a day, and with what they pay for it. The share of users who then cut back on a professional is much flatter across groups (fig. 4). For anyone projecting effects forward, this separates two quantities that are easy to conflate. The adoption margin is moving fast. The substitution rate among adopters, so far, is not.</p>
+  <figure class="fig" id="fig3_who_substitutes">
+    <a class="fig-head" href="fig3_who_substitutes.html"><span class="no">Figure 4</span><span class="t">Use, then substitution, by respondent group</span></a>
+    <iframe src="fig3_who_substitutes.html?embed" title="Use and substitution by group" loading="lazy"></iframe>
+    <figcaption>Source: authors' survey. Whiskers are 95% intervals. <a class="open" href="fig3_who_substitutes.html">Open the full figure</a></figcaption>
+  </figure>
+
+  <h2 id="market">Did the market move?</h2>
+  <p>If chatbots had pulled filers away from paid preparers, the IRS's weekly filing statistics would show it. They do not. At the early-May release in each season from 2021 to 2025, professionals had e-filed between 50.4% and 51.4% of all returns received. In 2026 the figure was 52.0%, the highest in the series (fig. 5). Professional e-filing ran 1% to 2% behind the prior year through March, caught up in deadline week, and finished 0.3% ahead.</p>
+  <figure class="fig" id="figB_irs_channels">
+    <a class="fig-head" href="figB_irs_channels.html"><span class="no">Figure 5</span><span class="t">Individual returns e-filed by tax professionals and by taxpayers, by filing season</span></a>
+    <iframe src="figB_irs_channels.html?embed" title="IRS filing channels" loading="lazy"></iframe>
+    <figcaption>Source: IRS, Filing season statistics, weekly releases 2021–2026. <a class="open" href="figB_irs_channels.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>The survey and the IRS counts can be set side by side. Start from all filers, keep the roughly half who use chatbots, then the third of those who use one for money, then the 28% of those who say they hire a professional less. If every one of those answers were a full switch away from a paid preparer, professionally prepared returns would have fallen by about 9% (fig. 6). The largest year-on-year change in the three seasons before 2026 was 2.1%. For the survey to be consistent with the 2026 count, fewer than about one in eight of the reported cuts can be full exits.</p>
+  <figure class="fig" id="fig4_micro_macro_bridge">
+    <a class="fig-head" href="fig4_micro_macro_bridge.html"><span class="no">Figure 6</span><span class="t">From survey answers to the 2026 filing season, per 1,000 filers</span></a>
+    <iframe src="fig4_micro_macro_bridge.html?embed" title="Survey to IRS bridge" loading="lazy"></iframe>
+    <figcaption>Sources: Pew Research Center (2026); authors' survey; IRS filing season statistics, 2023–2026. <a class="open" href="fig4_micro_macro_bridge.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>The remaining answers most likely describe changes inside a channel: one fewer question to an accountant, a cheaper software tier, a check done with a chatbot instead of a phone call. The company filings of the two largest incumbents are consistent with that reading (fig. 7). TurboTax handled about 10% fewer units in fiscal 2026 than in fiscal 2022, while its revenue rose by a third. H&R Block's assisted returns fell 5% while assisted revenue rose 22%. At Intuit, revenue moved toward TurboTax Live, where a human expert prepares or reviews the return, which grew from about 30% to 53% of TurboTax revenue in two years. Intuit's management said on its May 2026 earnings call that it lost price-sensitive do-it-yourself filers earning under $50,000 (<a href="https://www.fool.com/earnings/call-transcripts/2026/05/20/intuit-intu-q3-2026-earnings-transcript/">Intuit earnings call, 2026</a>), and a panel of e-receipts shows TurboTax customers switching to the free FreeTaxUSA three times as often as the reverse (<a href="https://ask.yipitdata.com/insights/turbotax-filers-freetaxusa-directional-switching">YipitData, 2026</a>).</p>
+  <figure class="fig" id="figC_incumbents">
+    <a class="fig-head" href="figC_incumbents.html"><span class="no">Figure 7</span><span class="t">Returns handled and revenue, indexed to fiscal 2022 = 100</span></a>
+    <iframe src="figC_incumbents.html?embed" title="Incumbent volumes and revenue" loading="lazy"></iframe>
+    <figcaption>Sources: Intuit and H&R Block earnings releases and Forms 10-K, fiscal 2022–2026. <a class="open" href="figC_incumbents.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>Much of the volume decline predates AI tax help, and the 2026 season had other shocks: refunds rose 18% after tax-law changes, and the IRS shut down its free Direct File program. We cannot attribute the pattern to chatbots. What we can say is that the losses sit at the simple, price-sensitive end of the market, where a free chatbot plus free software is the closest substitute, while human-assisted service at the complex end is growing. The one randomized evidence on chatbots and a tax-like filing points the same way: in a field experiment with 645 Dallas County households, offering an AI assistant raised the share who filed their own property-tax appeal from 41% to 51% (<a href="https://www.nber.org/papers/w35632">Holz et al., 2026</a>). Chatbots make self-service more feasible. Whether that displaces a paid professional depends on whether the person would have hired one at all.</p>
+
+  <h2 id="ledgers">The ledger GDP does not keep</h2>
+  <p>For readers used to thinking about AI in terms of capabilities, a flat market can look like evidence that nothing happened. It is better read as evidence about which ledger the effect landed in. A dollar of preparer revenue that disappears because a filer did the work with a chatbot is mostly a transfer: the filer keeps the fee and the preparer loses it. The net gain to society is the preparer's time that is freed, plus whatever the filer saved, minus any errors. An hour of filing time that disappears is a direct gain to the household, and it shows up in no national statistic, because unpaid household work is outside GDP by construction.</p>
+  <p>The sizes are easy to compare once both are in dollars (fig. 8). The IRS's own model implies that filers spend 12.6 hours on an average return and values that time at about $21 an hour. If 16% of filers use AI and it saves them a fifth of their time, they get back about 68 million hours a year, worth $1.4 billion. A 1% switch of professionally prepared returns to self-preparation moves about $170 million of preparer revenue. Even the 9% switch implied by a literal reading of the survey would move about $1.5 billion, roughly the same as the modest time scenario, and the IRS counts rule that switch out.</p>
+  <figure class="fig" id="figF_ledgers">
+    <a class="fig-head" href="figF_ledgers.html"><span class="no">Figure 8</span><span class="t">Annual value of two effects of AI tax help</span></a>
+    <iframe src="figF_ledgers.html?embed" title="Time and market ledgers" loading="lazy"></iframe>
+    <figcaption>Sources: IRS Taxpayer Burden Model; IRS filing season statistics; H&R Block Form 10-K, fiscal 2026. <a class="open" href="figF_ledgers.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>Two calibration points help. The 2.1 billion hours Americans spend on federal income tax returns equal the full-time work of about one million people. And at the level of all generative AI, Brynjolfsson and coauthors estimate from a choice experiment that US consumers would need about $172 billion a year to give up access, against roughly $14 billion of global consumer spending on it (<a href="https://digitaleconomy.stanford.edu/app/uploads/2026/04/WhatsGenAIWorth.pdf">Brynjolfsson et al., 2026</a>). The ratio of value to revenue in that estimate is over ten to one. Tax filing is one of the few activities where the unpaid side can be measured in hours, and it suggests the same kind of gap.</p>
+  <p class="callout">A small or zero effect in market data is compatible with a meaningful gain in welfare. The time saving we have no direct measure of is larger, under plausible assumptions, than any revenue shift the IRS counts allow.</p>
+  <p>The same framing clarifies distribution. The gains accrue first to adopters, and adoption is concentrated among heavy chatbot users and those who pay for a subscription (fig. 4). The losses fall on the providers of the cheapest services, whose customers are the most price sensitive. Low-income filers who used free IRS options lost one when Direct File closed. Whether chatbots fill that gap or widen it is one of the more important open questions.</p>
+
+  <h2 id="quality">Quality and compliance</h2>
+  <p>A time saving is only a gain if the return is still right. Here the evidence is mixed and moving quickly. On TaxCalcBench, which asks a model to compute a complete federal return from given facts and counts it correct only if every evaluated line matches, the best model in July 2025 got 32% of the test returns exactly right. Models released since then reach 63% on the same set, and on a harder 2025 set with realistic document inputs the best reach 70% to 78% when allowed to search the web (fig. 9). Line-level accuracy is much higher, so errors tend to be confined to one or two lines, which is the kind of error a filer is least likely to catch.</p>
+  <figure class="fig" id="figE_capability">
+    <a class="fig-head" href="figE_capability.html"><span class="no">Figure 9</span><span class="t">Share of test returns computed exactly right</span></a>
+    <iframe src="figE_capability.html?embed" title="TaxCalcBench accuracy" loading="lazy"></iframe>
+    <figcaption>Source: Column Tax, TaxCalcBench leaderboard (retrieved October 2026). <a class="open" href="figE_capability.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>The right comparison is not a perfect return. Using random IRS audits, DeBacker and coauthors find that paid preparers increase underreported income by roughly $3,900 per return relative to self-preparation (<a href="https://ideas.repec.org/a/ucp/nattax/doi10.1086-728928.html">DeBacker et al., 2024</a>), and the GAO found error rates of 60% on paid-prepared returns against 50% on self-prepared ones in earlier audit data (<a href="https://www.gao.gov/products/gao-26-108723">GAO, 2026</a>). Meanwhile the IRS's own capacity to answer questions has fallen: staffing in fiscal 2026 is about a quarter lower than before (<a href="https://www.taxpayeradvocate.irs.gov/wp-content/uploads/2026/01/ARC_Publication-2104_2025_Web.pdf">National Taxpayer Advocate, 2026a</a>), and live assistors answered 20% fewer calls in the 2026 season (<a href="https://www.taxpayeradvocate.irs.gov/wp-content/uploads/2026/06/JRC27_FullReport.pdf">National Taxpayer Advocate, 2026b</a>). Some of the demand for chatbot help is demand the agency no longer serves.</p>
+  <p>Our survey adds one uncomfortable fact. Respondents who cut back on professionals for money matters report the largest savings, but they report receiving incorrect information from their chatbot just as often as other finance users, and more often than people who do not use a chatbot for money at all (fig. 10). Heavy users report more of everything, so this is not evidence that substitution causes errors. It does rule out the reassuring story that those who left professionals were the ones who never saw a mistake.</p>
+  <figure class="fig" id="fig5_reported_effects">
+    <a class="fig-head" href="fig5_reported_effects.html"><span class="no">Figure 10</span><span class="t">Reported effects among those who hire a professional less, against a comparison group</span></a>
+    <iframe src="fig5_reported_effects.html?embed" title="Reported benefits and harms" loading="lazy"></iframe>
+    <figcaption>Source: authors' survey. <a class="open" href="fig5_reported_effects.html">Open the full figure</a></figcaption>
+  </figure>
+
+  <h2 id="labor">Preparers and the learning pipeline</h2>
+  <p>The labor-market signal so far is slow pressure, not a shock (fig. 11). Occupational employment of tax preparers was 76,000 in May 2025, about 6% below 2023, while accountants and auditors held steady at 1.45 million. Seasonal employment at tax-preparation firms peaked at about 155,000 in early 2026, the highest since 2020. Indeed postings for accounting jobs have fallen from well above the all-occupation average to roughly in line with it, a decline that began in early 2023. Anthropic's measure of observed exposure, which combines what models can do with what Claude is actually used for, puts tax preparers at 0.13 and accountants at 0.35 (<a href="https://www.anthropic.com/research/labor-market-impacts">Massenkoff and McCrory, 2026</a>).</p>
+  <figure class="fig" id="figD_labor">
+    <a class="fig-head" href="figD_labor.html"><span class="no">Figure 11</span><span class="t">Employment and hiring demand in tax preparation and accounting</span></a>
+    <iframe src="figD_labor.html?embed" title="Tax preparation labor" loading="lazy"></iframe>
+    <figcaption>Sources: BLS OEWS and CES; Indeed Hiring Lab via FRED; Massenkoff and McCrory (2026). <a class="open" href="figD_labor.html">Open the full figure</a></figcaption>
+  </figure>
+  <p>The channel we would watch most closely is not headcount but who gets which work. Simple returns are where new preparers and junior accountants learn the trade. If those returns are the first to leave the paid market, as the incumbents' filings suggest, the profession can lose its training ground while total demand holds up, because the remaining work is more complex and better paid. Brynjolfsson, Chandar and Chen find employment of 22- to 25-year-olds in the most AI-exposed occupations, a group that includes accountants, about 19% below trend by mid-2026, with no comparable gap for older workers (<a href="https://digitaleconomy.stanford.edu/app/uploads/2026/08/Canaries_August2026.pdf">Brynjolfsson et al., 2026</a>). Nothing in the tax data yet isolates that mechanism, but it is the indirect effect most likely to matter over a decade.</p>
+
+  <h2 id="next">What to measure next</h2>
+  <p>Three measurements would turn this picture into estimates. First, a survey in the 2027 filing season that asks, for each input, whether use increased, stayed the same, decreased, or never happened, and records minutes and dollars. That separates full exits from smaller purchases, which our current question cannot do. Second, verification: linking a sample of respondents to receipts or preparer records, and checking AI-assisted returns against a reference calculation, so the quality ledger has numbers. Third, administrative data. The Tax Policy Center has proposed that returns report how they were prepared and what was paid (<a href="https://taxpolicycenter.org/taxvox/we-dont-know-how-many-people-file-their-taxes-free-congress-could-fix">Tax Policy Center, 2026</a>). A single checkbox for AI assistance would let the IRS count, every year, the effect that this essay can only bound.</p>
+  <p>The broader lesson travels beyond taxes. When a new technology lets households do for themselves what they used to buy, or used to do slowly, the first effects show up as time saved and as a change in what is bought, not as a fall in what is bought. Market statistics will be the last place to see them.</p>
+
+  <section class="methods">
+  <h2 id="methods">Data and methods</h2>
+  <p>The survey was fielded on Prolific to US adults on August 22–25, 2026. Of 2,167 approved responses, 1,850 current chatbot users passed reCAPTCHA, duration and two attention screens. For each of ten personal-use domains a respondent selected, we asked: “Since you started using your most-used chatbot for [domain], which do you do less?” with six options and multiple selection allowed. The sample is not representative of US adults and is heavier on chatbot use; figure 6 lets readers vary the population shares accordingly. Intervals are 95% Wilson intervals.</p>
+  <p>IRS filing-season statistics were collected from each weekly release from 2021 to 2026. Each release reports cumulative counts for the current season and the comparable week of the prior season; we use each season's own release nearest May 4 for level comparisons and the within-release ratio for year-on-year growth. Company figures come from SEC filings; where a firm restated a series, we chain the new series onto the old at the overlap year. All code and aggregated data used in the figures are available on request.</p>
+  </section>
+
+  <h2 id="references">References</h2>
+  <ol class="refs">
+    <li>Anthropic (2026). <a href="https://www.anthropic.com/research/economic-index-june-2026-report">Anthropic Economic Index: Cadences.</a> June 26, 2026. Data: <a href="https://huggingface.co/datasets/Anthropic/EconomicIndex">Hugging Face</a>.</li>
+    <li>Brynjolfsson, E., Chandar, B., and Chen, R. (2026). <a href="https://digitaleconomy.stanford.edu/app/uploads/2026/08/Canaries_August2026.pdf">Canaries in the Coal Mine? Six Facts about the Recent Employment Effects of Artificial Intelligence.</a> Revised August 2026.</li>
+    <li>Brynjolfsson, E., Collis, A., Eggers, F., Kazinnik, S., and Nguyen, T. (2026). <a href="https://digitaleconomy.stanford.edu/app/uploads/2026/04/WhatsGenAIWorth.pdf">What Is Generative AI Worth?</a> Stanford Digital Economy Lab.</li>
+    <li>Column Tax (2026). <a href="https://github.com/column-tax/tax-calc-bench">TaxCalcBench leaderboard.</a> Original benchmark: <a href="https://arxiv.org/abs/2507.16126">arXiv:2507.16126</a>.</li>
+    <li>DeBacker, J., Heim, B., Tran, A., and Yuskavage, A. (2024). <a href="https://ideas.repec.org/a/ucp/nattax/doi10.1086-728928.html">Seeking Professional Help: How Paid Preparers Decrease Tax Compliance.</a> National Tax Journal 77(2).</li>
+    <li>Google (2026). <a href="https://arxiv.org/abs/2608.00038">AI and Economy ATLAS v1.0.</a> July 2026.</li>
+    <li>H&R Block (2026). <a href="https://www.sec.gov/Archives/edgar/data/0000012659/000001265926000026/hrb-20260630.htm">Form 10-K for fiscal year ended June 30, 2026.</a></li>
+    <li>Holz, J., Perez-Truglia, R., Simon, A., and Zentner, B. (2026). <a href="https://www.nber.org/papers/w35632">Taxpayer Behavior in the Age of AI: A Field Experiment on Property Tax Appeals.</a> NBER Working Paper 35632.</li>
+    <li>Internal Revenue Service (2021–2026). <a href="https://www.irs.gov/newsroom/filing-season-statistics-for-week-ending-may-1-2026">Filing season statistics</a>, weekly releases.</li>
+    <li>Internal Revenue Service (2024). <a href="https://www.federalregister.gov/documents/full_text/text/2024/12/19/2024-30074.txt">Proposed collection; comment request for Forms 1040 et al.</a> Federal Register, December 19, 2024 (taxpayer burden estimates).</li>
+    <li>Intuit (2026). <a href="https://www.sec.gov/Archives/edgar/data/0000896878/000089687826000029/fy26q4earningspressrelease.htm">Fourth-quarter fiscal 2026 results</a> and <a href="https://www.sec.gov/Archives/edgar/data/896878/000089687826000037/intu-20260731.htm">Form 10-K</a>.</li>
+    <li>Massenkoff, M., and McCrory, P. (2026). <a href="https://www.anthropic.com/research/labor-market-impacts">Labor market impacts of AI.</a> Anthropic, March 2026.</li>
+    <li>National Taxpayer Advocate (2026a). <a href="https://www.taxpayeradvocate.irs.gov/wp-content/uploads/2026/01/ARC_Publication-2104_2025_Web.pdf">2025 Annual Report to Congress.</a></li>
+    <li>National Taxpayer Advocate (2026b). <a href="https://www.taxpayeradvocate.irs.gov/wp-content/uploads/2026/06/JRC27_FullReport.pdf">Objectives Report to Congress, Fiscal Year 2027.</a></li>
+    <li>OpenAI (2026). <a href="https://x.com/OpenAINewsroom/status/2044161573405765767">Tax-related queries on ChatGPT.</a> April 14, 2026.</li>
+    <li>Pew Research Center (2026). <a href="https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026-chatbots-smart-devices-and-views-on-impact/">Americans and AI in 2026.</a> June 17, 2026.</li>
+    <li>Qlik (2026). <a href="https://www.qlik.com/us/news/company/press-room/press-releases/qlik-survey-mid-career-americans-emerge-as-ai-power-users-during-the-2026-tax-season">Survey on AI use during the 2026 tax season.</a> March 2026.</li>
+    <li>Sensor Tower (2025). <a href="https://sensortower.com/blog/ai-tax-filing-chatgpt">AI and tax filing.</a> July 2025.</li>
+    <li>Tax Policy Center (2026). <a href="https://taxpolicycenter.org/taxvox/we-dont-know-how-many-people-file-their-taxes-free-congress-could-fix">We Don't Know How Many People File Their Taxes Free.</a> TaxVox, February 2, 2026.</li>
+    <li>US Government Accountability Office (2026). <a href="https://www.gao.gov/products/gao-26-108723">Paid Tax Return Preparers (GAO-26-108723).</a> February 2026.</li>
+    <li>US Department of the Treasury (2025). <a href="https://home.treasury.gov/system/files/131/Report-Replacement-of-Direct-File-2025.pdf">Report to Congress on the replacement of Direct File.</a> October 2025.</li>
+    <li>YipitData (2026). <a href="https://ask.yipitdata.com/insights/turbotax-filers-freetaxusa-directional-switching">TurboTax filers and FreeTaxUSA: directional switching.</a> August 2026.</li>
+  </ol>
+</article>
+</div>
+<script>
+// Size embedded figures to their content.
+addEventListener('message', e => {
+  if (!e.data || e.data.type !== 'fig-height') return;
+  document.querySelectorAll('.fig iframe').forEach(f => { if (f.contentWindow === e.source) f.style.height = Math.ceil(e.data.h) + 'px'; });
+});
+// Contents: mark the section in view.
+const links = [...document.querySelectorAll('#toc a')];
+const secs = links.map(a => document.querySelector(a.getAttribute('href')));
+function mark() {
+  let cur = 0; secs.forEach((s, i) => { if (s && s.getBoundingClientRect().top < 140) cur = i; });
+  links.forEach((a, i) => a.setAttribute('aria-current', i === cur ? 'true' : 'false'));
+}
+addEventListener('scroll', mark, { passive: true }); mark();
+</script>
+</body>
+</html>

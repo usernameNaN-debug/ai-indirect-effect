@@ -10,7 +10,7 @@ const files = await fs.readdir(dist, { recursive: true });
 const htmlFiles = files.filter(file => file.endsWith('.html'));
 const pages = new Map(await Promise.all(htmlFiles.map(async file => [file, await fs.readFile(path.join(dist, file), 'utf8')])));
 let links = 0, imports = 0;
-assert.equal(pages.size, 14, 'Landing, two introductions, nine reading chapters, economy, and the legacy redirect must be built');
+assert.equal(pages.size, 26, 'The core site, legacy redirect, and twelve empirical article and figure pages must be built');
 const dynamics = [...pages.values()].flatMap(html => [...html.matchAll(/data-dynamic="([^"]+)"/g)].map(m=>m[1]));
 assert.deepEqual(new Set(dynamics), new Set(['career-phase','response-map','research-allocation','wage-kernel']), 'All four quantitative dynamics figures must be reachable');
 const figures = [...pages.values()].flatMap(html => [...html.matchAll(/data-figure-number="(\d+)"/g)].map(m=>Number(m[1])));

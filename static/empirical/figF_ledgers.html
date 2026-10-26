@@ -1,0 +1,321 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Two Ledgers</title>
+<style>/* Editorial reading style (white page, serif reading text, sans UI).
+   Chart colors: blue/rose validated as a categorical pair on #f8f8f8 (dataviz validator, all pairs). */
+:root {
+  --paper: #ffffff;
+  --ink: #272727;
+  --ink-2: #4f4f4f;
+  --muted: #6f6f6f;
+  --line: #e5e5e5;
+  --panel: #f8f8f8;
+  --button: #ededed;
+  --grid: #e7e7e7;
+  --axis: #c9c9c9;
+  --blue: #3775BA;
+  --blue-deep: #0F4D92;
+  --rose: #B64342;
+  --blue-fill: #B4C0E4;
+  --rose-fill: #F0C0CC;
+  --deemph: #cfcfcf;
+  --body-font: 'Linux Libertine', 'Linux Libertine O', 'Libertinus Serif', Georgia, serif;
+  --ui-font: 'GT America', 'Helvetica Neue', Arial, sans-serif;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; }
+body { background: var(--paper); color: var(--ink); font: 400 19px/1.6 var(--body-font); -webkit-font-smoothing: antialiased; }
+a { color: inherit; text-decoration-thickness: 1.5px; text-decoration-color: #bdbdbd; text-underline-offset: 4px; }
+:focus-visible { outline: 2px solid #555; outline-offset: 3px; }
+
+.page { max-width: 690px; margin: 0 auto; padding: 64px 0 72px; }
+.page.wide { max-width: 780px; }
+@media (max-width: 760px) { .page, .page.wide { padding: 40px 20px 56px; } }
+
+.crumb { font: 500 13px/1.4 var(--ui-font); color: var(--muted); margin: 0 0 22px; }
+.crumb a { text-decoration: none; }
+.crumb a:hover { text-decoration: underline; }
+h1 { font: 400 36px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
+@media (max-width: 700px) { h1 { font-size: 30px; } body { font-size: 18px; } }
+.lede p { margin: 0 0 18px; }
+.figno { font: 500 12px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); margin: 0 0 10px; }
+
+.lab { background: var(--panel); border-radius: 14px; padding: 20px 20px 14px; margin: 28px 0 0; font-family: var(--ui-font); }
+@media (max-width: 700px) { .lab { border-radius: 12px; padding: 16px 12px 12px; } }
+.lab-title { font: 500 15px/1.4 var(--ui-font); color: var(--ink); margin: 0 0 4px; }
+.lab-sub { font: 400 13px/1.5 var(--ui-font); color: var(--muted); margin: 0 0 14px; }
+.caption { margin: 12px 0 0; color: #767676; font: 400 13px/1.65 var(--ui-font); }
+.caption a { color: #5f5f5f; }
+
+.controls { display: flex; flex-wrap: wrap; gap: 10px 26px; align-items: flex-end; margin: 0 0 14px; }
+.ctl { display: flex; flex-direction: column; gap: 2px; }
+.ctl-label { font: 500 11px/1.3 var(--ui-font); letter-spacing: .05em; text-transform: uppercase; color: #8a8a8a; }
+.tabs { display: flex; flex-wrap: wrap; gap: 4px 16px; }
+.tabs button { border: 0; border-bottom: 2px solid transparent; background: transparent; padding: 5px 0; min-height: 32px; color: #767676; font: 400 13px/1.35 var(--ui-font); cursor: pointer; }
+.tabs button:hover { color: var(--ink); }
+.tabs button[aria-pressed='true'] { color: var(--ink); border-bottom-color: #777; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 4px 18px; font: 400 12.5px/1.4 var(--ui-font); color: var(--ink-2); }
+.legend .key { display: inline-flex; align-items: center; gap: 6px; }
+.legend .sw { width: 11px; height: 11px; border-radius: 3px; display: inline-block; }
+.legend .dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; }
+.toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-top: 10px; }
+.text-btn { font: 400 12.5px/1.4 var(--ui-font); color: #6a6a6a; background: none; border: 0; padding: 4px 0; cursor: pointer; }
+.text-btn:hover, .text-btn:focus-visible { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+svg { display: block; overflow: visible; max-width: 100%; font-family: var(--ui-font); }
+svg text { fill: var(--ink-2); font-size: 12px; }
+.axis-label { fill: #8a8a8a; font-size: 11.5px; }
+.tick text { fill: #8a8a8a; font-size: 11px; font-variant-numeric: tabular-nums; }
+.gridline { stroke: var(--grid); stroke-width: 1; shape-rendering: crispEdges; }
+.baseline { stroke: var(--axis); stroke-width: 1; shape-rendering: crispEdges; }
+
+#tip { position: fixed; pointer-events: none; z-index: 10; opacity: 0; transition: opacity .12s; background: #fff; color: var(--ink);
+  border-radius: 10px; padding: 9px 12px; min-width: 150px; max-width: 280px; box-shadow: 0 0 0 1px rgba(0,0,0,.08), 0 6px 20px rgba(0,0,0,.08); font: 400 13px/1.45 var(--ui-font); }
+#tip .v { font-size: 17px; font-weight: 600; line-height: 1.2; }
+#tip .l { color: var(--ink-2); }
+#tip .m { color: #8a8a8a; font-size: 12px; margin-top: 3px; }
+#tip .row { display: flex; align-items: flex-start; gap: 8px; }
+#tip .lk { width: 12px; height: 2px; border-radius: 1px; flex: none; margin-top: 10px; }
+
+table.data { width: 100%; border-collapse: collapse; font: 400 12.5px/1.4 var(--ui-font); margin-top: 12px; }
+table.data th, table.data td { text-align: right; padding: 5px 8px; border-bottom: 1px solid var(--line); font-variant-numeric: tabular-nums; }
+table.data th:first-child, table.data td:first-child { text-align: left; }
+table.data th { color: #8a8a8a; font-weight: 500; }
+.hidden { display: none; }
+
+.after { margin-top: 30px; }
+.after p { margin: 0 0 18px; }
+.foot { margin-top: 36px; padding-top: 16px; border-top: 1px solid var(--line); font: 400 12.5px/1.6 var(--ui-font); color: #7a7a7a; }
+.foot p { margin: 0 0 6px; }
+.pagenav { display: grid; grid-template-columns: 1fr 1fr 1fr; margin-top: 28px; font: 400 15px/1.5 var(--ui-font); color: #696969; }
+.pagenav > :first-child { justify-self: start; } .pagenav > :nth-child(2) { justify-self: center; } .pagenav > :last-child { justify-self: end; }
+.pagenav a { text-decoration: none; }
+.pagenav a:hover, .pagenav a:focus-visible { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+
+.enter { animation: enter 480ms cubic-bezier(.16,1,.3,1) both; }
+@keyframes enter { from { opacity: 0; transform: translateY(7px); } to { opacity: 1; transform: none; } }
+@media (prefers-reduced-motion: reduce) { .enter { animation: none; } }
+svg [tabindex]:focus { outline: none; }
+svg [tabindex]:focus-visible { outline: 2px solid #555; outline-offset: 2px; }
+/* Embed mode: the essay page shows only the figure panel, sized by its content. */
+html.embed body { background: transparent; }
+html.embed .page { padding: 0; max-width: none; animation: none; }
+html.embed .page > :not(.lab) { display: none; }
+html.embed .lab { margin: 0; }
+.source { margin: 8px 0 0; color: #8a8a8a; font: 400 12.5px/1.6 var(--ui-font); }
+.source a { color: #6f6f6f; }
+
+.sliders { display: grid; grid-template-columns: 1fr 1fr; gap: 14px 28px; margin-top: 6px; }
+@media (max-width: 560px) { .sliders { grid-template-columns: 1fr; } }
+.sl label { display: flex; justify-content: space-between; gap: 12px; font: 400 12.5px/1.4 var(--ui-font); color: var(--ink-2); }
+.sl label b { font-weight: 600; color: var(--ink); font-variant-numeric: tabular-nums; }
+.sl .src { font: 400 11.5px/1.4 var(--ui-font); color: #8a8a8a; margin-top: 2px; }
+input[type=range] { width: 100%; accent-color: #555; margin: 6px 0 0; }
+.blab { font-size: 12.5px; fill: var(--ink); }
+.bsub { font-size: 11px; fill: #8a8a8a; }
+.bval { font-size: 13px; fill: var(--ink); font-weight: 600; font-variant-numeric: tabular-nums; }
+.readout { font: 400 13px/1.55 var(--ui-font); color: var(--ink-2); margin: 12px 0 4px; }
+.readout b { color: var(--ink); font-weight: 600; }
+</style>
+</head>
+<body>
+<main class="page wide enter">
+  <p class="figno">Figure 8</p>
+  <h1>The time ledger can be larger than the market ledger, even when the market barely moves</h1>
+  <div class="lede">
+    <p>Americans spend about 2.1 billion hours a year on their federal income tax returns, according to the IRS's own burden model, and about $49 billion out of pocket on software and preparers. A chatbot can change either number. Fees that are no longer paid show up as lower revenue for preparers. Hours that are no longer spent show up nowhere in national accounts. This calculator puts both on the same dollar scale.</p>
+  </div>
+  <section class="lab" aria-labelledby="tf">
+    <p class="lab-title" id="tf">Annual value of two effects of AI tax help, in billions of dollars</p>
+    <div id="chart"></div>
+    <p class="readout" id="readout"></p>
+    <div class="sliders" id="sliders"></div>
+    <div class="toolbar"><span></span><button class="text-btn" id="tbtn">Show data table</button></div>
+    <div id="tpanel" class="hidden"></div>
+  </section>
+  <p class="caption">Time saved = filers × adoption × average filing hours × share of hours saved × value of an hour. Preparer revenue moved = professionally prepared returns × share switching to self-preparation × average fee. Average hours (12.6) and the IRS value of time ($21 per hour) are implied by the burden model's 2.129 billion hours, $48.7 billion out-of-pocket and $93.7 billion monetized burden for 168.8 million filers. The average fee is H&R Block's US assisted revenue per assisted return in fiscal 2026.</p>
+  <p class="source">Sources: IRS Taxpayer Burden Model via <a href="https://www.federalregister.gov/documents/full_text/text/2024/12/19/2024-30074.txt">Federal Register, December 19, 2024</a>; IRS <a href="https://www.irs.gov/newsroom/filing-season-statistics-for-week-ending-may-1-2026">filing season statistics</a>; <a href="https://www.sec.gov/Archives/edgar/data/0000012659/000001265926000026/hrb-20260630.htm">H&R Block Form 10-K, fiscal 2026</a>; BEA household production wage as used in <a href="https://arxiv.org/abs/2608.00038">Google ATLAS (2026)</a>.</p>
+  <div class="after">
+    <p>At the middle of the adoption range and a modest one-fifth time saving, filers get back roughly 68 million hours a year, worth about $1.4 billion at the IRS's value of time. Moving even 1% of professionally prepared returns to self-preparation shifts about $170 million of preparer revenue. The first number is a real resource saving that GDP does not record. The second is mostly a transfer: the filer keeps the fee and the preparer loses it, so the net gain to society is the time and effort the preparer no longer spends, not the revenue figure itself.</p>
+    <p>For a sense of scale, the IRS's 2.1 billion hours equal the full-time work of roughly one million people. Brynjolfsson and coauthors estimate that US consumers value access to generative AI at about $172 billion a year, against roughly $14 billion of global consumer spending on it. Tax help is a small slice of that, but it is one of the few slices where the counterfactual time cost is measured.</p>
+  </div>
+  <nav class="pagenav"><a href="figC_incumbents.html">prev</a><a href="index.html#figF_ledgers">back to the essay</a><a href="figE_capability.html">next</a></nav>
+</main>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/d3/7.9.0/d3.min.js"></script>
+<script>// Shared helpers: tooltip, theme toggle, table view, segmented controls.
+const css = name => getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+const pct = (p, d = 0) => p == null ? '—' : (100 * p).toFixed(d) + '%';
+
+const Tip = (() => {
+  const el = document.createElement('div');
+  el.id = 'tip';
+  el.setAttribute('role', 'status');
+  document.body.appendChild(el);
+  // rows: [{value, label, meta, color}] — built with textContent, never innerHTML
+  function show(evt, rows) {
+    el.replaceChildren();
+    rows.forEach((r, i) => {
+      const box = document.createElement('div');
+      if (r.color) { box.className = 'row'; const k = document.createElement('span'); k.className = 'lk'; k.style.background = r.color; box.appendChild(k); }
+      const inner = document.createElement('div');
+      if (r.value != null) { const v = document.createElement('div'); v.className = 'v'; v.textContent = r.value; inner.appendChild(v); }
+      if (r.label) { const l = document.createElement('div'); l.className = 'l'; l.textContent = r.label; inner.appendChild(l); }
+      if (r.meta) { const m = document.createElement('div'); m.className = 'm'; m.textContent = r.meta; inner.appendChild(m); }
+      box.appendChild(inner);
+      if (i) box.style.marginTop = '8px';
+      el.appendChild(box);
+    });
+    move(evt);
+    el.style.opacity = 1;
+  }
+  function move(evt) {
+    let x, y;
+    if (evt && evt.clientX != null && evt.type !== 'focus') { x = evt.clientX; y = evt.clientY; }
+    else if (evt && evt.target && evt.target.getBoundingClientRect) { const b = evt.target.getBoundingClientRect(); x = b.right; y = b.top; }
+    else return;
+    const w = el.offsetWidth, h = el.offsetHeight;
+    let left = x + 14, top = y + 14;
+    if (left + w > innerWidth - 8) left = x - w - 14;
+    if (top + h > innerHeight - 8) top = y - h - 14;
+    el.style.left = Math.max(8, left) + 'px';
+    el.style.top = Math.max(8, top) + 'px';
+  }
+  function hide() { el.style.opacity = 0; }
+  return { show, move, hide };
+})();
+
+function bindTip(sel, rowsFn) {
+  sel.attr('tabindex', 0).classed('focusable', true)
+    .on('pointerenter pointermove', function (e, d) { Tip.show(e, rowsFn(d, this)); })
+    .on('focus', function (e, d) { Tip.show(e, rowsFn(d, this)); })
+    .on('pointerleave blur', () => Tip.hide());
+}
+
+// Underlined tabs: options [{key,label}]
+function segmented(container, options, initial, onPick) {
+  const seg = document.createElement('div');
+  seg.className = 'tabs';
+  seg.setAttribute('role', 'group');
+  const btns = options.map(o => {
+    const b = document.createElement('button');
+    b.textContent = o.label;
+    b.setAttribute('aria-pressed', o.key === initial);
+    b.onclick = () => { btns.forEach(x => x.setAttribute('aria-pressed', x === b)); onPick(o.key); };
+    seg.appendChild(b);
+    return b;
+  });
+  container.appendChild(seg);
+  return seg;
+}
+
+// Table view twin: columns [{label, get}], rows array
+function tableView(container, columns, rows) {
+  const t = document.createElement('table');
+  t.className = 'data';
+  const thead = t.createTHead().insertRow();
+  columns.forEach(c => { const th = document.createElement('th'); th.textContent = c.label; thead.appendChild(th); });
+  const tb = t.createTBody();
+  rows.forEach(r => { const tr = tb.insertRow(); columns.forEach(c => { tr.insertCell().textContent = c.get(r); }); });
+  container.replaceChildren(t);
+}
+
+function tableToggle(btn, panel, render) {
+  btn.onclick = () => {
+    const open = panel.classList.toggle('hidden') === false;
+    btn.textContent = open ? 'Hide table' : 'Show data table';
+    if (open) render();
+  };
+}
+
+function onResize(fn) { let t; addEventListener('resize', () => { clearTimeout(t); t = setTimeout(fn, 120); }); }
+
+// Rounded data-end bar path (square at baseline). Horizontal bars grow from x0.
+function hbarPath(x0, x1, y, h, r = 4) {
+  const w = Math.max(0, x1 - x0); r = Math.min(r, w, h / 2);
+  return `M${x0},${y}H${x0 + w - r}Q${x0 + w},${y} ${x0 + w},${y + r}V${y + h - r}Q${x0 + w},${y + h} ${x0 + w - r},${y + h}H${x0}Z`;
+}
+function vbarPath(x, w, y0, y1, r = 4) {
+  const h = Math.max(0, y0 - y1); r = Math.min(r, h, w / 2);
+  return `M${x},${y0}V${y1 + r}Q${x},${y1} ${x + r},${y1}H${x + w - r}Q${x + w},${y1} ${x + w},${y1 + r}V${y0}Z`;
+}
+
+// Embed mode (?embed): render only the figure panel and report height to the parent essay page.
+(function () {
+  if (!/[?&]embed\b/.test(location.search)) return;
+  document.documentElement.classList.add('embed');
+  const send = () => parent.postMessage({ type: 'fig-height', id: location.pathname.split('/').pop(), h: document.documentElement.scrollHeight }, '*');
+  new ResizeObserver(send).observe(document.documentElement);
+  addEventListener('load', send);
+})();
+</script>
+<script>
+const FILERS = 168.8e6, HOURS = 2.129e9, OOP = 48.7e9, MON = 93.68e9;
+const IRS_VOT = (MON - OOP) / HOURS;                 // ≈ $21.1 per hour
+const PRO_RETURNS = 74.678e6, FEE = 2560.895e6 / 11.3e6; // ≈ $227 per assisted return
+const P = {
+  adopt: { label: 'Filers using AI for their taxes', v: 0.16, min: 0.05, max: 0.40, step: 0.01, fmt: v => pct(v), src: 'Survey estimates range from 11% to 26%' },
+  save: { label: 'Share of their filing time saved', v: 0.20, min: 0, max: 0.5, step: 0.01, fmt: v => pct(v), src: 'Unmeasured for taxes; work-task estimates range widely' },
+  vot: { label: 'Value of an hour', v: IRS_VOT, min: 8, max: 40, step: 0.5, fmt: v => '$' + v.toFixed(2), src: '$12.02 BEA household wage; $21.13 implied by the IRS model' },
+  sw: { label: 'Pro-prepared returns switching to self-prep', v: 0.01, min: 0, max: 0.10, step: 0.001, fmt: v => pct(v, 1), src: 'The 2026 IRS counts are consistent with about 0–1%' },
+};
+const sl = document.getElementById('sliders');
+Object.entries(P).forEach(([k, o]) => {
+  const d = document.createElement('div'); d.className = 'sl';
+  const lab = document.createElement('label'); lab.htmlFor = 'r-' + k;
+  const t = document.createElement('span'); t.textContent = o.label;
+  const b = document.createElement('b'); b.id = 'v-' + k; lab.append(t, b);
+  const r = document.createElement('input'); r.type = 'range'; r.id = 'r-' + k; Object.assign(r, { min: o.min, max: o.max, step: o.step, value: o.v });
+  r.addEventListener('input', () => { o.v = +r.value; update(true); });
+  const s = document.createElement('div'); s.className = 'src'; s.textContent = o.src;
+  d.append(lab, r, s); sl.appendChild(d);
+});
+const svg = d3.select('#chart').append('svg');
+function calc() {
+  const hours = HOURS * P.adopt.v * P.save.v;
+  return { hours, time: hours * P.vot.v, market: PRO_RETURNS * P.sw.v * FEE, returns: PRO_RETURNS * P.sw.v };
+}
+function update(animate) {
+  Object.entries(P).forEach(([k, o]) => document.getElementById('v-' + k).textContent = o.fmt(o.v));
+  const c = calc();
+  const W = document.getElementById('chart').clientWidth, narrow = W < 560;
+  const labW = narrow ? 0 : 210, rowH = narrow ? 64 : 54, H = 20 + 2 * rowH + 22;
+  svg.attr('width', W).attr('height', H).attr('viewBox', `0 0 ${W} ${H}`);
+  const max = Math.max(4, Math.ceil(Math.max(c.time, c.market) / 1e9));
+  const x = d3.scaleLinear().domain([0, max]).range([labW + 4, W - 64]);
+  const t = svg.transition().duration(animate ? 0 : 0);
+  let ax = svg.select('g.ax'); if (ax.empty()) ax = svg.append('g').attr('class', 'ax');
+  ax.selectAll('*').remove();
+  x.ticks(4).forEach(v => { ax.append('line').attr('class', v ? 'gridline' : 'baseline').attr('x1', x(v)).attr('x2', x(v)).attr('y1', 10).attr('y2', H - 22);
+    ax.append('text').attr('class', 'axis-label').attr('x', x(v)).attr('y', H - 6).attr('text-anchor', 'middle').text('$' + v + 'B'); });
+  const rows = [
+    { key: 'time', label: 'Time saved by filers', sub: `${(c.hours / 1e6).toFixed(0)} million hours a year`, v: c.time, color: 'var(--blue)' },
+    { key: 'market', label: 'Preparer revenue moved', sub: `${(c.returns / 1e6).toFixed(2)} million returns a year`, v: c.market, color: 'var(--rose)' },
+  ];
+  const g = svg.selectAll('g.r').data(rows, d => d.key).join(e => { const g = e.append('g').attr('class', 'r'); g.append('text').attr('class', 'blab'); g.append('text').attr('class', 'bsub'); g.append('path'); g.append('text').attr('class', 'bval'); return g; });
+  g.attr('transform', (d, i) => `translate(0,${16 + i * rowH})`);
+  g.select('.blab').attr('x', narrow ? x(0) : 0).attr('y', narrow ? 0 : 16).text(d => d.label);
+  g.select('.bsub').attr('x', narrow ? x(0) : 0).attr('y', narrow ? 13 : 30).text(d => d.sub);
+  g.select('path').attr('fill', d => d.color).attr('d', d => hbarPath(x(0), x(d.v / 1e9), narrow ? 22 : 10, 18));
+  g.select('.bval').attr('x', d => x(d.v / 1e9) + 7).attr('y', narrow ? 36 : 24).text(d => '$' + (d.v / 1e9).toFixed(2) + 'B');
+  bindTip(g.select('path'), d => [{ value: '$' + (d.v / 1e9).toFixed(2) + 'B', label: d.label, meta: d.sub }]);
+  const r = document.getElementById('readout'); r.replaceChildren();
+  const ratio = c.market > 0 ? c.time / c.market : Infinity;
+  const b = document.createElement('b'); b.textContent = isFinite(ratio) ? `${ratio >= 1 ? ratio.toFixed(1) + '×' : (1 / ratio).toFixed(1) + '× smaller'}` : 'No revenue moves';
+  r.append(document.createTextNode('Time ledger relative to market ledger: '), b, document.createTextNode('. Only the time ledger is a net resource saving; most of the market ledger is a transfer from preparers to filers.'));
+}
+update(false);
+onResize(() => update(false));
+tableToggle(document.getElementById('tbtn'), document.getElementById('tpanel'), () => {
+  const c = calc();
+  tableView(document.getElementById('tpanel'), [{ label: 'Quantity', get: d => d[0] }, { label: 'Value', get: d => d[1] }], [
+    ['Filers (IRS burden model)', d3.format(',')(FILERS)], ['Total filing hours', d3.format(',')(HOURS)], ['Implied IRS value of an hour', '$' + IRS_VOT.toFixed(2)],
+    ['Professionally e-filed returns, 2026 season to May 1', d3.format(',')(PRO_RETURNS)], ['Average assisted fee', '$' + FEE.toFixed(0)],
+    ['Hours saved', d3.format(',.0f')(c.hours)], ['Value of time saved', '$' + d3.format(',.0f')(c.time)], ['Preparer revenue moved', '$' + d3.format(',.0f')(c.market)]]);
+});
+</script>
+</body>
+</html>
