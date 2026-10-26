@@ -36,9 +36,29 @@ a { color: inherit; text-decoration-thickness: 1.5px; text-decoration-color: #bd
 .page.wide { max-width: 780px; }
 @media (max-width: 760px) { .page, .page.wide { padding: 40px 20px 56px; } }
 
-.crumb { font: 500 13px/1.4 var(--ui-font); color: var(--muted); margin: 0 0 22px; }
-.crumb a { text-decoration: none; }
-.crumb a:hover { text-decoration: underline; }
+.skip-link { position: absolute; left: 16px; top: -80px; z-index: 60; padding: 12px; background: #fff; font: 14px var(--ui-font); }
+.skip-link:focus { top: 12px; }
+.site-header { position: sticky; top: 0; z-index: 50; height: 76px; background: #fff; }
+.header-inner { height: 100%; padding: 0 34px; margin: auto; max-width: 1600px; display: flex; align-items: center; justify-content: space-between; gap: 28px; font-family: var(--ui-font); }
+.brand { font-size: 16px; font-weight: 500; text-decoration: none; letter-spacing: 0; }
+.top-nav { display: flex; align-items: center; gap: 28px; font: 500 14px/1.4 var(--ui-font); }
+.top-nav a { text-decoration: none; color: #565656; padding: 5px 0; }
+.top-nav a:hover, .top-nav a:focus-visible { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 6px; }
+.top-nav a[aria-current] { color: var(--ink); text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 6px; text-decoration-color: #777; }
+.contents-toggle { display: none; background: #f4f4f4; border: 0; border-radius: 999px; padding: 10px 17px; font: 500 14px/1.4 var(--ui-font); cursor: pointer; }
+.contents-dialog { border: 1px solid #e9e9e9; border-radius: 16px; padding: 0; background: #fff; width: min(92vw, 480px); max-height: 86svh; color: var(--ink); }
+.contents-dialog::backdrop { background: #0003; }
+.dialog-top { position: sticky; top: 0; background: #fff; padding: 20px 24px; display: flex; align-items: center; justify-content: space-between; font: 500 15px var(--ui-font); }
+.dialog-close { border: 0; background: none; font: 400 24px/1 var(--ui-font); cursor: pointer; }
+.dialog-nav { padding: 12px 27px 25px; font: 400 15px/1.5 var(--ui-font); }
+.rail-group { margin-bottom: 22px; }
+.rail-label { display: block; font-size: 11.5px; font-weight: 500; color: #888; margin: 0 0 7px; }
+.rail-link { display: block; position: relative; padding: 5px 0 5px 16px; text-decoration: none; color: #686868; }
+.rail-link[aria-current="page"] { color: var(--ink); font-weight: 600; }
+.rail-link:hover, .rail-link:focus-visible { text-decoration: underline; text-decoration-thickness: 1.5px; text-decoration-color: #b3b3b3; text-underline-offset: 5px; }
+.dialog-nav .rail-link { padding-block: 9px; }
+@media (max-width: 1179px) { .contents-toggle { display: inline-block; } }
+@media (max-width: 700px) { .site-header { height: 65px; } .header-inner { padding: 0 22px; gap: 14px; } .brand { font-size: 14px; } .top-nav { gap: 15px; } .top-nav > a { display: none; } .contents-toggle { padding: 9px 14px; } }
 h1 { font: 400 36px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
 @media (max-width: 700px) { h1 { font-size: 30px; } body { font-size: 18px; } }
 .lede p { margin: 0 0 18px; }
@@ -120,7 +140,6 @@ html.embed .lab { margin: 0; }
 @media (max-width: 1179px) { .layout { grid-template-columns: minmax(0, 690px); justify-content: center; padding: 0 36px; } .article { grid-column: 1; } .toc { display: none; } }
 @media (max-width: 700px) { .layout { padding: 0 22px; } .article { padding-top: 44px; } }
 
-.kicker { font: 500 12px/1.4 var(--ui-font); letter-spacing: .06em; text-transform: uppercase; color: #8a8a8a; margin: 0 0 16px; }
 .title { font: 400 40px/1.25 var(--body-font); margin: 0 0 18px; letter-spacing: -0.005em; }
 @media (max-width: 700px) { .title { font-size: 32px; } }
 .dek { font: 400 20px/1.55 var(--body-font); color: #4a4a4a; margin: 0 0 22px; }
@@ -155,6 +174,20 @@ sup a { text-decoration: none; font: 500 11px var(--ui-font); color: #6f6f6f; }
 </style>
 </head>
 <body>
+<a class="skip-link" href="#article">Skip to content</a>
+<header class="site-header">
+  <div class="header-inner">
+    <a class="brand" href="/ai-indirect-effect/">Indirect effects of AI</a>
+    <nav class="top-nav" aria-label="Primary">
+      <a href="/ai-indirect-effect/introduction/">Story</a>
+      <a href="/ai-indirect-effect/mathematics/">Mathematics</a>
+      <a href="/ai-indirect-effect/economy/">Explore the economy</a>
+      <a href="/ai-indirect-effect/empirical/" aria-current="page">Empirical</a>
+      <a class="paper-link" href="/ai-indirect-effect/assets/paper.pdf?v=20261015b" target="_blank" rel="noopener">Read the paper</a>
+      <button class="contents-toggle" type="button" aria-haspopup="dialog" aria-expanded="false" aria-controls="contents-dialog">Contents</button>
+    </nav>
+  </div>
+</header>
 <div class="layout">
 <nav class="toc" aria-label="Contents" id="toc">
   <a href="#why-taxes">Why taxes</a>
@@ -168,9 +201,7 @@ sup a { text-decoration: none; font: 500 11px var(--ui-font); color: #6f6f6f; }
   <a href="#methods">Data and methods</a>
   <a href="#references">References</a>
 </nav>
-<article class="article enter">
-  <p class="crumb"><a href="../">Indirect effects of AI</a> / Empirical</p>
-  <p class="kicker">Indirect effects of AI · October 2026</p>
+<article class="article enter" id="article">
   <h1 class="title">The invisible tax season: AI changed how Americans file, and the market barely noticed</h1>
   <p class="dek">Tax questions to chatbots quadrupled in a year. Paid preparers filed slightly more returns than before. Reconciling the two shows where the first effects of consumer AI land: in household time and in the mix of services people buy, not in the headline volume of an industry.</p>
   <p class="byline">October 26, 2026</p>
@@ -314,7 +345,26 @@ sup a { text-decoration: none; font: 500 11px var(--ui-font); color: #6f6f6f; }
   </ol>
 </article>
 </div>
+<dialog class="contents-dialog" id="contents-dialog" aria-label="Essay contents">
+  <div class="dialog-top"><span>Contents</span><button class="dialog-close" type="button" aria-label="Close contents">×</button></div>
+  <nav class="dialog-nav">
+    <div class="rail-group"><span class="rail-label">Story</span><a class="rail-link" href="/ai-indirect-effect/introduction/">Introduction</a><a class="rail-link" href="/ai-indirect-effect/story/">Before filing</a><a class="rail-link" href="/ai-indirect-effect/work/">Customer work</a><a class="rail-link" href="/ai-indirect-effect/careers/">Careers</a><a class="rail-link" href="/ai-indirect-effect/research/">Research</a><a class="rail-link" href="/ai-indirect-effect/welfare/">Welfare</a></div>
+    <div class="rail-group"><span class="rail-label">Mathematics</span><a class="rail-link" href="/ai-indirect-effect/mathematics/">Introduction</a><a class="rail-link" href="/ai-indirect-effect/model/">Equilibrium</a><a class="rail-link" href="/ai-indirect-effect/dynamics/">Dynamics</a><a class="rail-link" href="/ai-indirect-effect/growth/">RSI and growth</a><a class="rail-link" href="/ai-indirect-effect/appendix/">Derivations</a></div>
+    <div class="rail-group"><span class="rail-label">Explore the economy</span><a class="rail-link" href="/ai-indirect-effect/economy/">Explore the economy</a></div>
+    <div class="rail-group"><span class="rail-label">Empirical</span><a class="rail-link" href="/ai-indirect-effect/empirical/" aria-current="page">The Invisible Tax Season</a></div>
+  </nav>
+</dialog>
 <script>
+const siteContentsDialog = document.querySelector('.contents-dialog');
+const siteContentsOpen = document.querySelector('.contents-toggle');
+const siteContentsClose = document.querySelector('.dialog-close');
+if (siteContentsDialog && siteContentsOpen) {
+  siteContentsOpen.addEventListener('click', () => { siteContentsDialog.showModal(); siteContentsOpen.setAttribute('aria-expanded', 'true'); });
+  siteContentsClose?.addEventListener('click', () => siteContentsDialog.close());
+  siteContentsDialog.addEventListener('click', event => { if (event.target === siteContentsDialog) siteContentsDialog.close(); });
+  siteContentsDialog.addEventListener('close', () => { siteContentsOpen.setAttribute('aria-expanded', 'false'); siteContentsOpen.focus(); });
+  siteContentsDialog.querySelectorAll('a').forEach(link => link.addEventListener('click', () => siteContentsDialog.close()));
+}
 // Size embedded figures to their content.
 addEventListener('message', e => {
   if (!e.data || e.data.type !== 'fig-height') return;
