@@ -117,9 +117,9 @@ html.embed .lab { margin: 0; }
 <body>
 <main class="page wide enter">
   <p class="figno">Figure 9</p>
-  <h1>Frontier models now compute most test returns exactly right, but only with search, and still not all of them</h1>
+  <h1>Frontier models solve most test returns exactly when they can search</h1>
   <div class="lede">
-    <p>TaxCalcBench gives a model every fact needed to complete a federal return and checks whether it produces the correct tax. A return counts as correct only if every evaluated line matches. This is a harder standard than answering a tax question, and closer to what a filer relies on when a chatbot fills in a form.</p>
+    <p>TaxCalcBench gives a model every fact needed for a federal return and checks whether every evaluated line matches. This complete-return task measures the accuracy filers need when a chatbot fills in a form.</p>
   </div>
   <section class="lab" aria-labelledby="te">
     <p class="lab-title" id="te">Share of test returns computed exactly right</p>
@@ -132,7 +132,7 @@ html.embed .lab { margin: 0; }
   <p class="source">Source: Column Tax, <a href="https://github.com/column-tax/tax-calc-bench">TaxCalcBench leaderboard</a>, retrieved October 2026; original benchmark in <a href="https://arxiv.org/abs/2507.16126">arXiv:2507.16126</a> (July 2025).</p>
   <div class="after">
     <p>When the benchmark launched in July 2025, the best model computed 32% of the 2024 test returns exactly right. Models released since then reach 63% on the same set. On the harder 2025 set, which uses realistic document inputs and state returns, the best models reach 70% to 78% when allowed to search the web, and roughly half that without it.</p>
-    <p>For the top models with search, 86% to 94% of individual lines are right, so the errors are concentrated: most of a return is right, and one or two lines are wrong. That is the pattern a filer is least likely to catch on their own.</p>
+    <p>For the top models with search, 86% to 94% of individual lines are right. Errors cluster in one or two lines of otherwise accurate returns, where filers can overlook a mistake.</p>
   </div>
   <nav class="pagenav"><a href="figF_ledgers.html">prev</a><a href="index.html#figE_capability">back to the essay</a><a href="fig5_reported_effects.html">next</a></nav>
 </main>

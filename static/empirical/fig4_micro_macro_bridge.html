@@ -134,14 +134,14 @@ input[type=range] { width: 100%; accent-color: #555; margin: 6px 0 0; }
 <body>
 <main class="page wide enter">
   <p class="figno">Figure 6</p>
-  <h1>If chatbot users had really stopped paying preparers, the IRS would have noticed</h1>
+  <h1>The IRS weekly series shows no mass exit from paid preparation</h1>
   <div class="lede">
-    <p>Survey answers about “doing less” can be scaled up. Start from all filers, keep those who use chatbots, then those who use them for money and taxes, then those who say they hire a professional less. If each of those answers were a full switch away from paid preparation, the number of professionally prepared returns would have fallen sharply in 2026. It rose slightly.</p>
+    <p>The IRS counted 0.3% more professional e-files in 2026, and the professional share reached 52.0%, its six-season high. This simulation scales survey reports to all filers and varies how many paid-help cutbacks represent full exits. If every report were a full exit, professional returns would fall about 9%.</p>
   </div>
 
   <section class="lab" aria-labelledby="t4">
     <p class="lab-title" id="t4">From survey answers to the 2026 filing season, per 1,000 filers</p>
-    <p class="lab-sub">Drag the assumptions. The last slider is the one the data cannot pin down.</p>
+    <p class="lab-sub">Adjust the assumptions. The final slider sets the share of reported cutbacks treated as full exits in this simulation.</p>
     <div class="grid2">
       <div>
         <div id="units"></div>
@@ -156,17 +156,17 @@ input[type=range] { width: 100%; accent-color: #555; margin: 6px 0 0; }
     </div>
     <div class="sliders" id="sliders"></div>
     <div class="toolbar">
-      <button class="play" id="play">Sweep the last assumption</button>
+      <button class="play" id="play">Sweep the full-exit share</button>
       <button class="text-btn" id="tbtn">Show data table</button>
     </div>
     <div id="tpanel" class="hidden"></div>
   </section>
-  <p class="caption">Implied change = −(chatbot use × finance use × reports hiring less × full-switch share) ÷ professional share of returns, assuming every full switch was a previous paid-preparer customer. Observed changes compare returns e-filed by tax professionals at the early-May release of each season with the same week a year earlier; grey bars show 2023–2025 for scale.</p>
+  <p class="caption">Simulated change = −(chatbot use × finance use × reports hiring less × full-exit share) ÷ professional share of returns, assuming each full exit was a former paid-preparer customer. Observed changes compare professional e-files at each season's early-May release with the same week a year earlier; grey bars show 2023–2025 for scale.</p>
   <p class="source">Sources: chatbot use, <a href="https://www.pewresearch.org/internet/2026/06/17/americans-and-ai-2026-chatbots-smart-devices-and-views-on-impact/">Pew Research Center (2026)</a>; finance use and reported cuts, authors' survey of US chatbot users (August 2026); IRS, <a href="https://www.irs.gov/newsroom/filing-season-statistics-for-week-ending-may-1-2026">Filing season statistics</a>, 2023–2026.</p>
 
   <div class="after">
-    <p>Read literally, the survey implies a drop of roughly 9% in professionally prepared returns. The IRS counted 74.7 million such returns by May 1, 2026, up 0.3% on the year before. In the three previous seasons the same comparison ran between −0.1% and +2.1%. Other shocks moved the 2026 season too: refunds jumped 18% after tax-law changes and IRS Direct File was shut down. Still, a drop four times larger than any recent season's swing would be hard to hide.</p>
-    <p>The reconciliation sits in the last slider. If fewer than about one in eight “hire a professional less” answers were full exits, the implied change falls inside the noise of a single season. Most answers more likely describe a smaller purchase, one question not asked, or a check done with a chatbot instead of a call. Those are intensive-margin changes, which the survey cannot size and the IRS counts cannot see.</p>
+    <p>The all-exit simulation predicts a 9% fall in professional returns. The IRS counted 74.7 million such returns by May 1, 2026, up 0.3% year over year. In the three previous seasons, the same comparison ranged from −0.1% to +2.1%. Refunds rose 18% after tax-law changes, and the IRS closed Direct File in 2026. The simulated full-exit share has to fall below about one in eight to fit the observed IRS series.</p>
+    <p>The final slider makes the simulation visible. It varies the share of “hire a professional less” reports treated as full exits. The remaining reports can represent smaller purchases, fewer questions to an accountant, or chatbot checks within the same filing process.</p>
   </div>
   <nav class="pagenav"><a href="figB_irs_channels.html">prev</a><a href="index.html#fig4_micro_macro_bridge">back to the essay</a><a href="figC_incumbents.html">next</a></nav>
 </main>
@@ -294,9 +294,9 @@ const P = {
   a: { label: 'Filers who use a chatbot', v: 0.49, min: 0.30, max: 0.70, step: 0.01, src: 'Pew 2026: 49% of adults' },
   f: { label: '… who use it for money or taxes', v: B.finance_share_of_users.p, min: 0.10, max: 0.50, step: 0.005, src: `This survey: ${B.finance_share_of_users.k} of ${B.finance_share_of_users.n}` },
   p: { label: '… who say they hire a professional less', v: B.pro_less_among_finance.p, min: 0.10, max: 0.40, step: 0.005, src: `This survey: ${B.pro_less_among_finance.k} of ${B.pro_less_among_finance.n}` },
-  e: { label: '… whose answer is a full switch', v: 1.0, min: 0, max: 1, step: 0.01, src: 'Unknown: not asked in this survey' },
+  e: { label: '… of cutbacks modeled as full exits', v: 1.0, min: 0, max: 1, step: 0.01, src: 'Simulation assumption' },
 };
-let threshold = 0.01; // smallest season-to-season change we treat as visible
+let threshold = 0.01; // comparison band for a small simulated change
 
 const sl = document.getElementById('sliders');
 Object.entries(P).forEach(([k, o]) => {
@@ -313,11 +313,11 @@ Object.entries(P).forEach(([k, o]) => {
 });
 
 const CAT = [
-  { key: 'non', label: 'Do not use a chatbot', color: '#dedede' },
-  { key: 'user', label: 'Use one, not for money', color: 'var(--blue-fill)' },
-  { key: 'fin', label: 'Use it for money, no cut to pros', color: 'var(--blue)' },
-  { key: 'part', label: 'Hire a pro less, still use one', color: 'var(--rose-fill)' },
-  { key: 'exit', label: 'Hire a pro less, full switch', color: 'var(--rose)' },
+  { key: 'non', label: 'No chatbot use', color: '#dedede' },
+  { key: 'user', label: 'Chatbot use for other tasks', color: 'var(--blue-fill)' },
+  { key: 'fin', label: 'Finance use, pros unchanged', color: 'var(--blue)' },
+  { key: 'part', label: 'Paid cutback, pro use continues', color: 'var(--rose-fill)' },
+  { key: 'exit', label: 'Modeled full exit', color: 'var(--rose)' },
 ];
 function counts() {
   const { a, f, p, e } = Object.fromEntries(Object.entries(P).map(([k, o]) => [k, o.v]));
@@ -370,7 +370,7 @@ function drawBars(implied, animate) {
   });
   bsvg.select('rect.band').attr('x', x(-threshold)).attr('width', x(threshold) - x(-threshold)).attr('y', 20).attr('height', H - 42).attr('fill', '#ececec').lower();
   g.append('text').attr('class', 'axis-label').attr('x', x(-threshold) - 4).attr('y', 14).attr('text-anchor', 'end').text('within ±1%');
-  const rows = [{ key: 'imp', label: 'Implied by the survey', v: implied, color: 'var(--rose)', y: 36 }]
+  const rows = [{ key: 'imp', label: 'Simulated change', v: implied, color: 'var(--rose)', y: 36 }]
     .concat(SEASONS.slice().reverse().map((d, i) => ({ key: 'obs' + d.season, season: d.season, label: i ? `${d.season} vs ${d.season - 1}` : `Observed, IRS: ${d.season} vs ${d.season - 1}`,
       v: d.v, color: d.season === 2026 ? 'var(--blue)' : '#c9c9c9', y: 92 + i * 30, d })));
   const r = bsvg.select('g.rows').selectAll('g.r').data(rows, d => d.key).join(enter => {
@@ -388,7 +388,7 @@ function drawBars(implied, animate) {
   r.select('.barval').transition(t).attr('x', d => d.v >= 0 ? x(d.v) + 6 : x(d.v) - 6).attr('y', d => d.y + 11)
     .attr('text-anchor', d => d.v >= 0 ? 'start' : 'end').text(d => (d.v >= 0 ? '+' : '−') + Math.abs(d.v * 100).toFixed(1) + '%');
   bindTip(r.select('.bar'), d => [{ value: (d.v >= 0 ? '+' : '−') + Math.abs(d.v * 100).toFixed(2) + '%', label: d.label,
-    meta: d.d ? `${(d.d.cur / 1e6).toFixed(2)}M vs ${(d.d.pri / 1e6).toFixed(2)}M returns e-filed by tax professionals, release of ${d.d.week}` : 'Change in professionally prepared returns if every full switch left a paid preparer' }]);
+    meta: d.d ? `${(d.d.cur / 1e6).toFixed(2)}M vs ${(d.d.pri / 1e6).toFixed(2)}M returns e-filed by tax professionals, release of ${d.d.week}` : 'Simulation at the selected full-exit share; each full exit represents a former paid-preparer customer' }]);
 }
 
 function update(animate = true) {
@@ -399,23 +399,23 @@ function update(animate = true) {
   CAT.forEach(cat => lgN[cat.key].textContent = c.n[cat.key]);
   const lost = c.share.exit * IRS.total2026;
   document.getElementById('big').textContent = (c.implied >= 0 ? '+' : '−') + Math.abs(c.implied * 100).toFixed(1) + '%';
-  document.getElementById('bigsub').textContent = `implied change in professionally prepared returns, about ${lost.toFixed(1)} million fewer`;
+  document.getElementById('bigsub').textContent = `simulated change in professionally prepared returns, about ${lost.toFixed(1)} million fewer`;
   drawBars(c.implied, animate);
   const { a, f, p } = Object.fromEntries(Object.entries(P).map(([k, o]) => [k, o.v]));
   const eStar = Math.min(1, threshold * proShare / (a * f * p));
   const v = document.getElementById('verdict'); v.replaceChildren();
   const b = document.createElement('b');
   if (-c.implied > threshold) {
-    b.textContent = 'Not consistent with the IRS count. ';
-    v.append(b, document.createTextNode(`With these inputs, the survey only fits a near-flat 2026 if fewer than ${pct(eStar)} of the reported cuts were full switches.`));
+    b.textContent = 'Above the ±1% band. ';
+    v.append(b, document.createTextNode(`A full-exit share below ${pct(eStar)} keeps the simulated change within the band.`));
   } else {
-    b.textContent = 'Within a season’s noise. ';
-    v.append(b, document.createTextNode(`At or below ${pct(eStar)} full switches, an effect this size would be hard to separate from refund and Direct File shocks.`));
+    b.textContent = 'Within the ±1% band. ';
+    v.append(b, document.createTextNode(`At or below ${pct(eStar)} full exits, the simulated change stays within the band.`));
   }
 }
 
 let sweepT = null;
-function stopSweep() { if (sweepT) { sweepT.stop(); sweepT = null; document.getElementById('play').textContent = 'Sweep the last assumption'; } }
+function stopSweep() { if (sweepT) { sweepT.stop(); sweepT = null; document.getElementById('play').textContent = 'Sweep the full-exit share'; } }
 document.getElementById('play').onclick = () => {
   if (sweepT) return stopSweep();
   if (matchMedia('(prefers-reduced-motion: reduce)').matches) { P.e.v = 0.12; update(); return; }
@@ -435,7 +435,7 @@ tableToggle(document.getElementById('tbtn'), document.getElementById('tpanel'), 
   const c = counts();
   tableView(document.getElementById('tpanel'), [{ label: 'Group (per 1,000 filers)', get: d => d.label }, { label: 'Count', get: d => d.n }],
     CAT.map(cat => ({ label: cat.label, n: c.n[cat.key] })).concat([
-      { label: 'Implied change in pro-prepared returns', n: (c.implied * 100).toFixed(1) + '%' }
+      { label: 'Simulated change in pro-prepared returns', n: (c.implied * 100).toFixed(1) + '%' }
     ].concat(SEASONS.map(d => ({ label: `Observed change in professional e-filing, ${d.season} vs ${d.season - 1} (release of ${d.week})`, n: (d.v >= 0 ? '+' : '') + (d.v * 100).toFixed(2) + '%' })))));
 });
 </script>

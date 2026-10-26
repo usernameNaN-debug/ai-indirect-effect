@@ -127,10 +127,11 @@ input[type=range] { width: 100%; accent-color: #555; margin: 6px 0 0; }
   <p class="figno">Figure 8</p>
   <h1>The time ledger can be larger than the market ledger, even when the market barely moves</h1>
   <div class="lede">
-    <p>Americans spend about 2.1 billion hours a year on their federal income tax returns, according to the IRS's own burden model, and about $49 billion out of pocket on software and preparers. A chatbot can change either number. Fees that are no longer paid show up as lower revenue for preparers. Hours that are no longer spent show up nowhere in national accounts. This calculator puts both on the same dollar scale.</p>
+    <p>The IRS estimates that Americans spend about 2.1 billion hours a year on federal income tax returns and $49 billion out of pocket on software and preparers. This simulation compares two effects of AI tax help: household time saved and preparer revenue moved.</p>
   </div>
   <section class="lab" aria-labelledby="tf">
     <p class="lab-title" id="tf">Annual value of two effects of AI tax help, in billions of dollars</p>
+    <p class="lab-sub">Both bars are simulations. Adjust the inputs to compare household time savings with preparer revenue moved.</p>
     <div id="chart"></div>
     <p class="readout" id="readout"></p>
     <div class="sliders" id="sliders"></div>
@@ -140,8 +141,8 @@ input[type=range] { width: 100%; accent-color: #555; margin: 6px 0 0; }
   <p class="caption">Time saved = filers × adoption × average filing hours × share of hours saved × value of an hour. Preparer revenue moved = professionally prepared returns × share switching to self-preparation × average fee. Average hours (12.6) and the IRS value of time ($21 per hour) are implied by the burden model's 2.129 billion hours, $48.7 billion out-of-pocket and $93.7 billion monetized burden for 168.8 million filers. The average fee is H&R Block's US assisted revenue per assisted return in fiscal 2026.</p>
   <p class="source">Sources: IRS Taxpayer Burden Model via <a href="https://www.federalregister.gov/documents/full_text/text/2024/12/19/2024-30074.txt">Federal Register, December 19, 2024</a>; IRS <a href="https://www.irs.gov/newsroom/filing-season-statistics-for-week-ending-may-1-2026">filing season statistics</a>; <a href="https://www.sec.gov/Archives/edgar/data/0000012659/000001265926000026/hrb-20260630.htm">H&R Block Form 10-K, fiscal 2026</a>; BEA household production wage as used in <a href="https://arxiv.org/abs/2608.00038">Google ATLAS (2026)</a>.</p>
   <div class="after">
-    <p>At the middle of the adoption range and a modest one-fifth time saving, filers get back roughly 68 million hours a year, worth about $1.4 billion at the IRS's value of time. Moving even 1% of professionally prepared returns to self-preparation shifts about $170 million of preparer revenue. The first number is a real resource saving that GDP does not record. The second is mostly a transfer: the filer keeps the fee and the preparer loses it, so the net gain to society is the time and effort the preparer no longer spends, not the revenue figure itself.</p>
-    <p>For a sense of scale, the IRS's 2.1 billion hours equal the full-time work of roughly one million people. Brynjolfsson and coauthors estimate that US consumers value access to generative AI at about $172 billion a year, against roughly $14 billion of global consumer spending on it. Tax help is a small slice of that, but it is one of the few slices where the counterfactual time cost is measured.</p>
+    <p>At the midpoint of the adoption range, a 20% time saving returns about 68 million hours to filers each year, worth $1.4 billion at the IRS's value of time. A 1% simulated shift from professional preparation to self-filing moves about $170 million in preparer revenue. Household hours create a net resource gain. The fee mostly transfers from preparers to filers; the social gain comes from preparation time freed on both sides. GDP records paid transactions and has no line for unpaid household hours.</p>
+    <p>The IRS's 2.1 billion hours equal the full-time work of roughly one million people. Brynjolfsson and coauthors estimate that US consumers value access to generative AI at about $172 billion a year, against roughly $14 billion of global consumer spending. Tax filing gives this value-to-revenue gap a concrete measure of household time.</p>
   </div>
   <nav class="pagenav"><a href="figC_incumbents.html">prev</a><a href="index.html#figF_ledgers">back to the essay</a><a href="figE_capability.html">next</a></nav>
 </main>
@@ -258,9 +259,9 @@ const IRS_VOT = (MON - OOP) / HOURS;                 // ≈ $21.1 per hour
 const PRO_RETURNS = 74.678e6, FEE = 2560.895e6 / 11.3e6; // ≈ $227 per assisted return
 const P = {
   adopt: { label: 'Filers using AI for their taxes', v: 0.16, min: 0.05, max: 0.40, step: 0.01, fmt: v => pct(v), src: 'Survey estimates range from 11% to 26%' },
-  save: { label: 'Share of their filing time saved', v: 0.20, min: 0, max: 0.5, step: 0.01, fmt: v => pct(v), src: 'Unmeasured for taxes; work-task estimates range widely' },
+  save: { label: 'Share of their filing time saved', v: 0.20, min: 0, max: 0.5, step: 0.01, fmt: v => pct(v), src: 'Simulation input: share of filing hours saved' },
   vot: { label: 'Value of an hour', v: IRS_VOT, min: 8, max: 40, step: 0.5, fmt: v => '$' + v.toFixed(2), src: '$12.02 BEA household wage; $21.13 implied by the IRS model' },
-  sw: { label: 'Pro-prepared returns switching to self-prep', v: 0.01, min: 0, max: 0.10, step: 0.001, fmt: v => pct(v, 1), src: 'The 2026 IRS counts are consistent with about 0–1%' },
+  sw: { label: 'Pro-prepared returns switching to self-prep', v: 0.01, min: 0, max: 0.10, step: 0.001, fmt: v => pct(v, 1), src: 'Simulation range consistent with 2026 IRS counts: 0–1%' },
 };
 const sl = document.getElementById('sliders');
 Object.entries(P).forEach(([k, o]) => {
@@ -305,7 +306,7 @@ function update(animate) {
   const r = document.getElementById('readout'); r.replaceChildren();
   const ratio = c.market > 0 ? c.time / c.market : Infinity;
   const b = document.createElement('b'); b.textContent = isFinite(ratio) ? `${ratio >= 1 ? ratio.toFixed(1) + '×' : (1 / ratio).toFixed(1) + '× smaller'}` : 'No revenue moves';
-  r.append(document.createTextNode('Time ledger relative to market ledger: '), b, document.createTextNode('. Only the time ledger is a net resource saving; most of the market ledger is a transfer from preparers to filers.'));
+  r.append(document.createTextNode('Time ledger relative to market ledger: '), b, document.createTextNode('. Time saved is a net resource gain; market revenue mostly transfers from preparers to filers.'));
 }
 update(false);
 onResize(() => update(false));

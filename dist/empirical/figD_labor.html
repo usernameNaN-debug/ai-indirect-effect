@@ -118,9 +118,9 @@ html.embed .lab { margin: 0; }
 <body>
 <main class="page wide enter">
   <p class="figno">Figure 11</p>
-  <h1>The tax-preparation workforce shows slow pressure, not a new shock</h1>
+  <h1>Tax-preparation employment shows gradual pressure</h1>
   <div class="lede">
-    <p>If consumers stopped buying help with their returns, the first labor-market signal would show up among tax preparers: a seasonal, mostly non-credentialed workforce whose hours rise and fall with the filing calendar. Three public series track it from different angles.</p>
+    <p>Labor-market data show whether demand for tax-preparation work is shifting. Three public series track tax-preparer employment, seasonal staffing at tax-preparation firms, and job postings for accounting work.</p>
   </div>
   <section class="lab" aria-labelledby="td">
     <p class="lab-title" id="td">Employment and hiring demand in tax preparation and accounting</p>
@@ -135,8 +135,8 @@ html.embed .lab { margin: 0; }
   <p class="caption" id="cap"></p>
   <p class="source">Sources: BLS, <a href="https://www.bls.gov/oes/tables.htm">Occupational Employment and Wage Statistics</a>, May 2019–May 2025; BLS, <a href="https://data.bls.gov/timeseries/CEU6054121301">Current Employment Statistics, tax preparation services (NAICS 541213)</a>; Indeed Hiring Lab via <a href="https://fred.stlouisfed.org/series/IHLIDXUSTPACCO">FRED</a> (accounting and total job postings indexes); observed AI exposure from <a href="https://www.anthropic.com/research/labor-market-impacts">Massenkoff and McCrory (2026)</a>.</p>
   <div class="after">
-    <p>Occupational employment of tax preparers was 76,000 in May 2025, about 6% below 2023, while accountants and auditors held steady at 1.45 million. Employment at tax-preparation firms still peaks every February or March, and the 2026 peak of about 155,000 was the highest since 2020. Indeed postings for accounting jobs ran well above the all-occupation average through 2022. Relative to that average they have fallen steadily since, from 1.28 in January 2023 to 0.99 in September 2026, a decline that began well before AI tax help was common and that the series cannot attribute to any single cause.</p>
-    <p>Anthropic's measure of observed exposure, which combines what language models can do with what Claude is actually used for, puts tax preparers at 0.13, far below accountants and auditors at 0.35. On current evidence the tax-preparation labor market looks like an industry under slow structural pressure, not one hit by a new shock.</p>
+    <p>Occupational employment of tax preparers was 76,000 in May 2025, about 6% below 2023, while accountants and auditors held steady at 1.45 million. Employment at tax-preparation firms still peaks every February or March; the 2026 peak of about 155,000 was the highest since 2020. Indeed accounting-job postings ran well above the all-occupation average through 2022, then fell from 1.28 in January 2023 to 0.99 in September 2026. That decline began before AI tax help became common.</p>
+    <p>Anthropic's observed-exposure measure combines model capability with actual Claude use. It scores tax preparers at 0.13 and accountants and auditors at 0.35. Together, the employment, posting, and exposure series show gradual pressure across tax preparation through 2026.</p>
   </div>
   <nav class="pagenav"><a href="fig5_reported_effects.html">prev</a><a href="index.html#figD_labor">back to the essay</a><span></span></nav>
 </main>
@@ -293,7 +293,7 @@ function render() {
     });
   } else if (view === 'ces') {
     legend([['Employees at tax-preparation firms, thousands', 'var(--rose)']]);
-    cap.textContent = 'All employees in tax preparation services (NAICS 541213), monthly, not seasonally adjusted. The annual peak falls in February or March.';
+    cap.textContent = 'All employees in tax preparation services (NAICS 541213), monthly series shown without seasonal adjustment. The annual peak falls in February or March.';
     const S = EXT.ces_taxprep.series.map(d => ({ ...d, date: new Date(d.y, d.m - 1, 15) }));
     const x = d3.scaleTime().domain(d3.extent(S, d => d.date)).range([m.l, W - m.r]);
     const y = d3.scaleLinear().domain([0, d3.max(S, d => d.v) * 1.1]).nice().range([H - m.b, m.t]);
